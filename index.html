@@ -224,6 +224,15 @@
             to { box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
         }
 
+        .featured-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-top: 20px;
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -573,6 +582,73 @@
             background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
         }
 
+        /* Degen Interactive Elements */
+        .degen-emojis {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .floating-emoji {
+            position: absolute;
+            font-size: 2rem;
+            animation: floatEmoji 15s infinite linear;
+            opacity: 0.7;
+        }
+
+        .floating-emoji:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .floating-emoji:nth-child(2) { left: 20%; animation-delay: 2s; }
+        .floating-emoji:nth-child(3) { left: 30%; animation-delay: 4s; }
+        .floating-emoji:nth-child(4) { left: 60%; animation-delay: 6s; }
+        .floating-emoji:nth-child(5) { left: 80%; animation-delay: 8s; }
+        .floating-emoji:nth-child(6) { left: 90%; animation-delay: 10s; }
+
+        @keyframes floatEmoji {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .degen-phrases-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 25px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            scale: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(240, 147, 251, 0.5);
+        }
+
+        .degen-phrases-popup.show {
+            opacity: 1;
+            scale: 1;
+        }
+
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: 1fr;
@@ -597,15 +673,27 @@
         <div class="shape"></div>
     </div>
 
+    <div class="degen-emojis">
+        <div class="floating-emoji">🚀</div>
+        <div class="floating-emoji">💎</div>
+        <div class="floating-emoji">🔥</div>
+        <div class="floating-emoji">🎲</div>
+        <div class="floating-emoji">⚡</div>
+        <div class="floating-emoji">🌙</div>
+    </div>
+
+    <div id="degen-phrases" class="degen-phrases-popup"></div>
+
     <div class="container">
         <header>
-            <h1 class="title">Schwepe's Funky Universe</h1>
-            <p class="subtitle">Where Memes Meet Magic in a Colorful Adventure</p>
+            <h1 class="title">🚀 Schwepe's Degen Universe 🚀</h1>
+            <p class="subtitle">Where 247420 Energy Meets Pure Meme Magic ✨</p>
         </header>
 
         <div class="featured-section">
-            <h2 class="featured-title">Official $SCHWEPE</h2>
+            <h2 class="featured-title">💎 The Degenerate Lifeblood of 247420 💎</h2>
             <img src="schwepe/schwepe.gif" alt="Official Schwepe Logo" class="featured-image">
+            <p class="featured-description">Not your grandpa's crypto — this is the digital dive bar of Web3 🍻</p>
         </div>
 
         <div class="stats">
@@ -615,11 +703,11 @@
             </div>
             <div class="stat-card">
                 <div class="stat-number">∞</div>
-                <div class="stat-label">Funk Level</div>
+                <div class="stat-label">Degen Energy</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">100%</div>
-                <div class="stat-label">Artistic Vibes</div>
+                <div class="stat-number">420%</div>
+                <div class="stat-label">Pure Chaos</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">24/7</div>
@@ -630,8 +718,8 @@
         <!-- Token Information Section -->
         <section class="token-info">
             <div class="token-header">
-                <h2 class="token-title">$SCHWEPE Token</h2>
-                <p class="token-subtitle">The Funkiest Meme Token on Somnia Blockchain</p>
+                <h2 class="token-title">🎲 $SCHWEPE Token 🎲</h2>
+                <p class="token-subtitle">Pure Distilled Degeneracy on Somnia Blockchain</p>
             </div>
 
             <div class="token-details">
@@ -782,11 +870,11 @@
         </section>
 
         <div class="cta-section">
-            <h2 class="cta-title">Join the Schwepe Revolution</h2>
-            <p class="cta-description">Dive into the wild world of Schwepe memes where creativity knows no bounds and every image tells a story</p>
+            <h2 class="cta-title">🔥 Join the Degen Revolution 🔥</h2>
+            <p class="cta-description">Welcome to 247420 — where memes > metrics and community > charts. Ready to ape in? 🚀</p>
             <div class="cta-buttons">
-                <a href="gallery.html" class="cta-button">Explore More Schwepes</a>
-                <a href="lore.html" class="cta-button lore-button">Read the Lore</a>
+                <a href="gallery.html" class="cta-button">🎭 Explore the Multiverse</a>
+                <a href="lore.html" class="cta-button lore-button">📜 Read the Sacred Lore</a>
             </div>
         </div>
 
@@ -821,6 +909,39 @@
                 console.error('Failed to copy address: ', err);
             });
         }
+
+        // Degen phrases that pop up randomly
+        const degenPhrases = [
+            "WAGMI! 🚀",
+            "Diamond Hands! 💎🙌",
+            "To the Moon! 🌙",
+            "Ape In! 🦍",
+            "HODL! 💪",
+            "This is the Way! ✨",
+            "Degeneracy Activated! 🎲",
+            "Vibes > Charts! 📈",
+            "Memes > Metrics! 🎭",
+            "Community > Everything! 🤝",
+            "247420 Energy! ⚡",
+            "No Paper Hands! 🚫📄",
+            "Pure Chaos Mode! 🌀",
+            "Schwepe Forever! 🐸💎"
+        ];
+
+        function showRandomPhrase() {
+            const popup = document.getElementById('degen-phrases');
+            const randomPhrase = degenPhrases[Math.floor(Math.random() * degenPhrases.length)];
+
+            popup.textContent = randomPhrase;
+            popup.classList.add('show');
+
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 2000);
+        }
+
+        // Show random phrase every 10-15 seconds
+        setInterval(showRandomPhrase, Math.random() * 5000 + 10000);
 
         // Add some interactive magic
         document.addEventListener('DOMContentLoaded', function() {
