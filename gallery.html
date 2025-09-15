@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schwepe Gallery - All Schwepes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: bgShift 10s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            25% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+            50% { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+            75% { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .gallery-title {
+            font-size: 3.5rem;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .gallery-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+        }
+
+        .complete-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px 0;
+        }
+
+        .schwepe-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .schwepe-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .schwepe-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .schwepe-card:hover .schwepe-image {
+            transform: scale(1.05);
+        }
+
+        .schwepe-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .schwepe-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .special-card {
+            border: 2px solid #f093fb;
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.2) 0%, rgba(245, 87, 108, 0.2) 100%);
+        }
+
+        @media (max-width: 768px) {
+            .complete-gallery {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .gallery-title {
+                font-size: 2.5rem;
+            }
+
+            .back-button {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin: 20px auto;
+                display: flex;
+                width: fit-content;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+
+    <a href="index.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="gallery-title">Complete Schwepe Collection</h1>
+            <p class="gallery-subtitle">Every Schwepe in the universe, each with their own personality</p>
+        </div>
+
+        <div class="complete-gallery">
+            <!-- Featured Official Schwepe -->
+            <div class="schwepe-card special-card">
+                <img src="schwepe/schwepe.gif" alt="Official Schwepe Logo" class="schwepe-image">
+                <h3 class="schwepe-title">Official $SCHWEPE</h3>
+                <p class="schwepe-description">The official branding and identity of our beloved token</p>
+            </div>
+
+            <!-- New Winking Schwepe -->
+            <div class="schwepe-card special-card">
+                <img src="schwepe/bafkreiemlmjlnywjsmuqrn6mav3q2rvxzjcocaxifsqjvhset4t6rv32hy.png" alt="Winking Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Winking Schwepe</h3>
+                <p class="schwepe-description">Confident finger guns when your trade hits perfectly</p>
+            </div>
+
+            <!-- Original Collection -->
+            <div class="schwepe-card">
+                <img src="schwepe/023 - G6DAIjS.jpg" alt="Crying Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Crying Schwepe</h3>
+                <p class="schwepe-description">When the market dips but you're still hodling strong</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="schwepe/105 - a2MHCB8.jpg" alt="Nervous Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Nervous Schwepe</h3>
+                <p class="schwepe-description">When you're sweating the market dips but still hodling strong</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="schwepe/1373931157071.jpg" alt="Smug Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Smug Schwepe</h3>
+                <p class="schwepe-description">That knowing look when you bought the dip perfectly</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="schwepe/1401142531187.jpg" alt="Cool Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Cool Schwepe</h3>
+                <p class="schwepe-description">Too cool for bear markets, always wearing shades</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="schwepe/1410016719966.png" alt="Happy Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Happy Schwepe</h3>
+                <p class="schwepe-description">Pure joy when the portfolio finally goes green</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="schwepe/1410051144306.jpg" alt="Scheming Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Scheming Schwepe</h3>
+                <p class="schwepe-description">Plotting the next big pump with that devious grin</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="schwepe/1410051520484.png" alt="Gamer Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Gamer Schwepe</h3>
+                <p class="schwepe-description">Gaming while trading, maximum multitasking energy</p>
+            </div>
+
+            <!-- Additional Schwepes from the folder -->
+            <div class="schwepe-card">
+                <img src="schwepe/1410197946075.png" alt="Thoughtful Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Thoughtful Schwepe</h3>
+                <p class="schwepe-description">Deep in thought about the next market move</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="schwepe/1410295565818.jpg" alt="Determined Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Determined Schwepe</h3>
+                <p class="schwepe-description">Focused and ready to conquer the crypto world</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="schwepe/1413782541624.jpg" alt="Excited Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Excited Schwepe</h3>
+                <p class="schwepe-description">When the pump starts and you're ready for the moon</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="schwepe/1421011511094.jpg" alt="Relaxed Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Relaxed Schwepe</h3>
+                <p class="schwepe-description">Zen mode activated, diamond hands forever</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add click interaction to schwepe cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const schwepeCards = document.querySelectorAll('.schwepe-card');
+            schwepeCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.animation = 'bounce 0.5s ease-in-out';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 500);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

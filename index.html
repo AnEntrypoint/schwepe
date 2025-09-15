@@ -589,13 +589,13 @@
         </header>
 
         <div class="featured-section">
-            <h2 class="featured-title">Star of the Show</h2>
-            <img src="schwepe/023 - G6DAIjS.jpg" alt="Crying Schwepe" class="featured-image">
+            <h2 class="featured-title">Official $SCHWEPE</h2>
+            <img src="schwepe/schwepe.gif" alt="Official Schwepe Logo" class="featured-image">
         </div>
 
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-number">12</div>
+                <div class="stat-number">14</div>
                 <div class="stat-label">Unique Schwepes</div>
             </div>
             <div class="stat-card">
@@ -758,12 +758,18 @@
                 <h3 class="pepe-title">Gamer Schwepe</h3>
                 <p class="pepe-description">Gaming while trading, maximum multitasking energy</p>
             </div>
+
+            <div class="pepe-card">
+                <img src="schwepe/bafkreiemlmjlnywjsmuqrn6mav3q2rvxzjcocaxifsqjvhset4t6rv32hy.png" alt="Winking Schwepe" class="pepe-image">
+                <h3 class="pepe-title">Winking Schwepe</h3>
+                <p class="pepe-description">Confident finger guns when your trade hits perfectly</p>
+            </div>
         </section>
 
         <div class="cta-section">
             <h2 class="cta-title">Join the Schwepe Revolution</h2>
             <p class="cta-description">Dive into the wild world of Schwepe memes where creativity knows no bounds and every image tells a story</p>
-            <a href="#gallery" class="cta-button">Explore More Schwepes</a>
+            <a href="gallery.html" class="cta-button">Explore More Schwepes</a>
         </div>
 
         <footer>
@@ -823,13 +829,8 @@
                 });
             });
 
-            // Smooth scrolling for CTA button
-            document.querySelector('.cta-button').addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelector('.gallery').scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
+            // CTA button navigation (now goes to gallery.html)
+            // No need for smooth scrolling since we're navigating to a new page
         });
     </script>
 </body>
