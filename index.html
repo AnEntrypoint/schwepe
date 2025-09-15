@@ -558,6 +558,21 @@
             margin-top: 10px;
         }
 
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .lore-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .lore-button:hover {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+        }
+
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: 1fr;
@@ -769,7 +784,10 @@
         <div class="cta-section">
             <h2 class="cta-title">Join the Schwepe Revolution</h2>
             <p class="cta-description">Dive into the wild world of Schwepe memes where creativity knows no bounds and every image tells a story</p>
-            <a href="gallery.html" class="cta-button">Explore More Schwepes</a>
+            <div class="cta-buttons">
+                <a href="gallery.html" class="cta-button">Explore More Schwepes</a>
+                <a href="lore.html" class="cta-button lore-button">Read the Lore</a>
+            </div>
         </div>
 
         <footer>
