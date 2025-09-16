@@ -1,0 +1,57 @@
+{
+  "cornermen": {
+    "version": "1.0",
+    "created": "2024-09-15",
+    "description": "Schwepe corner men with transparent backgrounds",
+    "images": [
+      {
+        "filename": "schwepe-corner-1.png",
+        "source": "1410051520484.png",
+        "title": "Gamer Corner Man",
+        "processing": "ImageMagick background removal",
+        "size": "120x120px"
+      },
+      {
+        "filename": "schwepe-corner-2.png",
+        "source": "4QLYrPg.jpg",
+        "title": "Fear and Loathing Corner Man",
+        "processing": "ImageMagick background removal",
+        "size": "120x120px"
+      },
+      {
+        "filename": "schwepe-corner-3.png",
+        "source": "010 - UBxhtzo.png",
+        "title": "Cozy Corner Man",
+        "processing": "ImageMagick background removal",
+        "size": "120x120px"
+      },
+      {
+        "filename": "schwepe-corner-4.png",
+        "source": "096 - yFMbZ1a.png",
+        "title": "Swinging Corner Man",
+        "processing": "ImageMagick background removal",
+        "size": "120x120px"
+      },
+      {
+        "filename": "schwepe-corner-5.png",
+        "source": "1406323323590.jpg",
+        "title": "Tiny Corner Man",
+        "processing": "ImageMagick background removal",
+        "size": "120x120px"
+      }
+    ]
+  },
+  "display": {
+    "position": "bottom-left",
+    "size": "120x120px",
+    "rotation_interval": 30000,
+    "animation": "smooth-scale",
+    "z_index": 1000
+  },
+  "processing": {
+    "tool": "ImageMagick (rembg-node fallback available)",
+    "background_removal": "transparent",
+    "resizing": "120x120px centered",
+    "format": "PNG"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "timestamp": 1757940905550,
+  "chunks": [
+    {
+      "file": "/mnt/c/dev/schwepe/vite.config.js",
+      "content": "import { defineConfig } from 'vite'\nimport { resolve } from 'path'\n\nexport default defineConfig({\n  root: '.', // Use root as the base directory\n  build: {\n    outDir: 'dist',\n    rollupOptions: {\n      input: {\n        main: resolve(__dirname, 'index.html'),\n        gallery: resolve(__dirname, 'gallery.html'),\n        lore: resolve(__dirname, 'lore.html')\n      }\n    }\n  },\n  server: {\n    port: 3000\n  }\n})",
+      "startLine": 0,
+      "endLine": 18
+    }
+  ]
+}
