@@ -1046,13 +1046,40 @@
         let cornerManImages = [];
         let currentCornerImage = 0;
 
-        function loadCornerManImages() {
-            // Load all corner man images from cornermen folder
+        async function loadCornerManImages() {
+            // Dynamically discover all corner man images from cornermen folder
             cornerManImages = [];
-            for (let i = 1; i <= 1239; i++) {
+
+            // Since we can't directly list directory contents in browser,
+            // we'll try to load images by checking common patterns
+            const imagePromises = [];
+            const potentialImages = [];
+
+            // Check for schwepe-corner-XXX.png pattern (up to reasonable limit)
+            for (let i = 1; i <= 1500; i++) {
                 const filename = `cornermen/schwepe-corner-${String(i).padStart(3, '0')}.png`;
-                cornerManImages.push(filename);
+                potentialImages.push(filename);
             }
+
+            // Also check for the special hash-named files
+            potentialImages.push('cornermen/bafkreiemlmjlnywjsmuqrn6mav3q2rvxzjcocaxifsqjvhset4t6rv32hy.png');
+
+            // Test each image to see if it exists
+            for (const imagePath of potentialImages) {
+                const promise = new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => resolve(imagePath);
+                    img.onerror = () => resolve(null);
+                    img.src = imagePath;
+                });
+                imagePromises.push(promise);
+            }
+
+            // Wait for all checks to complete and filter out failed loads
+            const results = await Promise.all(imagePromises);
+            cornerManImages = results.filter(path => path !== null);
+
+            console.log(`Found ${cornerManImages.length} cornermen images`);
         }
 
         function loadRandomCornerImage() {
@@ -1080,16 +1107,16 @@
         }
 
         // Add some interactive magic
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             // Initialize corner man and show immediately
-            loadCornerManImages();
+            await loadCornerManImages();
 
-            // Show corner man immediately
+            // Show corner man immediately after loading images
             setTimeout(() => {
                 const cornerMan = document.getElementById('corner-man');
                 cornerMan.classList.add('show');
                 loadRandomCornerImage();
-            }, 1000);
+            }, 500);
 
             // Change corner man image every 15 seconds
             setInterval(() => {
