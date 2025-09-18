@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schwepe Lore - The Degenerate Lifeblood of 247420</title>
+    <title>Schwepe Lore - The Complete Saga</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -46,32 +46,50 @@
             padding: 0 20px;
         }
 
-        .back-button {
-            position: absolute;
-            top: 30px;
-            left: 30px;
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 15px 20px;
             border-radius: 25px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: transform 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 10;
+            padding: 10px 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
 
-        .back-button:hover {
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
+        }
+
+        .navbar a.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .navbar i {
+            font-size: 16px;
         }
 
         .header {
             text-align: center;
-            padding: 80px 0 60px;
+            padding: 120px 0 60px;
         }
 
         .lore-title {
@@ -89,142 +107,133 @@
             font-weight: 400;
         }
 
-        .emoji-divider {
-            font-size: 2rem;
-            margin: 40px 0;
-            text-align: center;
+        .lore-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
         }
 
-        .lore-content {
+        .lore-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
             border-radius: 25px;
-            padding: 50px;
-            margin-bottom: 40px;
+            padding: 40px 30px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            line-height: 1.8;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
+            text-decoration: none;
             color: #fff;
-            margin-bottom: 30px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .section-content {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 30px;
+        .lore-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
         }
 
-        .highlight {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 600;
+        .lore-card:hover::before {
+            left: 100%;
         }
 
-        .quote-box {
-            background: rgba(0, 0, 0, 0.3);
-            border-left: 4px solid #f093fb;
-            padding: 25px;
-            margin: 30px 0;
-            border-radius: 10px;
-            font-style: italic;
-            font-size: 1.1rem;
+        .lore-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(240, 147, 251, 0.5);
         }
 
-        .trinity-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .trinity-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .trinity-item h4 {
-            color: #f093fb;
-            margin-bottom: 10px;
-            font-size: 1.3rem;
-        }
-
-        .culture-points {
-            list-style: none;
-            margin: 20px 0;
-        }
-
-        .culture-points li {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px 20px;
-            margin: 10px 0;
-            border-radius: 10px;
-            border-left: 4px solid #43e97b;
-            font-size: 1.1rem;
-        }
-
-        .manifesto-points {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 30px;
-            border-radius: 15px;
-            margin: 30px 0;
-        }
-
-        .manifesto-points ul {
-            list-style: none;
-        }
-
-        .manifesto-points li {
-            padding: 10px 0;
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.95);
-        }
-
-        .manifesto-points li:before {
-            content: "👉 ";
-            margin-right: 10px;
-        }
-
-        .tldr-section {
-            background: linear-gradient(135deg, rgba(240, 147, 251, 0.2) 0%, rgba(245, 87, 108, 0.2) 100%);
-            border: 2px solid #f093fb;
-            padding: 40px;
-            border-radius: 20px;
-            margin: 40px 0;
+        .lore-card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
             text-align: center;
         }
 
-        .tldr-title {
-            font-size: 2rem;
+        .lore-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
             color: #f093fb;
+            text-align: center;
+        }
+
+        .lore-card p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
             margin-bottom: 20px;
         }
 
-        .tldr-points {
+        .lore-card-topics {
             list-style: none;
-            font-size: 1.2rem;
-            line-height: 2;
-        }
-
-        .tldr-points li {
-            margin: 10px 0;
-        }
-
-        .final-message {
             text-align: center;
-            font-size: 1.3rem;
+        }
+
+        .lore-card-topics li {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            margin: 5px 0;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .start-here {
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #fff;
+            padding: 20px 40px;
+            border-radius: 30px;
+            text-decoration: none;
             font-weight: 600;
-            color: #2d8f5f;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
+        }
+
+        .progress-indicator {
+            text-align: center;
             margin: 40px 0;
-            text-shadow: 0 0 10px rgba(67, 231, 123, 0.5);
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .progress-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot:hover {
+            background: rgba(240, 147, 251, 0.8);
+            transform: scale(1.2);
         }
 
         @keyframes glow {
@@ -237,6 +246,17 @@
         }
 
         @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                max-width: 90%;
+                gap: 10px;
+            }
+
+            .navbar a {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+
             .lore-title {
                 font-size: 2.5rem;
             }
@@ -245,29 +265,22 @@
                 font-size: 1.3rem;
             }
 
-            .lore-content {
+            .header {
+                padding: 100px 0 40px;
+            }
+
+            .lore-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .lore-card {
                 padding: 30px 20px;
             }
 
-            .section-title {
-                font-size: 2rem;
-            }
-
-            .section-content {
-                font-size: 1.1rem;
-            }
-
-            .back-button {
-                position: relative;
-                top: 0;
-                left: 0;
-                margin: 20px auto;
-                display: flex;
-                width: fit-content;
-            }
-
-            .trinity-list {
-                grid-template-columns: 1fr;
+            .cta-button {
+                padding: 15px 30px;
+                font-size: 1rem;
             }
         }
     </style>
@@ -275,544 +288,154 @@
 <body>
     <div class="animated-bg"></div>
 
-    <a href="index.html" class="back-button">
-        <i class="fas fa-arrow-left"></i> Back to Universe
-    </a>
+    <nav class="navbar">
+        <a href="index.html">
+            <i class="fas fa-home"></i>
+            Home
+        </a>
+        <a href="gallery.html">
+            <i class="fas fa-images"></i>
+            Gallery
+        </a>
+        <a href="lore.html" class="active">
+            <i class="fas fa-book"></i>
+            Lore
+        </a>
+        <a href="#" onclick="showStats()">
+            <i class="fas fa-chart-bar"></i>
+            Stats
+        </a>
+    </nav>
 
     <div class="container">
         <div class="header">
-            <h1 class="lore-title glow-text">🚀🐸 Schwepe Lore 🐸🚀</h1>
-            <p class="lore-subtitle">The Degenerate Lifeblood of 247420</p>
+            <h1 class="lore-title glow-text">🚀🐸 Schwepe Lore Library 🐸🚀</h1>
+            <p class="lore-subtitle">Choose Your Chapter in the Saga of 247420</p>
         </div>
 
-        <div class="lore-content">
-            <div class="section-content">
-                If you've wandered into 247420, you already know you're not in some sterile Discord server or buttoned-up Telegram chat. This isn't your grandpa's crypto forum — this is the <span class="highlight">digital dive bar of Web3</span>, the after-hours casino where memes hit harder than market caps, and where <strong>community > charts</strong> every single time.
-            </div>
-
-            <div class="section-content">
-                And at the heart of this chaotic ecosystem, there's one coin that captures the essence of what it means to be here:
-            </div>
-
-            <div class="quote-box">
-                💎 Schwepe 💎
-            </div>
-
-            <div class="section-content">
-                Not a utility token. Not a "next-gen protocol with disruptive potential." None of that VC-fed buzzword salad. Schwepe is <span class="highlight">pure distilled degeneracy in coin form</span>. A memecoin born out of the holy trinity of Web3 culture:
-            </div>
-
-            <div class="trinity-list">
-                <div class="trinity-item">
-                    <h4>24/7 Markets</h4>
-                    <p>Never sleep, always trading</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>420 Degen Energy</h4>
-                    <p>Maximum chaos vibes</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>Meme Magic</h4>
-                    <p>That refuses to die</p>
-                </div>
+        <div class="progress-indicator">
+            <p>📚 Complete Schwepe Saga (5 Chapters)</p>
+            <div class="progress-dots">
+                <div class="progress-dot" title="Introduction"></div>
+                <div class="progress-dot" title="Culture"></div>
+                <div class="progress-dot" title="Multiverse"></div>
+                <div class="progress-dot" title="Cult"></div>
+                <div class="progress-dot" title="Economics"></div>
             </div>
         </div>
 
-        <div class="emoji-divider">🌐 * * * 🌐</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">What Even Is Schwepe?</h2>
-
-            <div class="section-content">
-                Imagine if the chaotic energy of Pepe, the nihilistic optimism of Doge, and the "screw it, let's ape" philosophy of every late-night rug victim had a love child. <span class="highlight">That's Schwepe.</span>
-            </div>
-
-            <div class="section-content">
-                It doesn't promise the moon — it promises <strong>vibes</strong>. It doesn't ask you to HODL — it dares you to ride the wave until you either make it or nuke it. It's the coin equivalent of someone screaming "WAGMI" while already down 80%, then doubling down because why the hell not.
-            </div>
-        </div>
-
-        <div class="emoji-divider">🔥 * * * 🔥</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The Culture of 247420</h2>
-
-            <div class="section-content">
-                Schwepe thrives because 247420 isn't just a community — it's a <span class="highlight">cult of chaos</span>.
-            </div>
-
-            <ul class="culture-points">
-                <li><strong>Memes > Whitepapers</strong></li>
-                <li><strong>Degeneracy > Regulation</strong></li>
-                <li><strong>Vibes > Roadmaps</strong></li>
-            </ul>
-
-            <div class="section-content">
-                This is the place where an inside joke at 2 a.m. can pump harder than a Coinbase listing. Where your shitpost can turn into a liquidity pool. Where nothing is sacred, but everything is celebrated.
-            </div>
-
-            <div class="quote-box">
-                And Schwepe? It's the lifeblood. It's the ticker that everyone spams, the coin that keeps the chat buzzing at ungodly hours, the digital badge that says:<br><br>
-                👉 "Yeah, I live here. I am 247420."
-            </div>
-        </div>
-
-        <div class="emoji-divider">💀 * * * 💀</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">Why Schwepe Matters (If You Can Even Call It That)</h2>
-
-            <div class="section-content">
-                Because in a crypto world obsessed with "serious" projects, compliance, and utility narratives, Schwepe is <span class="highlight">the middle finger</span>. It's proof that Web3 is at its best when it's fun, reckless, and completely unserious.
-            </div>
-
-            <div class="manifesto-points">
-                <ul>
-                    <li>No promises. No roadmap. Just vibes.</li>
-                    <li>No CEOs. Just shitposters.</li>
-                    <li>No exit liquidity. Wait, actually, you might be the exit liquidity.</li>
+        <div class="lore-grid">
+            <a href="lore-intro.html" class="lore-card">
+                <span class="lore-card-icon">🚀</span>
+                <h3>Introduction</h3>
+                <p>Begin your journey into the world of Schwepe</p>
+                <ul class="lore-card-topics">
+                    <li>What is Schwepe?</li>
+                    <li>The Culture of 247420</li>
+                    <li>Why Schwepe Matters</li>
                 </ul>
-            </div>
+            </a>
 
-            <div class="section-content">
-                And that's okay. Because Schwepe isn't here to make sense — it's here to <span class="highlight">make history</span> in the way only memecoins can: by being so absurd it becomes inevitable.
-            </div>
-        </div>
-
-        <div class="emoji-divider">🎭 * * * 🎭</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The Origin Story: Birth of a Meme Legend</h2>
-
-            <div class="section-content">
-                Legend has it that Schwepe wasn't created — it was <span class="highlight">manifested</span>. Born from the collective consciousness of degenerates who spent too many nights watching 5-minute candles, scrolling Twitter for alpha, and aping into questionable contracts.
-            </div>
-
-            <div class="quote-box">
-                "One night, around 3:47 AM (the most degen hour), someone in 247420 said: <br><br>
-                'What if we had a pink Pepe that actually understood us?'<br><br>
-                And thus, Schwepe was born."
-            </div>
-
-            <div class="section-content">
-                Unlike other memecoins birthed by VCs in boardrooms or influencers chasing engagement, Schwepe emerged from the <span class="highlight">pure chaos of late-night crypto Twitter</span>. No whitepaper. No roadmap. Just vibes and the unshakeable belief that sometimes the most beautiful things come from complete degeneracy.
-            </div>
-        </div>
-
-        <div class="emoji-divider">🎲 * * * 🎲</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The 247420 Ecosystem: Where Schwepe Lives</h2>
-
-            <div class="section-content">
-                247420 isn't just a number — it's a <span class="highlight">state of mind</span>. It's the digital embodiment of "markets never sleep, and neither do we." The community that exists in this perpetual state of:
-            </div>
-
-            <ul class="culture-points">
-                <li><strong>24/7</strong> - Always online, always trading, always scheming</li>
-                <li><strong>420</strong> - That blissed-out, "nothing matters but the vibes" energy</li>
-                <li><strong>Infinite</strong> - The loop never ends, the memes never die</li>
-            </ul>
-
-            <div class="section-content">
-                In this ecosystem, <span class="highlight">Schwepe is the native currency of chaos</span>. It's what you tip when someone drops fire alpha. It's what you ape when you're feeling lucky. It's what you hodl when everything else is rugging because at least Schwepe is honest about being completely unhinged.
-            </div>
-        </div>
-
-        <div class="emoji-divider">🌀 * * * 🌀</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The Philosophy of Schwepe</h2>
-
-            <div class="section-content">
-                Schwepe operates on a simple philosophy that most of crypto has forgotten:
-            </div>
-
-            <div class="manifesto-points">
-                <h3 style="color: #f093fb; margin-bottom: 20px;">The Schwepe Manifesto</h3>
-                <ul>
-                    <li><strong>Embrace the Chaos:</strong> Markets are irrational, so be irrationally optimistic</li>
-                    <li><strong>Memes > Metrics:</strong> A good shitpost will outlast any fundamental analysis</li>
-                    <li><strong>Community First:</strong> We're all going to make it or nuke it together</li>
-                    <li><strong>No False Promises:</strong> We promise absolutely nothing except pure, unfiltered vibes</li>
-                    <li><strong>Diamond Hands, Diamond Hearts:</strong> Hodl the coin, hodl the culture</li>
-                    <li><strong>Degen with Purpose:</strong> Be reckless, but be reckless with style</li>
+            <a href="lore-culture.html" class="lore-card">
+                <span class="lore-card-icon">🌟</span>
+                <h3>Culture & Philosophy</h3>
+                <p>Understand the 247420 ecosystem</p>
+                <ul class="lore-card-topics">
+                    <li>Origin Story</li>
+                    <li>247420 Way of Life</li>
+                    <li>Schwepe Manifesto</li>
                 </ul>
-            </div>
+            </a>
 
-            <div class="section-content">
-                This isn't just a token philosophy — it's a <span class="highlight">way of life</span>. Schwepe holders don't just own a memecoin; they own a piece of the revolution against boring, sanitized, corporate crypto.
-            </div>
-        </div>
-
-        <div class="emoji-divider">🎪 * * * 🎪</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The Schwepe Multiverse: Every Frog Has a Story</h2>
-
-            <div class="section-content">
-                Each Schwepe in our collection of 28 unique frogs isn't just a JPEG — they're <span class="highlight">characters in the grand saga</span> of 247420. Meet the core cast:
-            </div>
-
-            <div class="trinity-list">
-                <div class="trinity-item">
-                    <h4>🥲 Crying Schwepe</h4>
-                    <p>The patron saint of "buying high, selling low" — but still coming back for more</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>😰 Nervous Schwepe</h4>
-                    <p>Sweating through every dip, but diamond handing through the fear</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>😏 Smug Schwepe</h4>
-                    <p>The oracle who called the pump before anyone else</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>😎 Cool Schwepe</h4>
-                    <p>Unbothered. Moisturized. Happy. In his lane. Focused. Flourishing.</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>😊 Happy Schwepe</h4>
-                    <p>Pure joy incarnate when the portfolio finally goes green</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>😈 Scheming Schwepe</h4>
-                    <p>Always plotting the next 100x, the next community takeover</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>🎮 Gamer Schwepe</h4>
-                    <p>Multitasking legend: gaming, trading, and memeing simultaneously</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>😉 Winking Schwepe</h4>
-                    <p>The confident trader with perfect timing and finger guns</p>
-                </div>
-            </div>
-
-            <div class="section-content">
-                Together, they form the <span class="highlight">Schwepe Collective</span> — a representation of every emotion, every moment, every vibe in the degen journey. We are all Schwepe. Schwepe is all of us.
-            </div>
-        </div>
-
-        <div class="emoji-divider">⚡ * * * ⚡</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The Great Schwepe Prophecy</h2>
-
-            <div class="section-content">
-                Ancient degen scrolls (aka Discord screenshots from 3 AM) speak of a time when:
-            </div>
-
-            <div class="quote-box">
-                "When the markets are at their most chaotic,<br>
-                When the rugs are plentiful and the hopium scarce,<br>
-                When even the diamond hands begin to shake,<br><br>
-
-                A pink frog shall rise,<br>
-                Not to promise the moon,<br>
-                But to remind us why we're here:<br><br>
-
-                For the memes.<br>
-                For the community.<br>
-                For the pure, unhinged joy of it all."
-            </div>
-
-            <div class="section-content">
-                Some say this prophecy has already begun. Others say we're living in it right now. But one thing is certain: <span class="highlight">Schwepe doesn't follow the prophecy — Schwepe IS the prophecy.</span>
-            </div>
-        </div>
-
-        <div class="emoji-divider">🎯 * * * 🎯</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The Schwepe Effect: Changing the Game</h2>
-
-            <div class="section-content">
-                Schwepe isn't just participating in the meme coin meta — it's <span class="highlight">rewriting the rules</span>. Here's how:
-            </div>
-
-            <div class="manifesto-points">
-                <h3 style="color: #2d8f5f; margin-bottom: 20px;">Breaking the Mold</h3>
-                <ul>
-                    <li><strong>No Utility Promises:</strong> We promise nothing, deliver vibes</li>
-                    <li><strong>No Roadmap:</strong> The journey is the destination</li>
-                    <li><strong>No Marketing Budget:</strong> The community IS the marketing</li>
-                    <li><strong>No Celebrity Endorsements:</strong> We ARE the celebrities</li>
-                    <li><strong>No Exit Strategy:</strong> There is no exit, only evolution</li>
+            <a href="lore-multiverse.html" class="lore-card">
+                <span class="lore-card-icon">🌌</span>
+                <h3>Multiverse & Prophecy</h3>
+                <p>Explore the frogs and their destinies</p>
+                <ul class="lore-card-topics">
+                    <li>28 Unique Frogs</li>
+                    <li>Great Prophecy</li>
+                    <li>Schwepe Effect</li>
                 </ul>
-            </div>
+            </a>
 
-            <div class="section-content">
-                While other projects chase legitimacy, Schwepe embraces the beautiful chaos of what crypto was always meant to be: <span class="highlight">a rebellion against the traditional, a celebration of the impossible, and a middle finger to anyone who says "you can't do that."</span>
-            </div>
-        </div>
-
-        <div class="emoji-divider">🚬 * * * 🚬</div>
-
-        <div class="tldr-section">
-            <h2 class="tldr-title">TL;DR</h2>
-            <ul class="tldr-points">
-                <li>Schwepe isn't just a coin.</li>
-                <li>It's the spirit animal of 247420.</li>
-                <li>It's a ticket to the meme casino.</li>
-                <li>It's a badge of degeneracy.</li>
-                <li>It's what happens when a community says: <strong>"Let's stop pretending and just send it."</strong></li>
-            </ul>
-        </div>
-
-        <div class="emoji-divider">🌋 * * * 🌋</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The Rituals of the Schwepe Cult</h2>
-
-            <div class="section-content">
-                Every religion has its rituals. Every cult has its ceremonies. And Schwepe? Oh baby, we've got <span class="highlight">rituals that would make Bitcoin maxis clutch their pearls</span>.
-            </div>
-
-            <div class="manifesto-points">
-                <h3 style="color: #f093fb; margin-bottom: 20px;">The Sacred Rites of 247420</h3>
-                <ul>
-                    <li><strong>The Midnight Ape:</strong> When the clock strikes 12 and the charts look scary, that's when the true degenerates emerge to "buy the dip"</li>
-                    <li><strong>The 3:47 AM Prophecy:</strong> The most degen hour when the wildest predictions are made and the boldest bets are placed</li>
-                    <li><strong>The Meme Sacrifice:</strong> Creating the perfect shitpost that will either pump the coin or get you banned from Twitter</li>
-                    <li><strong>The Diamond Hand Ceremony:</strong> Watching your portfolio dump 90% while saying "I'm not selling, I believe in the project" (we all know you're lying)</li>
-                    <li><strong>The Liquidity Pool Baptism:</strong> That beautiful moment when you add your life savings to a pool and immediately question all your life choices</li>
+            <a href="lore-cult.html" class="lore-card">
+                <span class="lore-card-icon">🎭</span>
+                <h3>Cult & Hierarchy</h3>
+                <p>Discover the rituals and social structure</p>
+                <ul class="lore-card-topics">
+                    <li>Sacred Rituals</li>
+                    <li>Degen Hierarchy</li>
+                    <li>Inner Circle</li>
                 </ul>
-            </div>
+            </a>
 
-            <div class="quote-box">
-                "Schwepe holders don't just participate in crypto rituals — we <strong>invent new ones</strong>.<br><br>
-                While others are reading whitepapers, we're writing memes.<br>
-                While others are doing due diligence, we're doing due degeneracy.<br>
-                While others are hedging risks, we're hedging our bets on pure, unadulterated chaos."
-            </div>
-        </div>
-
-        <div class="emoji-divider">🎭 * * * 🎭</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The Schwepe Hierarchy: Every Degen Has Their Place</h2>
-
-            <div class="section-content">
-                In the grand ecosystem of 247420, not all degens are created equal. There's a <span class="highlight">pecking order</span>, a social ladder that determines who gets the early alpha and who's left holding the bag (spoiler: eventually we all hold the bag).
-            </div>
-
-            <div class="trinity-list">
-                <div class="trinity-item">
-                    <h4>👑 The OGs</h4>
-                    <p>The ancient ones who were here when Schwepe was just a glimmer in a degen's eye. They remember when the chart was flat and the chat was dead</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>🔮 The Prophets</h4>
-                    <p>The ones who "called it" (they didn't, but they'll keep telling you they did). Masters of the "I told you so" when things go right</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>🎪 The Clowns</h4>
-                    <p>The entertainment division. They're here for the memes, the chaos, and the beautiful suffering of watching their portfolio go to zero</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>💎 The Diamond Hands</h4>
-                    <p>The true believers. They'll hold through a 99% dump and tell you it's "accumulation" while secretly crying into their ramen</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>🚀 The Moonboys</h4>
-                    <p>Eternally optimistic. Every green candle is "the one" that's finally going to make it. Spoiler: it's not</p>
-                </div>
-                <div class="trinity-item">
-                    <h4>📊 The Chart Readers</h4>
-                    <p>They come from traditional finance with their fancy TA and indicators. They leave when they realize none of it matters and it's all just meme magic</p>
-                </div>
-            </div>
-
-            <div class="section-content">
-                And Schwepe? Schwepe is the <span class="highlight">great equalizer</span>. It doesn't care if you're an OG or a newcomer. It will pump and dump on everyone equally. In the kingdom of chaos, all are equally likely to get rekt.
-            </div>
-        </div>
-
-        <div class="emoji-divider">🌪️ * * * 🌪️</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The Economics of Schwepe: It's Not About the Money</h2>
-
-            <div class="section-content">
-                Let's be real for a second (don't worry, we'll go back to being unserious in a moment). The economics of Schwepe make <span class="highlight">zero sense</span> from a traditional perspective:
-            </div>
-
-            <div class="manifesto-points">
-                <h3 style="color: #2d8f5f; margin-bottom: 20px;">The Schwepe Economic Model (aka The Art of Losing Money Stylishly)</h3>
-                <ul>
-                    <li><strong>Supply:</strong> However much we feel like having today. Maybe we burn some. Maybe we mint more. Who knows? It's vibes-based economics</li>
-                    <li><strong>Demand:</strong> Based entirely on how funny the memes are and how many people are currently having a mental breakdown in the chat</li>
-                    <li><strong>Market Cap:</strong> Calculated by multiplying the number of active schizos in the Discord by the current level of hopium</li>
-                    <li><strong>Liquidity:</strong> What's left after the team rugs (kidding... unless?)</li>
-                    <li><strong>Tokenomics:</strong> We don't have tokenomics. We have <strong>memenomics</strong></li>
+            <a href="lore-economics.html" class="lore-card">
+                <span class="lore-card-icon">💎</span>
+                <h3>Economics & Future</h3>
+                <p>Learn about memenomics and what's next</p>
+                <ul class="lore-card-topics">
+                    <li>Memenomics</li>
+                    <li>Future Scenarios</li>
+                    <li>Complete TL;DR</li>
                 </ul>
-            </div>
-
-            <div class="quote-box">
-                "Traditional economists look at Schwepe and have an aneurysm.<br><br>
-                They see a project with no utility, no roadmap, no use case.<br><br>
-                We see a project with something much more valuable:<br><br>
-                <strong>Unfiltered, unapologetic, unhinged community energy.</strong>"
-            </div>
-
-            <div class="section-content">
-                This isn't about getting rich. This is about <span class="highlight">being part of something so ridiculous it becomes legendary</span>. It's about having a story to tell. It's about looking back and saying "I was there when a pink frog with no purpose captured the hearts of thousands of degenerates."
-            </div>
+            </a>
         </div>
 
-        <div class="emoji-divider">🎪 * * * 🎪</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The Schwepe Prophecy Part 2: The Great Meme War</h2>
-
-            <div class="section-content">
-                The ancient degen scrolls speak of another prophecy, one that many believe is already unfolding:
-            </div>
-
-            <div class="quote-box">
-                "In the year of our lord 2024,<br>
-                When the meme coin market reaches peak insanity,<br>
-                When even your grandma is asking about Dogecoin,<br><br>
-
-                A great war shall commence.<br>
-                Not a war of swords and shields,<br>
-                But a war of memes and metrics.<br><br>
-
-                The blue coins shall battle the meme coins,<br>
-                The serious projects shall fight the shitposts,<br>
-                And in the midst of this chaos,<br><br>
-
-                A pink frog shall emerge,<br>
-                Not as a warrior,<br>
-                But as a reminder.<br><br>
-
-                A reminder that in the end,<br>
-                None of this matters,<br>
-                And that's precisely why it matters so much."
-            </div>
-
-            <div class="section-content">
-                Some say this prophecy is about Schwepe. Others say we're all just <span class="highlight">really high and reading too much into random Discord messages</span>. But in 247420, we believe in the power of collective delusion. If enough people believe in the prophecy, does it not become real?
-            </div>
-        </div>
-
-        <div class="emoji-divider">🔮 * * * 🔮</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">How to Spot a True Schwepe Believer</h2>
-
-            <div class="section-content">
-                You can tell a lot about a person by how they react to Schwepe. The true believers, the real degens, they exhibit certain <span class="highlight">tells</span> that separate them from the normies:
-            </div>
-
-            <div class="manifesto-points">
-                <h3 style="color: #f093fb; margin-bottom: 20px;">Signs You're Part of the Schwepe Cult</h3>
-                <ul>
-                    <li><strong>You find yourself saying "This is the one" at least three times a week</strong> (Spoiler: It's never "the one")</li>
-                    <li><strong>You've lost more money than you care to admit, but you're still here</strong> (The definition of crypto)</li>
-                    <li><strong>You check the price more often than you check your bank account</strong> (Priorities, people)</li>
-                    <li><strong>You've tried to explain Schwepe to your friends and family</strong> (They now think you're in a cult. They're not wrong)</li>
-                    <li><strong>You've unironically used phrases like "WAGMI" and "NGMI" in real life</strong> (Seek help. Or don't. We're all messed up here)</li>
-                    <li><strong>You see pink frogs everywhere</strong> (It's not just you. It's the Schwepe psychosis setting in)</li>
-                </ul>
-            </div>
-
-            <div class="section-content">
-                The most beautiful thing about Schwepe is that <span class="highlight">nobody accidentally becomes a believer</span>. You don't stumble into this cult. You march in willingly, eyes wide open, knowing full well that you're probably about to lose your money but gain a lifetime of memes and trauma bonding with strangers on the internet.
-            </div>
-        </div>
-
-        <div class="emoji-divider">🎭 * * * 🎭</div>
-
-        <div class="lore-content">
-            <h2 class="section-title">The Future of Schwepe: Nobody Knows, and That's the Point</h2>
-
-            <div class="section-content">
-                Ask any legitimate project about their future, and they'll give you a roadmap with mile-long timelines, technical jargon, and promises that will never be kept.
-            </div>
-
-            <div class="quote-box">
-                "Ask us about our future?<br><br>
-                We don't have a roadmap.<br>
-                We have a <strong>meme map</strong>.<br><br>
-                We don't have milestones.<br>
-                We have <strong>vibe stones</strong>.<br><br>
-                We don't have deliverables.<br>
-                We have <strong>unforgettable experiences</strong> (mostly traumatic, but unforgettable nonetheless)."
-            </div>
-
-            <div class="section-content">
-                The future of Schwepe is unwritten because <span class="highlight">the community writes it every single day</span>. Today we're pumping because of a funny meme. Tomorrow we're dumping because someone said something negative. The day after, we're back because, well, where else would we go?
-            </div>
-
-            <div class="manifesto-points">
-                <h3 style="color: #2d8f5f; margin-bottom: 20px;">Possible Futures (All Equally Likely)</h3>
-                <ul>
-                    <li><strong>The Meme Singularity:</strong> Schwepe becomes so meta that it transcends being a memecoin and becomes a philosophical movement</li>
-                    <li><strong>The Great Rug:</strong> We all wake up one day and it's gone. We laugh, cry, then immediately jump into the next scam</li>
-                    <li><strong>The Institutional Adoption:</strong> BlackRock creates a Schwepe ETF. Hell freezes over. Pigs fly. We all make it (but we're still miserable)</li>
-                    <li><strong>The Eternal Loop:</strong> Schwepe just... continues. Forever. Pumps, dumps, memes, more memes. The cycle never ends because the cycle is the point</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="emoji-divider">💎 * * * 💎</div>
-
-        <div class="tldr-section">
-            <h2 class="tldr-title">TL;DR (The Extended Edition)</h2>
-            <ul class="tldr-points">
-                <li>Schwepe isn't just a coin.</li>
-                <li>It's the spirit animal of 247420.</li>
-                <li>It's a ticket to the meme casino.</li>
-                <li>It's a badge of degeneracy.</li>
-                <li>It's what happens when a community says: <strong>"Let's stop pretending and just send it."</strong></li>
-                <li>It's the digital equivalent of laughing while the world burns.</li>
-                <li>It's proof that the best things in life are ridiculous, pointless, and utterly meaningless.</li>
-                <li>It's our middle finger to the system that tells us to be serious, responsible, and boring.</li>
-                <li>It's a pink frog that represents the beautiful chaos of being human in an increasingly digital world.</li>
-                <li>And most importantly: <strong>It's whatever we want it to be, because that's how memecoins work.</strong></li>
-            </ul>
-        </div>
-
-        <div class="final-message">
-            So load up your wallet, light up the chat, and remember:<br><br>
-            👉 The charts don't matter.<br>
-            👉 The memes are the alpha.<br>
-            👉 The trauma bonds are real.<br>
-            👉 The losses are temporary but the memes are forever.<br>
-            👉 <span class="glow-text">The Schwepe always wins.</span><br><br>
-
-            <strong>Welcome to 247420. You're here forever. 🚀🐸</strong>
+        <div class="start-here">
+            <p style="font-size: 1.3rem; margin-bottom: 30px; color: rgba(255, 255, 255, 0.9);">
+                New to the Schwepe universe? Start with the introduction and work your way through the saga.
+            </p>
+            <a href="lore-intro.html" class="cta-button">
+                <i class="fas fa-play"></i> Begin Your Journey
+            </a>
         </div>
     </div>
 
     <script>
-        // Add some interactive effects
+        // Stats function
+        function showStats() {
+            const statsContent = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; text-align: center; color: white; border: 1px solid rgba(255,255,255,0.2);">
+                        <h2 style="margin-bottom: 20px; color: #f093fb;">🚀 Schwepe Stats 🚀</h2>
+                        <div style="font-size: 1.2rem; line-height: 1.8;">
+                            <p>🐸 Total Schwepes: 28 Unique Frogs</p>
+                            <p>💎 Diamond Hands: Infinite</p>
+                            <p>🎯 Memes Created: Countless</p>
+                            <p>🌙 Moonshots: Many</p>
+                            <p>💀 Bags Held: All of them</p>
+                            <p>⚡ Degeneracy Level: Maximum</p>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; padding: 10px 20px; background: #f093fb; border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer;">Close Stats</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', statsContent);
+        }
+
+        // Add click effects to progress dots
         document.addEventListener('DOMContentLoaded', function() {
-            // Add click effects to content sections
-            const contentSections = document.querySelectorAll('.lore-content');
-            contentSections.forEach(section => {
-                section.addEventListener('click', function() {
-                    this.style.transform = 'scale(1.02)';
-                    setTimeout(() => {
-                        this.style.transform = 'scale(1)';
-                    }, 200);
+            const progressDots = document.querySelectorAll('.progress-dot');
+            const lorePages = ['lore-intro.html', 'lore-culture.html', 'lore-multiverse.html', 'lore-cult.html', 'lore-economics.html'];
+
+            progressDots.forEach((dot, index) => {
+                dot.style.cursor = 'pointer';
+                dot.addEventListener('click', () => {
+                    window.location.href = lorePages[index];
                 });
             });
 
-            // Add hover effects to trinity items
-            const trinityItems = document.querySelectorAll('.trinity-item');
-            trinityItems.forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px)';
-                    this.style.boxShadow = '0 10px 20px rgba(240, 147, 251, 0.3)';
-                });
+            // Set active navigation
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.navbar a');
 
-                item.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                    this.style.boxShadow = 'none';
-                });
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
             });
         });
     </script>
