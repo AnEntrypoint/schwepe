@@ -687,41 +687,7 @@
             scale: 1;
         }
 
-        /* Corner Man Styles */
-        .corner-man {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 120px;
-            height: 120px;
-            z-index: 1000;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: scale(0);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .corner-man.show {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .corner-man:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
-        }
-
-        .corner-man img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background: transparent;
-        }
-
+  
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: 1fr;
@@ -756,9 +722,6 @@
     </div>
 
     <div id="degen-phrases" class="degen-phrases-popup"></div>
-    <div id="corner-man" class="corner-man">
-        <img src="cornermen/schwepe-corner-001.png" alt="Corner Man">
-    </div>
 
     <div class="container">
         <header>
@@ -781,7 +744,7 @@
             </a>
             <a href="#">
                 <i class="fas fa-ghost"></i>
-                Random Cornerman
+                Stats
             </a>
             <a href="#" onclick="showStats()">
                 <i class="fas fa-chart-bar"></i>
@@ -1108,21 +1071,7 @@
 
         // Add some interactive magic
         document.addEventListener('DOMContentLoaded', async function() {
-            // Initialize corner man and show immediately
-            await loadCornerManImages();
-
-            // Show corner man immediately after loading images
-            setTimeout(() => {
-                const cornerMan = document.getElementById('corner-man');
-                cornerMan.classList.add('show');
-                loadRandomCornerImage();
-            }, 500);
-
-            // Change corner man image every 15 seconds
-            setInterval(() => {
-                loadRandomCornerImage();
-            }, 15000);
-            // Animate stats on scroll
+              // Animate stats on scroll
             const stats = document.querySelectorAll('.stat-number');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
