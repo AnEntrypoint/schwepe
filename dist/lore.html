@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schwepe Lore - The Complete Saga</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            color: #fff;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: bgShift 15s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            25% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+            50% { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+            75% { background: linear-gradient(135deg, #2d8f5f 0%, #25a67a 100%); }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 10px 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .navbar a.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .navbar i {
+            font-size: 16px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 120px 0 60px;
+        }
+
+        .lore-title {
+            font-size: 4rem;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            line-height: 1.1;
+        }
+
+        .lore-subtitle {
+            font-size: 1.8rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .lore-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .lore-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lore-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .lore-card:hover::before {
+            left: 100%;
+        }
+
+        .lore-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(240, 147, 251, 0.5);
+        }
+
+        .lore-card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+            text-align: center;
+        }
+
+        .lore-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #f093fb;
+            text-align: center;
+        }
+
+        .lore-card p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .lore-card-topics {
+            list-style: none;
+            text-align: center;
+        }
+
+        .lore-card-topics li {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            margin: 5px 0;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .start-here {
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #fff;
+            padding: 20px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
+        }
+
+        .progress-indicator {
+            text-align: center;
+            margin: 40px 0;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .progress-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot:hover {
+            background: rgba(240, 147, 251, 0.8);
+            transform: scale(1.2);
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(240, 147, 251, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(240, 147, 251, 0.8); }
+        }
+
+        .glow-text {
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                max-width: 90%;
+                gap: 10px;
+            }
+
+            .navbar a {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+
+            .lore-title {
+                font-size: 2.5rem;
+            }
+
+            .lore-subtitle {
+                font-size: 1.3rem;
+            }
+
+            .header {
+                padding: 100px 0 40px;
+            }
+
+            .lore-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .lore-card {
+                padding: 30px 20px;
+            }
+
+            .cta-button {
+                padding: 15px 30px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+
+    <nav class="navbar">
+        <a href="index.html">
+            <i class="fas fa-home"></i>
+            Home
+        </a>
+        <a href="gallery.html">
+            <i class="fas fa-images"></i>
+            Gallery
+        </a>
+        <a href="lore.html" class="active">
+            <i class="fas fa-book"></i>
+            Lore
+        </a>
+        <a href="#" onclick="showStats()">
+            <i class="fas fa-chart-bar"></i>
+            Stats
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="lore-title glow-text">🚀🐸 Schwepe Lore Library 🐸🚀</h1>
+            <p class="lore-subtitle">Choose Your Chapter in the Saga of 247420</p>
+        </div>
+
+        <div class="progress-indicator">
+            <p>📚 Complete Schwepe Saga (5 Chapters)</p>
+            <div class="progress-dots">
+                <div class="progress-dot" title="Introduction"></div>
+                <div class="progress-dot" title="Culture"></div>
+                <div class="progress-dot" title="Multiverse"></div>
+                <div class="progress-dot" title="Cult"></div>
+                <div class="progress-dot" title="Economics"></div>
+            </div>
+        </div>
+
+        <div class="lore-grid">
+            <a href="lore-intro.html" class="lore-card">
+                <span class="lore-card-icon">🚀</span>
+                <h3>Introduction</h3>
+                <p>Begin your journey into the world of Schwepe</p>
+                <ul class="lore-card-topics">
+                    <li>What is Schwepe?</li>
+                    <li>The Culture of 247420</li>
+                    <li>Why Schwepe Matters</li>
+                </ul>
+            </a>
+
+            <a href="lore-culture.html" class="lore-card">
+                <span class="lore-card-icon">🌟</span>
+                <h3>Culture & Philosophy</h3>
+                <p>Understand the 247420 ecosystem</p>
+                <ul class="lore-card-topics">
+                    <li>Origin Story</li>
+                    <li>247420 Way of Life</li>
+                    <li>Schwepe Manifesto</li>
+                </ul>
+            </a>
+
+            <a href="lore-multiverse.html" class="lore-card">
+                <span class="lore-card-icon">🌌</span>
+                <h3>Multiverse & Prophecy</h3>
+                <p>Explore the frogs and their destinies</p>
+                <ul class="lore-card-topics">
+                    <li>28 Unique Frogs</li>
+                    <li>Great Prophecy</li>
+                    <li>Schwepe Effect</li>
+                </ul>
+            </a>
+
+            <a href="lore-cult.html" class="lore-card">
+                <span class="lore-card-icon">🎭</span>
+                <h3>Cult & Hierarchy</h3>
+                <p>Discover the rituals and social structure</p>
+                <ul class="lore-card-topics">
+                    <li>Sacred Rituals</li>
+                    <li>Degen Hierarchy</li>
+                    <li>Inner Circle</li>
+                </ul>
+            </a>
+
+            <a href="lore-economics.html" class="lore-card">
+                <span class="lore-card-icon">💎</span>
+                <h3>Economics & Future</h3>
+                <p>Learn about memenomics and what's next</p>
+                <ul class="lore-card-topics">
+                    <li>Memenomics</li>
+                    <li>Future Scenarios</li>
+                    <li>Complete TL;DR</li>
+                </ul>
+            </a>
+        </div>
+
+        <div class="start-here">
+            <p style="font-size: 1.3rem; margin-bottom: 30px; color: rgba(255, 255, 255, 0.9);">
+                New to the Schwepe universe? Start with the introduction and work your way through the saga.
+            </p>
+            <a href="lore-intro.html" class="cta-button">
+                <i class="fas fa-play"></i> Begin Your Journey
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Stats function
+        function showStats() {
+            const statsContent = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; text-align: center; color: white; border: 1px solid rgba(255,255,255,0.2);">
+                        <h2 style="margin-bottom: 20px; color: #f093fb;">🚀 Schwepe Stats 🚀</h2>
+                        <div style="font-size: 1.2rem; line-height: 1.8;">
+                            <p>🐸 Total Schwepes: 28 Unique Frogs</p>
+                            <p>💎 Diamond Hands: Infinite</p>
+                            <p>🎯 Memes Created: Countless</p>
+                            <p>🌙 Moonshots: Many</p>
+                            <p>💀 Bags Held: All of them</p>
+                            <p>⚡ Degeneracy Level: Maximum</p>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; padding: 10px 20px; background: #f093fb; border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer;">Close Stats</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', statsContent);
+        }
+
+        // Add click effects to progress dots
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressDots = document.querySelectorAll('.progress-dot');
+            const lorePages = ['lore-intro.html', 'lore-culture.html', 'lore-multiverse.html', 'lore-cult.html', 'lore-economics.html'];
+
+            progressDots.forEach((dot, index) => {
+                dot.style.cursor = 'pointer';
+                dot.addEventListener('click', () => {
+                    window.location.href = lorePages[index];
+                });
+            });
+
+            // Set active navigation
+            const currentPath = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.navbar a');
+
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

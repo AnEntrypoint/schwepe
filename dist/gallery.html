@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schwepe Gallery - All Schwepes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: bgShift 10s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            25% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+            50% { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+            75% { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0 40px;
+        }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 30px;
+            margin: 20px auto;
+            max-width: 800px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar a.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .gallery-title {
+            font-size: 3.5rem;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .gallery-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+        }
+
+        .complete-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px 0;
+        }
+
+        .schwepe-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .schwepe-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .schwepe-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .schwepe-card:hover .schwepe-image {
+            transform: scale(1.05);
+        }
+
+        .schwepe-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .schwepe-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .special-card {
+            border: 2px solid #f093fb;
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.2) 0%, rgba(245, 87, 108, 0.2) 100%);
+        }
+
+        /* Corner Man Styles */
+        .corner-man {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 120px;
+            height: 120px;
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .corner-man.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .corner-man:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .corner-man img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: transparent;
+        }
+
+        @media (max-width: 768px) {
+            .complete-gallery {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .gallery-title {
+                font-size: 2.5rem;
+            }
+
+            .back-button {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin: 20px auto;
+                display: flex;
+                width: fit-content;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div id="corner-man" class="corner-man">
+        <img src="cornermen/schwepe-corner-1.png" alt="Corner Man">
+    </div>
+
+    <a href="index.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back to Degen HQ
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="gallery-title">🎭 The Schwepe Multiverse 🎭</h1>
+            <p class="gallery-subtitle">Every degen emotion, every trading vibe, every 247420 moment captured in pink frog form 🐸</p>
+        </div>
+
+        <nav class="navbar">
+            <a href="index.html">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+            <a href="gallery.html" class="active">
+                <i class="fas fa-images"></i>
+                Gallery
+            </a>
+            <a href="lore.html">
+                <i class="fas fa-book"></i>
+                Lore
+            </a>
+            <a href="#" onclick="#">
+                <i class="fas fa-ghost"></i>
+                Corner Man
+            </a>
+            <a href="#" onclick="showStats()">
+                <i class="fas fa-chart-bar"></i>
+                Stats
+            </a>
+        </nav>
+
+        <div class="complete-gallery">
+            <!-- Generated from schwepe-descriptions.json -->
+            <!-- Generated from schwepe-descriptions.json -->
+            <!-- Generated from schwepe-descriptions.json -->
+            <!-- Generated from schwepe-descriptions.json -->
+            <!-- Generated from schwepe-descriptions.json -->
+            <!-- Featured Official Schwepe -->
+            <div class="schwepe-card special-card">
+                <img src="/assets/schwepe-Bj13aShb.gif" alt="Official Schwepe Logo" class="schwepe-image">
+                <h3 class="schwepe-title">Official $SCHWEPE</h3>
+                <p class="schwepe-description">The official branding and identity of our beloved token</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/bafkreiemlmjlnywjsmuqrn6mav3q2rvxzjcocaxifsqjvhset4t6rv32hy-BKLs3u9o.png" alt="Winking Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Winking Schwepe</h3>
+                <p class="schwepe-description">Confident finger guns when your trade hits perfectly</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="/assets/023%20-%20G6DAIjS-DW3EbfUc.jpg" alt="Crying Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Crying Schwepe</h3>
+                <p class="schwepe-description">When the market dips but you're still hodling strong</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="/assets/105%20-%20a2MHCB8-BVeC3ta_.jpg" alt="Nervous Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Nervous Schwepe</h3>
+                <p class="schwepe-description">When you're sweating the market dips but still hodling strong</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="/assets/1373931157071-BXW2MPtF.jpg" alt="Smug Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Smug Schwepe</h3>
+                <p class="schwepe-description">That knowing look when you bought the dip perfectly</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="/assets/1401142531187-DWoWaabo.jpg" alt="Cool Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Cool Schwepe</h3>
+                <p class="schwepe-description">Too cool for bear markets, always wearing shades</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="/assets/1410016719966-C6ISaRSB.png" alt="Happy Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Happy Schwepe</h3>
+                <p class="schwepe-description">Pure joy when the portfolio finally goes green</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="/assets/1410051144306-CwLrZhU0.jpg" alt="Scheming Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Scheming Schwepe</h3>
+                <p class="schwepe-description">Plotting the next big pump with that devious grin</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="/assets/1410051520484-3FMpj2gz.png" alt="Gamer Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Gamer Schwepe</h3>
+                <p class="schwepe-description">Gaming while trading, maximum multitasking energy</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="/assets/1410197946075-NXO1zuIC.png" alt="Thoughtful Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Thoughtful Schwepe</h3>
+                <p class="schwepe-description">Deep in thought about the next market move</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="/assets/1410295565818-B2jVwUjM.jpg" alt="Determined Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Determined Schwepe</h3>
+                <p class="schwepe-description">Focused and ready to conquer the crypto world</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="/assets/1413782541624-DDUZeVyx.jpg" alt="Excited Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Excited Schwepe</h3>
+                <p class="schwepe-description">When the pump starts and you're ready for the moon</p>
+            </div>
+
+            <div class="schwepe-card">
+                <img src="/assets/1421011511094-BBgdugDZ.jpg" alt="Relaxed Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Relaxed Schwepe</h3>
+                <p class="schwepe-description">Zen mode activated, diamond hands forever</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/010%20-%20UBxhtzo-D_uT-9A4.png" alt="Cozy Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Cozy Schwepe</h3>
+                <p class="schwepe-description">Late night chart watching with comfort drinks and hopium</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/058%20-%202ZlcBAo-BvsZd2j4.jpg" alt="Golden Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Golden Schwepe</h3>
+                <p class="schwepe-description">When your portfolio finally turns golden and you're feeling majestic</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/088%20-%20GZH4qeD-Cq53Ri-f.jpg" alt="Wizard Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Wizard Schwepe</h3>
+                <p class="schwepe-description">The oracle of TA magic, celebrating 30 years of market wizardry</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/093%20-%20OzrWPaE-D9mHksll.jpg" alt="Psychedelic Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Psychedelic Schwepe</h3>
+                <p class="schwepe-description">When you've stared at the charts too long and reality starts glitching</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/096%20-%20yFMbZ1a-C8HLTfsz.png" alt="Swinging Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Swinging Schwepe</h3>
+                <p class="schwepe-description">Riding the market swings like a true degen acrobat</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/1390676080234-BOzTW6Hw.jpg" alt="Armed Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Armed Schwepe</h3>
+                <p class="schwepe-description">Ready to defend the community against rugs and paper hands</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/1XCPDAL-BWUF7C8r.jpg" alt="Road Trip Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Road Trip Schwepe</h3>
+                <p class="schwepe-description">On the endless journey to the moon, watching sunsets and pumps</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/9emAxDj-B3dWUjPD.jpg" alt="Flower Power Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Flower Power Schwepe</h3>
+                <p class="schwepe-description">Spreading love and positive vibes through the bear market</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/1406323323590-CteK8Zpr.jpg" alt="Tiny Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Tiny Schwepe</h3>
+                <p class="schwepe-description">Small but mighty, representing the power of micro-cap gems</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/1407529841099-B3aa9e8M.jpg" alt="Artistic Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Artistic Schwepe</h3>
+                <p class="schwepe-description">When your trades become masterpieces of timing and execution</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/1QfKiHb-B7EsfGAM.png" alt="Minimalist Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Minimalist Schwepe</h3>
+                <p class="schwepe-description">Simple, clean, focused — sometimes less is more in trading</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/2RFnKup-1Zk9ueJn.jpg" alt="Intense Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Intense Schwepe</h3>
+                <p class="schwepe-description">When you're locked in on a trade and nothing else matters</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/4QLYrPg-CjmwyIfr.jpg" alt="Noble Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Noble Schwepe</h3>
+                <p class="schwepe-description">The aristocrat of degens, trading with class and sophistication</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/883810350-CpJjnZ-W.png" alt="Battle Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Battle Schwepe</h3>
+                <p class="schwepe-description">In the trenches fighting FUD and defending the community</p>
+            </div>
+
+            <div class="schwepe-card special-card">
+                <img src="/assets/068%20-%20UVZzH0F-DY9ZDqQZ.jpg" alt="Confident Schwepe" class="schwepe-image">
+                <h3 class="schwepe-title">Confident Schwepe</h3>
+                <p class="schwepe-description">That subtle smirk when you know something the market doesn't yet</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Corner Man functionality
+        let cornerManVisible = false;
+        let cornerManImages = [];
+
+        function # {
+            cornerManVisible = !cornerManVisible;
+            const cornerMan = document.getElementById('corner-man');
+            if (cornerManVisible) {
+                cornerMan.classList.add('show');
+                if (cornerManImages.length > 0) {
+                    loadRandomCornerImage();
+                }
+            } else {
+                cornerMan.classList.remove('show');
+            }
+        }
+
+        function loadCornerManImages() {
+            // Load corner man images from cornermen folder
+            cornerManImages = [
+                'cornermen/schwepe-corner-1.png',
+                'cornermen/schwepe-corner-2.png',
+                'cornermen/schwepe-corner-3.png',
+                'cornermen/schwepe-corner-4.png',
+                'cornermen/schwepe-corner-5.png'
+            ];
+        }
+
+        function loadRandomCornerImage() {
+            if (cornerManImages.length === 0) return;
+
+            const cornerMan = document.getElementById('corner-man');
+            const randomIndex = Math.floor(Math.random() * cornerManImages.length);
+            const img = cornerMan.querySelector('img');
+            img.src = cornerManImages[randomIndex];
+
+            // Preload next images
+            cornerManImages.forEach(imageSrc => {
+                const preloadImg = new Image();
+                preloadImg.src = imageSrc;
+            });
+        }
+
+        function showStats() {
+            alert('🎯 Schwepe Stats:\n\n' +
+                  '• Total Schwepes: 28\n' +
+                  '• Special Schwepes: 20\n' +
+                  '• Corner Men: 5\n' +
+                  '• Degen Energy: 247420%\n' +
+                  '• Meme Power: MAXIMUM');
+        }
+
+        // Add click interaction to schwepe cards
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize corner man
+            loadCornerManImages();
+
+            // Change corner man image every 30 seconds when visible
+            setInterval(() => {
+                if (cornerManVisible) {
+                    loadRandomCornerImage();
+                }
+            }, 30000);
+            const schwepeCards = document.querySelectorAll('.schwepe-card');
+            schwepeCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.animation = 'bounce 0.5s ease-in-out';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 500);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
