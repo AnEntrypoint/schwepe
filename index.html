@@ -724,8 +724,8 @@
     <div id="degen-phrases" class="degen-phrases-popup"></div>
 
     <!-- Corner Man Element -->
-    <div id="corner-man" style="position: fixed; bottom: 20px; right: 20px; width: 120px; height: 120px; z-index: 100; cursor: pointer; transition: all 0.5s ease; opacity: 0; transform: scale(0) rotate(0deg);" onclick="loadRandomCornerImage()">
-        <img src="cornermen/schwepe-corner-001.png" alt="Corner Man" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+    <div id="corner-man" style="position: fixed; bottom: 0; width: 150px; height: 150px; z-index: 100; cursor: pointer; transition: all 0.8s ease; opacity: 0; transform: translateX(0);" onclick="loadRandomCornerImage()">
+        <img src="" alt="Corner Man" style="width: 100%; height: 100%; object-fit: contain;">
     </div>
 
     <div class="container">
@@ -1010,27 +1010,28 @@
         // Show random phrase every 10-15 seconds
         setInterval(showRandomPhrase, Math.random() * 5000 + 10000);
 
-        // Corner Man functionality - Always show random cornerman
-        let cornerManImages = [];
-        let currentCornerImage = 0;
+        // Corner Man functionality - Slide in from left or right
+        let leftCornerManImages = [];
+        let rightCornerManImages = [];
 
         async function loadCornerManImages() {
-            // Dynamically discover all corner man images from cornermen folder
-            cornerManImages = [];
+            // Load left cornerman images
+            leftCornerManImages = await loadImagesFromFolder('cornermen/left/', 100);
 
-            // Since we can't directly list directory contents in browser,
-            // we'll try to load images by checking common patterns
+            // Load right cornerman images
+            rightCornerManImages = await loadImagesFromFolder('cornermen/right/', 100);
+
+            console.log(`Found ${leftCornerManImages.length} left cornermen and ${rightCornerManImages.length} right cornermen`);
+        }
+
+        async function loadImagesFromFolder(folderPath, maxImages) {
             const imagePromises = [];
             const potentialImages = [];
 
-            // Check for schwepe-corner-XXX.png pattern (up to reasonable limit)
-            for (let i = 1; i <= 1500; i++) {
-                const filename = `cornermen/schwepe-corner-${String(i).padStart(3, '0')}.png`;
-                potentialImages.push(filename);
+            // Check for common image patterns in the folder
+            for (let i = 1; i <= maxImages; i++) {
+                potentialImages.push(`${folderPath}schwepe-corner-${String(i).padStart(3, '0')}.png`);
             }
-
-            // Also check for the special hash-named files
-            potentialImages.push('cornermen/bafkreiemlmjlnywjsmuqrn6mav3q2rvxzjcocaxifsqjvhset4t6rv32hy.png');
 
             // Test each image to see if it exists
             for (const imagePath of potentialImages) {
@@ -1045,53 +1046,67 @@
 
             // Wait for all checks to complete and filter out failed loads
             const results = await Promise.all(imagePromises);
-            cornerManImages = results.filter(path => path !== null);
-
-            console.log(`Found ${cornerManImages.length} cornermen images`);
+            return results.filter(path => path !== null);
         }
 
-        function loadRandomCornerImage() {
-            if (cornerManImages.length === 0) return;
-
+        function slideInCornerMan(fromLeft = true) {
             const cornerMan = document.getElementById('corner-man');
-            const randomIndex = Math.floor(Math.random() * cornerManImages.length);
+            const images = fromLeft ? leftCornerManImages : rightCornerManImages;
+
+            if (images.length === 0) return;
+
+            const randomIndex = Math.floor(Math.random() * images.length);
             const img = cornerMan.querySelector('img');
-            img.src = cornerManImages[randomIndex];
+            img.src = images[randomIndex];
 
-            // Show with animation
+            // Set starting position based on direction
+            if (fromLeft) {
+                cornerMan.style.left = '-150px';
+                cornerMan.style.right = 'auto';
+            } else {
+                cornerMan.style.right = '-150px';
+                cornerMan.style.left = 'auto';
+            }
+
+            // Show and slide in
             cornerMan.style.opacity = '1';
-            cornerMan.style.transform = 'scale(1) rotate(360deg)';
+            if (fromLeft) {
+                cornerMan.style.transform = 'translateX(150px)';
+            } else {
+                cornerMan.style.transform = 'translateX(-150px)';
+            }
 
-            // Hide after 3 seconds
+            // Hide after 4 seconds by sliding out
             setTimeout(() => {
-                cornerMan.style.opacity = '0';
-                cornerMan.style.transform = 'scale(0) rotate(0deg)';
-            }, 3000);
+                if (fromLeft) {
+                    cornerMan.style.transform = 'translateX(-150px)';
+                } else {
+                    cornerMan.style.transform = 'translateX(150px)';
+                }
+
+                // Hide completely after slide out animation
+                setTimeout(() => {
+                    cornerMan.style.opacity = '0';
+                }, 800);
+            }, 4000);
 
             // Preload next images
-            cornerManImages.forEach(imageSrc => {
+            images.forEach(imageSrc => {
                 const preloadImg = new Image();
                 preloadImg.src = imageSrc;
             });
         }
 
         function showRandomCornerMan() {
-            if (cornerManImages.length === 0) return;
+            // Randomly choose left or right
+            const fromLeft = Math.random() < 0.5;
+            slideInCornerMan(fromLeft);
+        }
 
-            const cornerMan = document.getElementById('corner-man');
-            const randomIndex = Math.floor(Math.random() * cornerManImages.length);
-            const img = cornerMan.querySelector('img');
-            img.src = cornerManImages[randomIndex];
-
-            // Show with seamless pop-up animation
-            cornerMan.style.opacity = '1';
-            cornerMan.style.transform = 'scale(1) rotate(360deg)';
-
-            // Hide after 4 seconds with fade out
-            setTimeout(() => {
-                cornerMan.style.opacity = '0';
-                cornerMan.style.transform = 'scale(0) rotate(0deg)';
-            }, 4000);
+        function loadRandomCornerImage() {
+            // Manual click - alternate between left and right
+            const fromLeft = Math.random() < 0.5;
+            slideInCornerMan(fromLeft);
         }
 
         function showStats() {
