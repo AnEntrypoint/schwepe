@@ -15,11 +15,11 @@
 
         body {
             font-family: 'Fredoka', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            color: #fff;
+            color: #ffffff;
         }
 
         .animated-bg {
@@ -29,15 +29,15 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             animation: bgShift 15s ease-in-out infinite;
         }
 
         @keyframes bgShift {
-            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-            25% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-            50% { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-            75% { background: linear-gradient(135deg, #2d8f5f 0%, #25a67a 100%); }
+            0%, 100% { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); }
+            25% { background: linear-gradient(135deg, #16a085 0%, #27ae60 100%); }
+            50% { background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); }
+            75% { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); }
         }
 
         .container {
@@ -51,8 +51,8 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 25px;
             padding: 10px 20px;
@@ -63,7 +63,7 @@
         }
 
         .navbar a {
-            color: #fff;
+            color: #ffffff;
             text-decoration: none;
             padding: 10px 15px;
             border-radius: 15px;
@@ -96,13 +96,13 @@
         }
 
         .lore-nav-item {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 15px 25px;
             border-radius: 20px;
             text-decoration: none;
-            color: #fff;
+            color: #ffffff;
             transition: all 0.3s ease;
             text-align: center;
             min-width: 200px;
@@ -135,7 +135,7 @@
 
         .lore-title {
             font-size: 3rem;
-            color: #fff;
+            color: #ffffff;
             margin-bottom: 20px;
             text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
             line-height: 1.1;
@@ -149,7 +149,7 @@
         }
 
         .lore-content {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(15px);
             border-radius: 25px;
             padding: 40px;
@@ -160,7 +160,7 @@
 
         .section-title {
             font-size: 2.2rem;
-            color: #fff;
+            color: #ffffff;
             margin-bottom: 25px;
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
@@ -197,7 +197,7 @@
         }
 
         .trinity-item {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             padding: 20px;
             border-radius: 15px;
             text-align: center;
@@ -222,7 +222,7 @@
         }
 
         .culture-points li {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             padding: 12px 18px;
             margin: 8px 0;
             border-radius: 10px;
@@ -489,7 +489,7 @@
         function showStats() {
             const statsContent = `
                 <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
-                    <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; text-align: center; color: white; border: 1px solid rgba(255,255,255,0.2);">
+                    <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; text-align: center; color: white; border: 1px solid rgba(255,255,255,0.2);">
                         <h2 style="margin-bottom: 20px; color: #f093fb;">🚀 Schwepe Stats 🚀</h2>
                         <div style="font-size: 1.2rem; line-height: 1.8;">
                             <p>🐸 Total Schwepes: 28 Unique Frogs</p>
