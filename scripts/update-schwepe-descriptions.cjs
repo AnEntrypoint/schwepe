@@ -251,48 +251,6 @@ Respond in this exact JSON format:
 function updateGalleryFiles(descriptions) {
     console.log('🔄 Updating gallery files...');
 
-    // Generate gallery HTML from descriptions
-    const schwepeCards = Object.entries(descriptions)
-        .filter(([filename, data]) => !data.featured) // Skip featured image
-        .map(([filename, data]) => {
-            const specialClass = data.special ? ' special-card' : '';
-            return `            <div class="schwepe-card${specialClass}">
-                <img src="schwepe/${filename}" alt="${data.title}" class="schwepe-image">
-                <h3 class="schwepe-title">${data.title}</h3>
-                <p class="schwepe-description">${data.description}</p>
-            </div>`;
-        }).join('\n\n');
-
-    // Update gallery.html
-    try {
-        let galleryContent = fs.readFileSync(GALLERY_FILE, 'utf8');
-
-        // Replace the gallery section
-        const galleryStart = galleryContent.indexOf('<!-- Featured Official Schwepe -->');
-        const galleryEnd = galleryContent.indexOf('        </div>\n    </div>\n\n    <script>');
-
-        if (galleryStart !== -1 && galleryEnd !== -1) {
-            const beforeGallery = galleryContent.substring(0, galleryStart);
-            const afterGallery = galleryContent.substring(galleryEnd);
-
-            const newGalleryContent = `<!-- Generated from schwepe-descriptions.json -->
-            <!-- Featured Official Schwepe -->
-            <div class="schwepe-card special-card">
-                <img src="schwepe/schwepe.gif" alt="Official Schwepe Logo" class="schwepe-image">
-                <h3 class="schwepe-title">Official $SCHWEPE</h3>
-                <p class="schwepe-description">The official branding and identity of our beloved token</p>
-            </div>
-
-${schwepeCards}`;
-
-            const newFileContent = beforeGallery + newGalleryContent + '\n' + afterGallery;
-            fs.writeFileSync(GALLERY_FILE, newFileContent, 'utf8');
-            console.log('✅ Gallery.html updated');
-        }
-    } catch (error) {
-        console.error('❌ Error updating gallery.html:', error.message);
-    }
-
     // Update count in index.html
     const totalCount = Object.keys(descriptions).length;
     try {
@@ -306,6 +264,9 @@ ${schwepeCards}`;
     } catch (error) {
         console.error('❌ Error updating index.html:', error.message);
     }
+
+    // Note: Gallery.html now loads dynamically from JSON, so no need to update the HTML content
+    console.log('✅ Gallery will load dynamically from schwepe-descriptions.json');
 }
 
 function main() {
