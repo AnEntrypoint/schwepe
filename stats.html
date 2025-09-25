@@ -238,7 +238,7 @@
                 <span id="rpc-status-indicator" class="status-indicator status-loading"></span>
                 Somnia RPC Connection
             </h3>
-            <p id="rpc-status-text" style="color: rgba(255, 255, 255, 0.8);">Connecting to dream-rpc.somnia.network...</p>
+            <p id="rpc-status-text" style="color: rgba(255, 255, 255, 0.8);">Connecting to Somnia Network...</p>
         </div>
 
         <h2 style="color: #ffffff; text-align: center; margin: 40px 0 20px; font-size: 2rem;">
@@ -335,41 +335,62 @@
             }
         }
 
-        // RPC Configuration
-        const RPC_URL = 'https://dream-rpc.somnia.network';
+        // RPC Configuration - with fallback endpoints (working endpoint first)
+        const RPC_ENDPOINTS = [
+            'https://somnia-rpc.publicnode.com',
+            'https://dream-rpc.somnia.network'
+        ];
 
-        // Simple RPC client
+        let currentRPCIndex = 0;
+        let currentRPCUrl = RPC_ENDPOINTS[0];
+
+        // Simple RPC client with fallback
         async function callRPC(method, params = []) {
             const startTime = Date.now();
 
-            try {
-                const response = await fetch(RPC_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        jsonrpc: '2.0',
-                        method: method,
-                        params: params,
-                        id: Date.now()
-                    })
-                });
+            // Try current RPC endpoint
+            for (let attempt = 0; attempt < RPC_ENDPOINTS.length; attempt++) {
+                const rpcUrl = RPC_ENDPOINTS[(currentRPCIndex + attempt) % RPC_ENDPOINTS.length];
 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                try {
+                    const response = await fetch(rpcUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            method: method,
+                            params: params,
+                            id: Date.now()
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    const latency = Date.now() - startTime;
+
+                    if (data.error) {
+                        throw new Error(`RPC Error: ${data.error.message}`);
+                    }
+
+                    // Update current RPC if we switched
+                    if (rpcUrl !== currentRPCUrl) {
+                        currentRPCIndex = (currentRPCIndex + attempt) % RPC_ENDPOINTS.length;
+                        currentRPCUrl = rpcUrl;
+                        console.log(`🔄 Switched to RPC: ${currentRPCUrl}`);
+                    }
+
+                    return { result: data.result, latency };
+                } catch (error) {
+                    console.warn(`❌ RPC ${rpcUrl} failed: ${error.message}`);
+                    if (attempt === RPC_ENDPOINTS.length - 1) {
+                        throw new Error(`All RPC endpoints failed: ${error.message}`);
+                    }
                 }
-
-                const data = await response.json();
-                const latency = Date.now() - startTime;
-
-                if (data.error) {
-                    throw new Error(`RPC Error: ${data.error.message}`);
-                }
-
-                return { result: data.result, latency };
-            } catch (error) {
-                throw new Error(`RPC call failed: ${error.message}`);
             }
         }
 
@@ -437,41 +458,56 @@
             return functionSelector + paddedParams;
         }
 
-        // Call token contract
+        // Call token contract with fallback RPC
         async function callTokenContract(functionName, params = []) {
-            try {
-                const data = {
-                    jsonrpc: '2.0',
-                    method: 'eth_call',
-                    params: [{
-                        to: SCHWEPE_CONTRACT,
-                        data: encodeFunctionCall(functionName, params)
-                    }, 'latest'],
-                    id: Date.now()
-                };
+            for (let attempt = 0; attempt < RPC_ENDPOINTS.length; attempt++) {
+                const rpcUrl = RPC_ENDPOINTS[(currentRPCIndex + attempt) % RPC_ENDPOINTS.length];
 
-                const response = await fetch(RPC_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
+                try {
+                    const data = {
+                        jsonrpc: '2.0',
+                        method: 'eth_call',
+                        params: [{
+                            to: SCHWEPE_CONTRACT,
+                            data: encodeFunctionCall(functionName, params)
+                        }, 'latest'],
+                        id: Date.now()
+                    };
 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    const response = await fetch(rpcUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    if (result.error) {
+                        throw new Error(`Contract call error: ${result.error.message}`);
+                    }
+
+                    // Update current RPC if we switched
+                    if (rpcUrl !== currentRPCUrl) {
+                        currentRPCIndex = (currentRPCIndex + attempt) % RPC_ENDPOINTS.length;
+                        currentRPCUrl = rpcUrl;
+                        console.log(`🔄 Switched to RPC: ${currentRPCUrl}`);
+                    }
+
+                    return result.result;
+                } catch (error) {
+                    console.warn(`❌ Contract call failed on ${rpcUrl}: ${error.message}`);
+                    if (attempt === RPC_ENDPOINTS.length - 1) {
+                        console.error(`❌ All RPC endpoints failed for ${functionName}`);
+                        return null;
+                    }
                 }
-
-                const result = await response.json();
-                if (result.error) {
-                    throw new Error(`Contract call error: ${result.error.message}`);
-                }
-
-                return result.result;
-            } catch (error) {
-                console.error(`❌ Error calling ${functionName}:`, error);
-                return null;
             }
+            return null;
         }
 
         // Get token price from CoinGecko
@@ -557,10 +593,83 @@
             liquidity: "TBA"
         };
 
+        // Check if contract exists on network (with fallback)
+        async function checkContractExists() {
+            for (let attempt = 0; attempt < RPC_ENDPOINTS.length; attempt++) {
+                const rpcUrl = RPC_ENDPOINTS[(currentRPCIndex + attempt) % RPC_ENDPOINTS.length];
+
+                try {
+                    const data = {
+                        jsonrpc: '2.0',
+                        method: 'eth_getCode',
+                        params: [SCHWEPE_CONTRACT, 'latest'],
+                        id: Date.now()
+                    };
+
+                    const response = await fetch(rpcUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+                    const code = result.result;
+
+                    if (code !== '0x' && code.length > 2) {
+                        // Update current RPC if we switched
+                        if (rpcUrl !== currentRPCUrl) {
+                            currentRPCIndex = (currentRPCIndex + attempt) % RPC_ENDPOINTS.length;
+                            currentRPCUrl = rpcUrl;
+                            console.log(`🔄 Switched to RPC: ${currentRPCUrl}`);
+                        }
+                        return true;
+                    }
+                } catch (error) {
+                    console.warn(`❌ Contract check failed on ${rpcUrl}: ${error.message}`);
+                    if (attempt === RPC_ENDPOINTS.length - 1) {
+                        return false;
+                    }
+                }
+            }
+            return false;
+        }
+
         // Load token stats
         async function loadTokenStats() {
             try {
                 console.log('🔄 Loading token stats...');
+
+                // First check if contract exists
+                const contractExists = await checkContractExists();
+
+                if (!contractExists) {
+                    console.log('⚠️  Contract not found on network, using mock data');
+
+                    // Use mock data when contract doesn't exist
+                    const tokenSupply = parseInt(MOCK_TOKEN_DATA.totalSupply).toLocaleString();
+                    const [priceData, dexData] = await Promise.all([
+                        getTokenPrice(),
+                        getDEXData()
+                    ]);
+
+                    // Update UI with mock data
+                    document.getElementById('token-supply').textContent = tokenSupply;
+                    document.getElementById('token-price').textContent = formatCurrency(priceData.price);
+                    document.getElementById('volume-24h').textContent = formatCurrency(priceData.volume24h);
+                    document.getElementById('market-cap').textContent = formatCurrency(priceData.marketCap);
+                    document.getElementById('liquidity').textContent = MOCK_TOKEN_DATA.liquidity;
+                    document.getElementById('token-holders').textContent = MOCK_TOKEN_DATA.holders;
+
+                    // Add visual indicator
+                    const supplyElement = document.getElementById('token-supply');
+                    supplyElement.title = 'Contract not deployed on this network - showing estimated data';
+                    supplyElement.style.opacity = '0.8';
+
+                    // Update RPC status to show contract issue
+                    updateRPCStatus(true, `Connected to Somnia Network via ${currentRPCUrl.split('//')[1]} - Contract not found`);
+
+                    return;
+                }
 
                 // Get basic token info from contract
                 const [totalSupplyRaw, decimalsRaw] = await Promise.all([
@@ -645,7 +754,7 @@
                 // Update RPC latency
                 document.getElementById('rpc-latency').textContent = blockNumber.latency.toString();
 
-                updateRPCStatus(true, `Connected to Somnia Network (Network ID: ${parseInt(networkId.result, 16)})`);
+                updateRPCStatus(true, `Connected to Somnia Network via ${currentRPCUrl.split('//')[1]} (Network ID: ${parseInt(networkId.result, 16)})`);
                 console.log('✅ Stats loaded successfully');
 
             } catch (error) {
