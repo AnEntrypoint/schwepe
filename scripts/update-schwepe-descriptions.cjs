@@ -94,45 +94,45 @@ Respond in this exact JSON format:
   "description": "Your trading-themed description here"
 }`;
 
-    try {
-        // Convert image to base64 for Z.AI API
-        const imageBase64 = fs.readFileSync(imagePath, 'base64');
-        const imageExt = path.extname(imagePath).toLowerCase().substring(1);
-        const imageDataUrl = `data:image/${imageExt};base64,${imageBase64}`;
+    return new Promise((resolve) => {
+        try {
+            // Convert image to base64 for Z.AI API
+            const imageBase64 = fs.readFileSync(imagePath, 'base64');
+            const imageExt = path.extname(imagePath).toLowerCase().substring(1);
+            const imageDataUrl = `data:image/${imageExt};base64,${imageBase64}`;
 
-        // Get API key from environment
-        const apiKey = process.env.ZAI_API_KEY;
-        if (!apiKey) {
-            throw new Error('ZAI_API_KEY environment variable not set');
-        }
-
-        // Prepare API request
-        const requestData = {
-            model: "glm-4.5v",
-            messages: [
-                {
-                    role: "user",
-                    content: [
-                        {
-                            type: "image_url",
-                            image_url: {
-                                url: imageDataUrl
-                            }
-                        },
-                        {
-                            type: "text",
-                            text: prompt
-                        }
-                    ]
-                }
-            ],
-            thinking: {
-                type: "enabled"
+            // Get API key from environment
+            const apiKey = process.env.ZAI_API_KEY;
+            if (!apiKey) {
+                throw new Error('ZAI_API_KEY environment variable not set');
             }
-        };
 
-        // Make API request
-        const response = await new Promise((resolve, reject) => {
+            // Prepare API request
+            const requestData = {
+                model: "glm-4.5v",
+                messages: [
+                    {
+                        role: "user",
+                        content: [
+                            {
+                                type: "image_url",
+                                image_url: {
+                                    url: imageDataUrl
+                                }
+                            },
+                            {
+                                type: "text",
+                                text: prompt
+                            }
+                        ]
+                    }
+                ],
+                thinking: {
+                    type: "enabled"
+                }
+            };
+
+            // Make API request
             const postData = JSON.stringify(requestData);
             const options = {
                 hostname: 'api.z.ai',
@@ -151,53 +151,77 @@ Respond in this exact JSON format:
                 let data = '';
                 res.on('data', (chunk) => data += chunk);
                 res.on('end', () => {
-                    if (res.statusCode === 200) {
-                        resolve(JSON.parse(data));
-                    } else {
-                        reject(new Error(`HTTP ${res.statusCode}: ${data}`));
+                    try {
+                        if (res.statusCode === 200) {
+                            const response = JSON.parse(data);
+                            const result = response.choices[0].message.content;
+
+                            // Extract JSON from response
+                            const jsonMatch = result.match(/\{[\s\S]*\}/);
+                            if (jsonMatch) {
+                                resolve(JSON.parse(jsonMatch[0]));
+                            } else {
+                                console.log('🔄 Z.AI response:', result);
+                                // Fallback: manual parsing if JSON isn't perfectly formatted
+                                const titleMatch = result.match(/title['":\s]*([^'"]+)/i);
+                                const descMatch = result.match(/description['":\s]*([^'"]+)/i);
+
+                                if (titleMatch && descMatch) {
+                                    resolve({
+                                        title: titleMatch[1].trim(),
+                                        description: descMatch[1].trim()
+                                    });
+                                } else {
+                                    throw new Error('Could not parse Z.AI response');
+                                }
+                            }
+                        } else {
+                            throw new Error(`HTTP ${res.statusCode}: ${data}`);
+                        }
+                    } catch (error) {
+                        console.error('❌ Error describing image with Z.AI:', error.message);
+                        console.log('📝 Please describe this image manually');
+
+                        // Return a placeholder that needs manual editing
+                        const baseName = path.basename(imagePath, path.extname(imagePath));
+                        resolve({
+                            title: `${baseName} Schwepe`,
+                            description: "MANUAL_DESCRIPTION_NEEDED - Please update this description",
+                            needsManualEdit: true
+                        });
                     }
                 });
             });
 
-            req.on('error', reject);
+            req.on('error', (error) => {
+                console.error('❌ Error describing image with Z.AI:', error.message);
+                console.log('📝 Please describe this image manually');
+
+                // Return a placeholder that needs manual editing
+                const baseName = path.basename(imagePath, path.extname(imagePath));
+                resolve({
+                    title: `${baseName} Schwepe`,
+                    description: "MANUAL_DESCRIPTION_NEEDED - Please update this description",
+                    needsManualEdit: true
+                });
+            });
+
             req.write(postData);
             req.end();
-        });
 
-        // Extract content from response
-        const result = response.choices[0].message.content;
+        } catch (error) {
+            console.error('❌ Error preparing image for Z.AI:', error.message);
+            console.log('📝 Please describe this image manually');
 
-        // Extract JSON from response
-        const jsonMatch = result.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
-        } else {
-            console.log('🔄 Z.AI response:', result);
-            // Fallback: manual parsing if JSON isn't perfectly formatted
-            const titleMatch = result.match(/title['":\s]*([^'"]+)/i);
-            const descMatch = result.match(/description['":\s]*([^'"]+)/i);
-
-            if (titleMatch && descMatch) {
-                return {
-                    title: titleMatch[1].trim(),
-                    description: descMatch[1].trim()
-                };
-            }
+            // Return a placeholder that needs manual editing
+            const baseName = path.basename(imagePath, path.extname(imagePath));
+            resolve({
+                title: `${baseName} Schwepe`,
+                description: "MANUAL_DESCRIPTION_NEEDED - Please update this description",
+                needsManualEdit: true
+            });
         }
-
-        throw new Error('Could not parse Z.AI response');
-    } catch (error) {
-        console.error('❌ Error describing image with Z.AI:', error.message);
-        console.log('📝 Please describe this image manually');
-
-        // Return a placeholder that needs manual editing
-        const baseName = path.basename(imagePath, path.extname(imagePath));
-        return {
-            title: `${baseName} Schwepe`,
-            description: "MANUAL_DESCRIPTION_NEEDED - Please update this description",
-            needsManualEdit: true
-        };
-    }
+    });
 }
 
 function updateGalleryFiles(descriptions) {
@@ -285,29 +309,42 @@ function main() {
     if (apiKey) {
         console.log('\n🤖 Z.AI API key detected, auto-describing images...');
 
-        let hasChanges = false;
-        for (const filename of missing) {
-            const imagePath = path.join(SCHWEPE_FOLDER, filename);
-            const result = describeImageWithClaude(imagePath);
+              hasChanges = true;
 
-            descriptions[filename] = {
-                title: result.title,
-                description: result.description,
-                special: true // Mark new images as special
-            };
+        // Process images sequentially
+        (async function processImages() {
+            for (const filename of missing) {
+                const imagePath = path.join(SCHWEPE_FOLDER, filename);
+                try {
+                    const result = await describeImageWithClaude(imagePath);
 
-            if (result.needsManualEdit) {
-                console.log(`⚠️  ${filename} needs manual editing`);
+                    descriptions[filename] = {
+                        title: result.title,
+                        description: result.description,
+                        special: true // Mark new images as special
+                    };
+
+                    if (result.needsManualEdit) {
+                        console.log(`⚠️  ${filename} needs manual editing`);
+                    }
+                } catch (error) {
+                    console.error(`❌ Error processing ${filename}:`, error.message);
+                    const baseName = path.basename(imagePath, path.extname(imagePath));
+                    descriptions[filename] = {
+                        title: `${baseName} Schwepe`,
+                        description: "MANUAL_DESCRIPTION_NEEDED - Please update this description",
+                        needsManualEdit: true
+                    };
+                }
             }
 
-            hasChanges = true;
-        }
-
-        if (hasChanges) {
+            // Save after all images are processed
             saveDescriptions(descriptions);
             updateGalleryFiles(descriptions);
             console.log('\n🎉 Auto-description complete!');
-        }
+        })();
+
+        // Processing is handled asynchronously above
 
     } else {
         console.log('\n❌ Z.AI API key not available');
