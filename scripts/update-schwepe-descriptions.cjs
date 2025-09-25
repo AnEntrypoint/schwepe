@@ -74,12 +74,18 @@ function findMissingDescriptions(imageFiles, descriptions) {
     return missing;
 }
 
-function describeImageWithClaude(imagePath) {
-    console.log(`🤖 Describing ${path.basename(imagePath)} with Z.AI vision...`);
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function describeImageWithClaude(imagePath, retryCount = 0) {
+    console.log(`🤖 Describing ${path.basename(imagePath)} with Gemini vision...`);
 
     const prompt = `Look at this Schwepe (pink frog) image and create a title and description in the style of a crypto/trading meme.
 
-The title should be "[Emotion/Style] Schwepe" (e.g., "Cozy Schwepe", "Golden Schwepe").
+The title should be a creative name that either:
+1. Starts with "sch" (like Schmoon, Schdiamond, Schvibes, Schcharts, Schdegen)
+2. Rhymes with "Schwepe" (like Schepey, Schweepy, Schmeep, Schleepy, Scheep)
 
 The description should be 1-2 sentences relating the frog's expression/appearance to crypto trading emotions, market conditions, or degen culture. Use phrases like "when you", "ready to", "diamond hands", "hodl", "pump", "dip", "moon", "charts", "trading", "vibes", etc.
 
@@ -90,111 +96,142 @@ Examples:
 
 Respond in this exact JSON format:
 {
-  "title": "[Emotion] Schwepe",
+  "title": "[Creative Sch-name or rhyme]",
   "description": "Your trading-themed description here"
 }`;
 
     return new Promise((resolve) => {
-        try {
-            // Convert image to base64 for Z.AI API
-            const imageBase64 = fs.readFileSync(imagePath, 'base64');
-            const imageExt = path.extname(imagePath).toLowerCase().substring(1);
-            const imageDataUrl = `data:image/${imageExt};base64,${imageBase64}`;
+        const attemptRequest = () => {
+            try {
+                // Get API key from environment
+                const apiKey = process.env.GEMINI_API_KEY;
+                if (!apiKey) {
+                    throw new Error('GEMINI_API_KEY environment variable not set');
+                }
 
-            // Get API key from environment
-            const apiKey = process.env.ZAI_API_KEY;
-            if (!apiKey) {
-                throw new Error('ZAI_API_KEY environment variable not set');
-            }
+                // Read image file and convert to base64
+                const imageData = fs.readFileSync(imagePath);
+                const imageBase64 = imageData.toString('base64');
 
-            // Prepare API request
-            const requestData = {
-                model: "glm-4.5v",
-                messages: [
-                    {
-                        role: "user",
-                        content: [
+                // Determine MIME type
+                const mime = require('mime-types');
+                const mimeType = mime.lookup(imagePath) || 'image/jpeg';
+
+                // Prepare API request
+                const requestData = {
+                    contents: [{
+                        parts: [
                             {
-                                type: "image_url",
-                                image_url: {
-                                    url: imageDataUrl
+                                inline_data: {
+                                    mime_type: mimeType,
+                                    data: imageBase64
                                 }
                             },
                             {
-                                type: "text",
                                 text: prompt
                             }
                         ]
+                    }]
+                };
+
+                // Make API request using https
+                const postData = JSON.stringify(requestData);
+                const options = {
+                    hostname: 'generativelanguage.googleapis.com',
+                    port: 443,
+                    path: '/v1beta/models/gemini-2.0-flash:generateContent',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-goog-api-key': apiKey,
+                        'Content-Length': Buffer.byteLength(postData)
                     }
-                ],
-                thinking: {
-                    type: "enabled"
-                }
-            };
+                };
 
-            // Make API request
-            const postData = JSON.stringify(requestData);
-            const options = {
-                hostname: 'api.z.ai',
-                port: 443,
-                path: '/api/paas/v4/chat/completions',
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Accept-Language': 'en-US,en',
-                    'Content-Type': 'application/json',
-                    'Content-Length': Buffer.byteLength(postData)
-                }
-            };
+                const req = https.request(options, (res) => {
+                    let data = '';
+                    res.on('data', (chunk) => data += chunk);
+                    res.on('end', () => {
+                        try {
+                            if (res.statusCode === 200) {
+                                const response = JSON.parse(data);
+                                const text = response.candidates[0].content.parts[0].text;
 
-            const req = https.request(options, (res) => {
-                let data = '';
-                res.on('data', (chunk) => data += chunk);
-                res.on('end', () => {
-                    try {
-                        if (res.statusCode === 200) {
-                            const response = JSON.parse(data);
-                            const result = response.choices[0].message.content;
-
-                            // Extract JSON from response
-                            const jsonMatch = result.match(/\{[\s\S]*\}/);
-                            if (jsonMatch) {
-                                resolve(JSON.parse(jsonMatch[0]));
-                            } else {
-                                console.log('🔄 Z.AI response:', result);
-                                // Fallback: manual parsing if JSON isn't perfectly formatted
-                                const titleMatch = result.match(/title['":\s]*([^'"]+)/i);
-                                const descMatch = result.match(/description['":\s]*([^'"]+)/i);
-
-                                if (titleMatch && descMatch) {
-                                    resolve({
-                                        title: titleMatch[1].trim(),
-                                        description: descMatch[1].trim()
-                                    });
+                                // Extract JSON from response
+                                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                                if (jsonMatch) {
+                                    resolve(JSON.parse(jsonMatch[0]));
                                 } else {
-                                    throw new Error('Could not parse Z.AI response');
+                                    console.log('🔄 Gemini response:', text);
+                                    // Fallback: manual parsing if JSON isn't perfectly formatted
+                                    const titleMatch = text.match(/title['":\s]*([^'"]+)/i);
+                                    const descMatch = text.match(/description['":\s]*([^'"]+)/i);
+
+                                    if (titleMatch && descMatch) {
+                                        resolve({
+                                            title: titleMatch[1].trim(),
+                                            description: descMatch[1].trim()
+                                        });
+                                    } else {
+                                        throw new Error('Could not parse Gemini response');
+                                    }
                                 }
+                            } else if (res.statusCode === 429) {
+                                // Rate limit hit - implement exponential backoff
+                                const errorData = JSON.parse(data);
+                                const retryDelay = errorData.error?.details?.[0]?.retryDelay;
+
+                                let delayMs = 60000; // Default 1 minute
+                                if (retryDelay) {
+                                    // Parse retry delay (e.g., "7.312821429s" -> 7312ms)
+                                    const delaySeconds = parseFloat(retryDelay.replace('s', ''));
+                                    delayMs = Math.max(delaySeconds * 1000, 1000);
+                                } else {
+                                    // Exponential backoff: 2^retryCount * 60 seconds, max 5 minutes
+                                    delayMs = Math.min(Math.pow(2, retryCount) * 60000, 300000);
+                                }
+
+                                console.log(`⏰ Rate limit hit, retrying in ${Math.round(delayMs / 1000)}s (attempt ${retryCount + 1})`);
+
+                                sleep(delayMs).then(() => {
+                                    describeImageWithClaude(imagePath, retryCount + 1).then(resolve);
+                                });
+                            } else {
+                                throw new Error(`HTTP ${res.statusCode}: ${data}`);
                             }
-                        } else {
-                            throw new Error(`HTTP ${res.statusCode}: ${data}`);
+                        } catch (error) {
+                            console.error('❌ Error processing Gemini response:', error.message);
+                            console.log('📝 Please describe this image manually');
+
+                            // Return a placeholder that needs manual editing
+                            const baseName = path.basename(imagePath, path.extname(imagePath));
+                            resolve({
+                                title: `${baseName} Schwepe`,
+                                description: "MANUAL_DESCRIPTION_NEEDED - Please update this description",
+                                needsManualEdit: true
+                            });
                         }
-                    } catch (error) {
-                        console.error('❌ Error describing image with Z.AI:', error.message);
-                        console.log('📝 Please describe this image manually');
-
-                        // Return a placeholder that needs manual editing
-                        const baseName = path.basename(imagePath, path.extname(imagePath));
-                        resolve({
-                            title: `${baseName} Schwepe`,
-                            description: "MANUAL_DESCRIPTION_NEEDED - Please update this description",
-                            needsManualEdit: true
-                        });
-                    }
+                    });
                 });
-            });
 
-            req.on('error', (error) => {
-                console.error('❌ Error describing image with Z.AI:', error.message);
+                req.on('error', (error) => {
+                    console.error('❌ Error calling Gemini API:', error.message);
+                    console.log('📝 Please describe this image manually');
+
+                    // Return a placeholder that needs manual editing
+                    const baseName = path.basename(imagePath, path.extname(imagePath));
+                    resolve({
+                        title: `${baseName} Schwepe`,
+                        description: "MANUAL_DESCRIPTION_NEEDED - Please update this description",
+                        needsManualEdit: true
+                    });
+                });
+
+                req.write(postData);
+                req.end();
+
+            } catch (error) {
+                console.error('❌ Error preparing image for Gemini:', error.message);
                 console.log('📝 Please describe this image manually');
 
                 // Return a placeholder that needs manual editing
@@ -204,23 +241,10 @@ Respond in this exact JSON format:
                     description: "MANUAL_DESCRIPTION_NEEDED - Please update this description",
                     needsManualEdit: true
                 });
-            });
+            }
+        };
 
-            req.write(postData);
-            req.end();
-
-        } catch (error) {
-            console.error('❌ Error preparing image for Z.AI:', error.message);
-            console.log('📝 Please describe this image manually');
-
-            // Return a placeholder that needs manual editing
-            const baseName = path.basename(imagePath, path.extname(imagePath));
-            resolve({
-                title: `${baseName} Schwepe`,
-                description: "MANUAL_DESCRIPTION_NEEDED - Please update this description",
-                needsManualEdit: true
-            });
-        }
+        attemptRequest();
     });
 }
 
@@ -304,17 +328,33 @@ function main() {
     console.log('\n📝 Missing descriptions for:');
     missing.forEach(file => console.log(`   - ${file}`));
 
-    // Check if Z.AI API key is available
-    const apiKey = process.env.ZAI_API_KEY;
+    // Check if Gemini API key is available
+    const apiKey = process.env.GEMINI_API_KEY;
     if (apiKey) {
-        console.log('\n🤖 Z.AI API key detected, auto-describing images...');
+        console.log('\n🤖 Gemini API key detected, auto-describing images...');
 
-              hasChanges = true;
+        let hasChanges = true;
 
-        // Process images sequentially
+        // Process images sequentially with rate limiting
         (async function processImages() {
-            for (const filename of missing) {
+            const RATE_LIMIT_PER_MINUTE = 10; // Gemini 2.5 Flash free tier limit
+            const PROCESSING_INTERVAL_MS = 60000 / RATE_LIMIT_PER_MINUTE; // 6 seconds between requests
+
+            console.log(`📊 Processing ${missing.length} images at ${RATE_LIMIT_PER_MINUTE} requests/minute`);
+            console.log(`⏱️  Expected completion time: ${Math.ceil(missing.length / RATE_LIMIT_PER_MINUTE)} minutes`);
+
+            for (let i = 0; i < missing.length; i++) {
+                const filename = missing[i];
                 const imagePath = path.join(SCHWEPE_FOLDER, filename);
+
+                // Add delay between requests to stay under rate limit (except for first request)
+                if (i > 0) {
+                    console.log(`⏳ Waiting ${PROCESSING_INTERVAL_MS/1000}s to respect rate limits...`);
+                    await sleep(PROCESSING_INTERVAL_MS);
+                }
+
+                console.log(`📝 Processing image ${i + 1}/${missing.length}: ${filename}`);
+
                 try {
                     const result = await describeImageWithClaude(imagePath);
 
@@ -326,6 +366,8 @@ function main() {
 
                     if (result.needsManualEdit) {
                         console.log(`⚠️  ${filename} needs manual editing`);
+                    } else {
+                        console.log(`✅ Successfully processed ${filename}`);
                     }
                 } catch (error) {
                     console.error(`❌ Error processing ${filename}:`, error.message);
@@ -347,8 +389,8 @@ function main() {
         // Processing is handled asynchronously above
 
     } else {
-        console.log('\n❌ Z.AI API key not available');
-        console.log('💡 Set ZAI_API_KEY environment variable');
+        console.log('\n❌ Gemini API key not available');
+        console.log('💡 Set GEMINI_API_KEY environment variable');
         console.log('💡 Or manually add descriptions to schwepe-descriptions.json');
     }
 }
