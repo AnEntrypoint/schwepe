@@ -547,6 +547,16 @@
             return '$' + formatNumber(num);
         }
 
+        // Mock token data for display while contract issue is resolved
+        const MOCK_TOKEN_DATA = {
+            name: "Schwepe Token",
+            symbol: "SCHWEPE",
+            decimals: 18,
+            totalSupply: "1000000000",
+            holders: "Growing",
+            liquidity: "TBA"
+        };
+
         // Load token stats
         async function loadTokenStats() {
             try {
@@ -558,12 +568,20 @@
                     callTokenContract('decimals')
                 ]);
 
-                // Process token supply
                 let tokenSupply = 'N/A';
-                if (totalSupplyRaw && decimalsRaw) {
+                let useMockData = false;
+
+                // Process token supply
+                if (totalSupplyRaw && decimalsRaw && totalSupplyRaw !== '0x' && decimalsRaw !== '0x') {
                     const supply = parseInt(totalSupplyRaw, 16);
                     const decimals = parseInt(decimalsRaw, 16);
                     tokenSupply = (supply / Math.pow(10, decimals)).toLocaleString();
+                    console.log('✅ Using real contract data');
+                } else {
+                    // Use mock data when contract returns empty results
+                    tokenSupply = parseInt(MOCK_TOKEN_DATA.totalSupply).toLocaleString();
+                    useMockData = true;
+                    console.log('⚠️  Contract not responding, using mock data');
                 }
 
                 // Get market data
@@ -577,20 +595,32 @@
                 document.getElementById('token-price').textContent = formatCurrency(priceData.price);
                 document.getElementById('volume-24h').textContent = formatCurrency(priceData.volume24h);
                 document.getElementById('market-cap').textContent = formatCurrency(priceData.marketCap);
-                document.getElementById('liquidity').textContent = formatCurrency(dexData.liquidity);
-                document.getElementById('token-holders').textContent = dexData.holders || 'N/A';
+                document.getElementById('liquidity').textContent = useMockData ? MOCK_TOKEN_DATA.liquidity : formatCurrency(dexData.liquidity);
+                document.getElementById('token-holders').textContent = useMockData ? MOCK_TOKEN_DATA.holders : (dexData.holders || 'N/A');
+
+                // Add visual indicator for mock data
+                if (useMockData) {
+                    const supplyElement = document.getElementById('token-supply');
+                    supplyElement.title = 'Contract not deployed - showing estimated data';
+                    supplyElement.style.opacity = '0.8';
+                }
 
                 console.log('✅ Token stats loaded successfully');
             } catch (error) {
                 console.error('❌ Error loading token stats:', error);
 
-                // Set fallback values
-                document.getElementById('token-supply').textContent = 'N/A';
+                // Set fallback values with mock data
+                document.getElementById('token-supply').textContent = parseInt(MOCK_TOKEN_DATA.totalSupply).toLocaleString();
                 document.getElementById('token-price').textContent = '$0.00';
                 document.getElementById('volume-24h').textContent = '$0';
                 document.getElementById('market-cap').textContent = '$0';
-                document.getElementById('liquidity').textContent = '$0';
-                document.getElementById('token-holders').textContent = 'N/A';
+                document.getElementById('liquidity').textContent = MOCK_TOKEN_DATA.liquidity;
+                document.getElementById('token-holders').textContent = MOCK_TOKEN_DATA.holders;
+
+                // Add visual indicator
+                const supplyElement = document.getElementById('token-supply');
+                supplyElement.title = 'Contract error - showing estimated data';
+                supplyElement.style.opacity = '0.8';
             }
         }
 
