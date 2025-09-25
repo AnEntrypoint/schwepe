@@ -342,24 +342,7 @@
 <body>
     <div class="animated-bg"></div>
 
-    <nav class="navbar">
-        <a href="index.html">
-            <i class="fas fa-home"></i>
-            Home
-        </a>
-        <a href="gallery.html">
-            <i class="fas fa-images"></i>
-            Gallery
-        </a>
-        <a href="lore.html" class="active">
-            <i class="fas fa-book"></i>
-            Lore
-        </a>
-        <a href="#" onclick="showStats()">
-            <i class="fas fa-chart-bar"></i>
-            Stats
-        </a>
-    </nav>
+    <!-- Navigation --> <div id="navbar-container"></div>
 
     <div class="container">
         <div class="lore-navigation">
@@ -506,19 +489,31 @@
             document.body.insertAdjacentHTML('beforeend', statsContent);
         }
 
-        // Set active navigation
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentPath = window.location.pathname.split('/').pop();
-            const navLinks = document.querySelectorAll('.navbar a');
+        // Load navbar function
+        async function loadNavbar() {
+            try {
+                const response = await fetch('navbar.html');
+                const navbarHTML = await response.text();
+                document.getElementById('navbar-container').innerHTML = navbarHTML;
 
-            navLinks.forEach(link => {
-                const href = link.getAttribute('href');
-                if (href === currentPath) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
+                // Set active state for current page
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                const navLinks = document.querySelectorAll('#navbar-container a');
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === currentPage) {
+                        link.classList.add('active');
+                    }
+                });
+
+                console.log('✅ Navbar loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading navbar:', error);
+            }
+        }
+
+        // Set active navigation and load navbar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNavbar();
         });
     </script>
 </body>
