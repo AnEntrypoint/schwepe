@@ -288,24 +288,8 @@
 <body>
     <div class="animated-bg"></div>
 
-    <nav class="navbar">
-        <a href="index.html">
-            <i class="fas fa-home"></i>
-            Home
-        </a>
-        <a href="gallery.html">
-            <i class="fas fa-images"></i>
-            Gallery
-        </a>
-        <a href="lore.html" class="active">
-            <i class="fas fa-book"></i>
-            Lore
-        </a>
-        <a href="#" onclick="showStats()">
-            <i class="fas fa-chart-bar"></i>
-            Stats
-        </a>
-    </nav>
+    <!-- Navigation -->
+    <div id="navbar-container"></div>
 
     <div class="container">
         <div class="header">
@@ -413,8 +397,33 @@
             document.body.insertAdjacentHTML('beforeend', statsContent);
         }
 
+        // Load shared navbar
+        async function loadNavbar() {
+            try {
+                const response = await fetch('navbar.html');
+                const navbarHTML = await response.text();
+                document.getElementById('navbar-container').innerHTML = navbarHTML;
+
+                // Set active state for current page
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                const navLinks = document.querySelectorAll('#navbar-container a');
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === currentPage) {
+                        link.classList.add('active');
+                    }
+                });
+
+                console.log('✅ Navbar loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading navbar:', error);
+            }
+        }
+
         // Add click effects to progress dots
         document.addEventListener('DOMContentLoaded', function() {
+            // Load shared navbar
+            loadNavbar();
+
             const progressDots = document.querySelectorAll('.progress-dot');
             const lorePages = ['lore-intro.html', 'lore-culture.html', 'lore-multiverse.html', 'lore-cult.html', 'lore-economics.html'];
 
@@ -423,19 +432,6 @@
                 dot.addEventListener('click', () => {
                     window.location.href = lorePages[index];
                 });
-            });
-
-            // Set active navigation
-            const currentPath = window.location.pathname.split('/').pop();
-            const navLinks = document.querySelectorAll('.navbar a');
-
-            navLinks.forEach(link => {
-                const href = link.getAttribute('href');
-                if (href === currentPath) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
             });
         });
     </script>

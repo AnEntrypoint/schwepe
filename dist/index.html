@@ -738,24 +738,8 @@
             <p class="subtitle">Where 247420 Energy Meets Pure Meme Magic ✨</p>
         </header>
 
-        <nav class="navbar">
-            <a href="index.html" class="active">
-                <i class="fas fa-home"></i>
-                Home
-            </a>
-            <a href="gallery.html">
-                <i class="fas fa-images"></i>
-                Gallery
-            </a>
-            <a href="lore.html">
-                <i class="fas fa-book"></i>
-                Lore
-            </a>
-            <a href="#" onclick="showStats()">
-                <i class="fas fa-chart-bar"></i>
-                Stats
-            </a>
-        </nav>
+        <!-- Navigation -->
+        <div id="navbar-container"></div>
 
         <div class="featured-section">
             <h2 class="featured-title">💎 The Degenerate Lifeblood of 247420 💎</h2>
@@ -897,8 +881,7 @@
             <h2 class="cta-title">🔥 Join the Degen Revolution 🔥</h2>
             <p class="cta-description">Welcome to 247420 — where memes > metrics and community > charts. Ready to ape in? 🚀</p>
             <div class="cta-buttons">
-                <a href="gallery.html" class="cta-button">🎭 Explore the Multiverse</a>
-                <a href="lore.html" class="cta-button lore-button">📜 Read the Sacred Lore</a>
+                      <a href="lore.html" class="cta-button lore-button">📜 Read the Sacred Lore</a>
             </div>
         </div>
 
@@ -967,6 +950,28 @@
         // Show random phrase every 10-15 seconds
         setInterval(showRandomPhrase, Math.random() * 5000 + 10000);
 
+        // Load shared navbar
+        async function loadNavbar() {
+            try {
+                const response = await fetch('navbar.html');
+                const navbarHTML = await response.text();
+                document.getElementById('navbar-container').innerHTML = navbarHTML;
+
+                // Set active state for current page
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                const navLinks = document.querySelectorAll('#navbar-container a');
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === currentPage) {
+                        link.classList.add('active');
+                    }
+                });
+
+                console.log('✅ Navbar loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading navbar:', error);
+            }
+        }
+
         // Load homepage gallery from JSON
         async function loadHomepageGallery() {
             try {
@@ -979,9 +984,9 @@
                 // Get first 7 random Schwepes for homepage (excluding the official schwepe.gif)
                 const schwepeEntries = Object.entries(descriptions).filter(([filename, data]) => filename !== 'schwepe.gif');
 
-                // Shuffle and take 7 random Schwepes
+                // Shuffle and take 6 random Schwepes
                 const shuffled = schwepeEntries.sort(() => 0.5 - Math.random());
-                const selectedSchwepes = shuffled.slice(0, 7);
+                const selectedSchwepes = shuffled.slice(0, 6);
 
                 selectedSchwepes.forEach(([filename, data], index) => {
                     const card = document.createElement('div');
@@ -1112,17 +1117,12 @@
             slideInCornerMan(fromLeft);
         }
 
-        function showStats() {
-            alert('🎯 Schwepe Stats:\n\n' +
-                  '• Total Schwepes: 28\n' +
-                  '• Special Schwepes: 20\n' +
-                  '• Corner Men: 5\n' +
-                  '• Degen Energy: 247420%\n' +
-                  '• Meme Power: MAXIMUM');
-        }
-
+    
         // Add some interactive magic
         document.addEventListener('DOMContentLoaded', async function() {
+            // Load shared navbar
+            await loadNavbar();
+
             // Load homepage gallery from JSON
             await loadHomepageGallery();
 

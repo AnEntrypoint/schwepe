@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schwepe Stats - Real-time Data</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            animation: bgShift 10s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); }
+            25% { background: linear-gradient(135deg, #16a085 0%, #27ae60 100%); }
+            50% { background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); }
+            75% { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0 40px;
+        }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 15px 30px;
+            margin: 20px auto;
+            max-width: 800px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar a.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .stats-title {
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .stats-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .rpc-status {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-connected {
+            background-color: #2ecc71;
+        }
+
+        .status-error {
+            background-color: #e74c3c;
+        }
+
+        .status-loading {
+            background-color: #f39c12;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .stats-title {
+                font-size: 2.5rem;
+            }
+
+            .navbar {
+                padding: 10px 20px;
+                gap: 15px;
+            }
+
+            .navbar a {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="stats-title">📊 Schwepe Stats Dashboard</h1>
+            <p class="stats-subtitle">Real-time blockchain data powered by Somnia Network</p>
+        </div>
+
+        <!-- Navigation -->
+        <div id="navbar-container"></div>
+
+        <!-- RPC Status -->
+        <div class="rpc-status">
+            <h3 style="color: white; margin-bottom: 15px;">
+                <span id="rpc-status-indicator" class="status-indicator status-loading"></span>
+                Somnia RPC Connection
+            </h3>
+            <p id="rpc-status-text" style="color: rgba(255, 255, 255, 0.8);">Connecting to dream-rpc.somnia.network...</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-schwepes">28</div>
+                <div class="stat-label">Unique Schwepes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="special-schwepes">20</div>
+                <div class="stat-label">Special Schwepes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="block-number">-</div>
+                <div class="stat-label">Current Block</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="gas-price">-</div>
+                <div class="stat-label">Gas Price (Gwei)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="network-id">-</div>
+                <div class="stat-label">Network ID</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="rpc-latency">-</div>
+                <div class="stat-label">RPC Latency (ms)</div>
+            </div>
+        </div>
+
+        <button class="refresh-btn" onclick="refreshStats()">
+            <i class="fas fa-sync-alt"></i> Refresh Stats
+        </button>
+
+        <div id="error-container"></div>
+    </div>
+
+    <script>
+        // Load shared navbar
+        async function loadNavbar() {
+            try {
+                const response = await fetch('navbar.html');
+                const navbarHTML = await response.text();
+                document.getElementById('navbar-container').innerHTML = navbarHTML;
+
+                // Set active state for current page
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                const navLinks = document.querySelectorAll('#navbar-container a');
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === currentPage) {
+                        link.classList.add('active');
+                    }
+                });
+
+                console.log('✅ Navbar loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading navbar:', error);
+            }
+        }
+
+        // RPC Configuration
+        const RPC_URL = 'https://dream-rpc.somnia.network';
+
+        // Simple RPC client
+        async function callRPC(method, params = []) {
+            const startTime = Date.now();
+
+            try {
+                const response = await fetch(RPC_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        method: method,
+                        params: params,
+                        id: Date.now()
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const latency = Date.now() - startTime;
+
+                if (data.error) {
+                    throw new Error(`RPC Error: ${data.error.message}`);
+                }
+
+                return { result: data.result, latency };
+            } catch (error) {
+                throw new Error(`RPC call failed: ${error.message}`);
+            }
+        }
+
+        // Update RPC status
+        function updateRPCStatus(connected, message = '') {
+            const indicator = document.getElementById('rpc-status-indicator');
+            const text = document.getElementById('rpc-status-text');
+
+            if (connected) {
+                indicator.className = 'status-indicator status-connected';
+                text.textContent = message || 'Connected to Somnia Network';
+            } else {
+                indicator.className = 'status-indicator status-error';
+                text.textContent = message || 'Connection failed';
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const container = document.getElementById('error-container');
+            container.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+
+        // Clear error message
+        function clearError() {
+            document.getElementById('error-container').innerHTML = '';
+        }
+
+        // Load stats from RPC
+        async function loadStats() {
+            try {
+                clearError();
+                updateRPCStatus(false, 'Connecting to Somnia Network...');
+
+                // Test basic connection
+                const networkId = await callRPC('eth_chainId');
+                document.getElementById('network-id').textContent = parseInt(networkId.result, 16).toString();
+
+                // Get current block number
+                const blockNumber = await callRPC('eth_blockNumber');
+                document.getElementById('block-number').textContent = parseInt(blockNumber.result, 16).toLocaleString();
+
+                // Get gas price
+                const gasPrice = await callRPC('eth_gasPrice');
+                document.getElementById('gas-price').textContent = (parseInt(gasPrice.result, 16) / 1000000000).toFixed(2);
+
+                // Update RPC latency
+                document.getElementById('rpc-latency').textContent = blockNumber.latency.toString();
+
+                updateRPCStatus(true, `Connected to Somnia Network (Network ID: ${parseInt(networkId.result, 16)})`);
+                console.log('✅ Stats loaded successfully');
+
+            } catch (error) {
+                console.error('❌ Error loading stats:', error);
+                updateRPCStatus(false, 'Failed to connect to RPC');
+                showError(`Unable to load blockchain stats: ${error.message}`);
+
+                // Set fallback values
+                document.getElementById('network-id').textContent = 'N/A';
+                document.getElementById('block-number').textContent = 'N/A';
+                document.getElementById('gas-price').textContent = 'N/A';
+                document.getElementById('rpc-latency').textContent = 'N/A';
+            }
+        }
+
+        // Refresh stats manually
+        function refreshStats() {
+            const button = document.querySelector('.refresh-btn');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            button.disabled = true;
+
+            loadStats().finally(() => {
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.disabled = false;
+                }, 1000);
+            });
+        }
+
+        // Load Schwepe descriptions for local stats
+        async function loadSchwepeStats() {
+            try {
+                const response = await fetch('schwepe-descriptions.json');
+                const descriptions = await response.json();
+
+                const totalCount = Object.keys(descriptions).length;
+                const specialCount = Object.values(descriptions).filter(d => d.special).length;
+
+                document.getElementById('total-schwepes').textContent = totalCount;
+                document.getElementById('special-schwepes').textContent = specialCount;
+            } catch (error) {
+                console.error('❌ Error loading Schwepe stats:', error);
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Load shared navbar
+            await loadNavbar();
+
+            // Load Schwepe stats
+            await loadSchwepeStats();
+
+            // Load blockchain stats
+            await loadStats();
+
+            // Auto-refresh every 30 seconds
+            setInterval(loadStats, 30000);
+        });
+    </script>
+</body>
+</html>

@@ -11,7 +11,13 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         gallery: resolve(__dirname, 'gallery.html'),
-        lore: resolve(__dirname, 'lore.html')
+        lore: resolve(__dirname, 'lore.html'),
+        'lore-intro': resolve(__dirname, 'lore-intro.html'),
+        'lore-culture': resolve(__dirname, 'lore-culture.html'),
+        'lore-multiverse': resolve(__dirname, 'lore-multiverse.html'),
+        'lore-cult': resolve(__dirname, 'lore-cult.html'),
+        'lore-economics': resolve(__dirname, 'lore-economics.html'),
+        stats: resolve(__dirname, 'stats.html')
       }
     },
     // Hook to copy additional files after build
@@ -31,6 +37,13 @@ export default defineConfig({
           if (existsSync(jsonFile)) {
             copyFileSync(jsonFile, resolve(__dirname, 'dist', 'schwepe-descriptions.json'))
             console.log('✅ Copied schwepe-descriptions.json')
+          }
+
+          // Copy navbar file
+          const navbarFile = resolve(__dirname, 'navbar.html')
+          if (existsSync(navbarFile)) {
+            copyFileSync(navbarFile, resolve(__dirname, 'dist', 'navbar.html'))
+            console.log('✅ Copied navbar.html')
           }
 
           // Copy schwepe folder if it doesn't exist in dist
