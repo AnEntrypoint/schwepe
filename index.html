@@ -889,48 +889,8 @@
             </div>
         </section>
 
-        <section class="gallery">
-            <div class="pepe-card">
-                <img src="schwepe/105 - a2MHCB8.jpg" alt="Nervous Schwepe" class="pepe-image">
-                <h3 class="pepe-title">Nervous Schwepe</h3>
-                <p class="pepe-description">When you're sweating the market dips but still hodling strong</p>
-            </div>
-
-            <div class="pepe-card">
-                <img src="schwepe/1373931157071.jpg" alt="Smug Schwepe" class="pepe-image">
-                <h3 class="pepe-title">Smug Schwepe</h3>
-                <p class="pepe-description">That knowing look when you bought the dip perfectly</p>
-            </div>
-
-            <div class="pepe-card">
-                <img src="schwepe/1401142531187.jpg" alt="Cool Schwepe" class="pepe-image">
-                <h3 class="pepe-title">Cool Schwepe</h3>
-                <p class="pepe-description">Too cool for bear markets, always wearing shades</p>
-            </div>
-
-            <div class="pepe-card">
-                <img src="schwepe/1410016719966.png" alt="Happy Schwepe" class="pepe-image">
-                <h3 class="pepe-title">Happy Schwepe</h3>
-                <p class="pepe-description">Pure joy when the portfolio finally goes green</p>
-            </div>
-
-            <div class="pepe-card">
-                <img src="schwepe/1410051144306.jpg" alt="Scheming Schwepe" class="pepe-image">
-                <h3 class="pepe-title">Scheming Schwepe</h3>
-                <p class="pepe-description">Plotting the next big pump with that devious grin</p>
-            </div>
-
-            <div class="pepe-card">
-                <img src="schwepe/1410051520484.png" alt="Gamer Schwepe" class="pepe-image">
-                <h3 class="pepe-title">Gamer Schwepe</h3>
-                <p class="pepe-description">Gaming while trading, maximum multitasking energy</p>
-            </div>
-
-            <div class="pepe-card">
-                <img src="schwepe/bafkreiemlmjlnywjsmuqrn6mav3q2rvxzjcocaxifsqjvhset4t6rv32hy.png" alt="Winking Schwepe" class="pepe-image">
-                <h3 class="pepe-title">Winking Schwepe</h3>
-                <p class="pepe-description">Confident finger guns when your trade hits perfectly</p>
-            </div>
+        <section class="gallery" id="homepage-gallery">
+            <!-- Schwepe cards will be loaded dynamically from schwepe-descriptions.json -->
         </section>
 
         <div class="cta-section">
@@ -1006,6 +966,52 @@
 
         // Show random phrase every 10-15 seconds
         setInterval(showRandomPhrase, Math.random() * 5000 + 10000);
+
+        // Load homepage gallery from JSON
+        async function loadHomepageGallery() {
+            try {
+                const response = await fetch('schwepe-descriptions.json');
+                const descriptions = await response.json();
+
+                const galleryContainer = document.getElementById('homepage-gallery');
+                galleryContainer.innerHTML = '';
+
+                // Get first 7 random Schwepes for homepage (excluding the official schwepe.gif)
+                const schwepeEntries = Object.entries(descriptions).filter(([filename, data]) => filename !== 'schwepe.gif');
+
+                // Shuffle and take 7 random Schwepes
+                const shuffled = schwepeEntries.sort(() => 0.5 - Math.random());
+                const selectedSchwepes = shuffled.slice(0, 7);
+
+                selectedSchwepes.forEach(([filename, data], index) => {
+                    const card = document.createElement('div');
+                    card.className = 'pepe-card';
+                    card.style.animationDelay = `${(index + 1) * 0.1}s`;
+                    card.innerHTML = `
+                        <img src="schwepe/${filename}" alt="${data.title}" class="pepe-image">
+                        <h3 class="pepe-title">${data.title}</h3>
+                        <p class="pepe-description">${data.description}</p>
+                    `;
+
+                    // Add click interaction
+                    card.addEventListener('click', function() {
+                        this.style.animation = 'bounce 0.5s ease-in-out';
+                        setTimeout(() => {
+                            this.style.animation = '';
+                        }, 500);
+                    });
+
+                    galleryContainer.appendChild(card);
+                });
+
+                console.log('✅ Homepage gallery loaded from JSON successfully');
+            } catch (error) {
+                console.error('❌ Error loading homepage gallery from JSON:', error);
+                // Fallback: show error message
+                const galleryContainer = document.getElementById('homepage-gallery');
+                galleryContainer.innerHTML = '<p style="color: white; text-align: center; padding: 40px;">Error loading gallery content. Please check back later.</p>';
+            }
+        }
 
         // Corner Man functionality - Slide in from left or right
         let leftCornerManImages = [];
@@ -1117,6 +1123,9 @@
 
         // Add some interactive magic
         document.addEventListener('DOMContentLoaded', async function() {
+            // Load homepage gallery from JSON
+            await loadHomepageGallery();
+
             // Initialize corner men
             await loadCornerManImages();
 
@@ -1141,17 +1150,6 @@
             });
 
             stats.forEach(stat => observer.observe(stat));
-
-            // Add click interaction to pepe cards
-            const pepeCards = document.querySelectorAll('.pepe-card');
-            pepeCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    this.style.animation = 'bounce 0.5s ease-in-out';
-                    setTimeout(() => {
-                        this.style.animation = '';
-                    }, 500);
-                });
-            });
 
             // CTA button navigation (now goes to gallery.html)
             // No need for smooth scrolling since we're navigating to a new page
