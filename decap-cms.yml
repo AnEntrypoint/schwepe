@@ -1,0 +1,117 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "static/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "lore_chapters"
+    label: "Lore Chapters"
+    label_singular: "Lore Chapter"
+    description: "Manage Schwepe lore chapters and content"
+    folder: "content/lore"
+    create: true
+    slug: "{{fields.id}}"
+    fields:
+      - { label: "Chapter ID", name: "id", widget: "string", required: true, hint: "Unique identifier (e.g., intro, culture, multiverse)" }
+      - { label: "Title", name: "title", widget: "string", required: true }
+      - { label: "Subtitle", name: "subtitle", widget: "string", required: true }
+      - { label: "Icon", name: "icon", widget: "string", required: true, hint: "Emoji icon (e.g., 🚀, 🌟, 🌌)" }
+      - { label: "Theme", name: "theme", widget: "select", required: true, options: ["cyberpunk", "neon-noir", "cosmic-horror", "occult-cyber", "cyberpunk-finance"] }
+      - { label: "Mood", name: "mood", widget: "select", required: true, options: ["chaotic", "rebellious", "mysterious", "ritualistic", "satirical"] }
+      - label: "Sections"
+        name: "sections"
+        widget: "list"
+        required: true
+        fields:
+          - { label: "Section Type", name: "type", widget: "select", required: true, options: ["manifesto", "rules", "ecosystem", "philosophy", "prophecy", "archetypes", "rituals", "hierarchy", "memenomics", "future"] }
+          - { label: "Section Title", name: "title", widget: "string", required: true }
+          - label: "Content"
+            name: "content"
+            widget: "list"
+            required: true
+            field: { label: "Content Block", name: "block", widget: "object", fields: [
+              { label: "Headline", name: "headline", widget: "string", required: false },
+              { label: "Copy", name: "copy", widget: "markdown", required: false }
+            ] }
+
+  - name: "meme_templates"
+    label: "Meme Templates"
+    label_singular: "Meme Template"
+    description: "Manage Schwepe meme templates and formats"
+    folder: "content/memes"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string", required: true }
+      - { label: "Template Image", name: "image", widget: "image", required: true }
+      - { label: "Description", name: "description", widget: "text", required: true }
+      - { label: "Category", name: "category", widget: "select", required: true, options: ["classic", "schwepe-specific", "market-reaction", "cult-rituals"] }
+      - { label: "Tags", name: "tags", widget: "list", required: true, field: { widget: "string" } }
+      - { label: "Usage Count", name: "usage_count", widget: "number", required: false, default: 0 }
+
+  - name: "cult_events"
+    label: "Cult Events"
+    label_singular: "Cult Event"
+    description: "Manage Schwepe cult events and rituals"
+    folder: "content/events"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Event Name", name: "name", widget: "string", required: true }
+      - { label: "Date", name: "date", widget: "datetime", required: true }
+      - { label: "Event Type", name: "type", widget: "select", required: true, options: ["ritual", "sacrifice", "meming-session", "chart-staring", "confessional"] }
+      - { label: "Description", name: "description", widget: "markdown", required: true }
+      - { label: "Requirements", name: "requirements", widget: "list", required: false, field: { widget: "string" } }
+      - { label: "Expected Outcome", name: "outcome", widget: "text", required: false }
+      - { label: "Status", name: "status", widget: "select", required: true, options: ["upcoming", "active", "completed", "failed"] }
+
+  - name: "frog_archetypes"
+    label: "Frog Archetypes"
+    label_singular: "Frog Archetype"
+    description: "Manage the 28 Schwepe frog archetypes"
+    folder: "content/frogs"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Frog Number", name: "number", widget: "number", required: true, min: 1, max: 28 }
+      - { label: "Archetype Name", name: "name", widget: "string", required: true }
+      - { label: "Description", name: "description", widget: "markdown", required: true }
+      - { label: "Trading Style", name: "trading_style", widget: "select", required: true, options: ["diamond-hands", "paper-hands", "fomo", "swing-trader", "hodler"] }
+      - { label: "Personality Traits", name: "traits", widget: "list", required: true, field: { widget: "string" } }
+      - { label: "Favorite Ritual", name: "favorite_ritual", widget: "string", required: false }
+      - { label: "Power Level", name: "power_level", widget: "number", required: true, min: 1, max: 10 }
+      - { label: "Rarity", name: "rarity", widget: "select", required: true, options: ["common", "uncommon", "rare", "legendary", "mythic"] }
+
+  - name: "prophecies"
+    label: "Prophecies"
+    label_singular: "Prophecy"
+    description: "Manage Schwepe prophecies and predictions"
+    folder: "content/prophecies"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Prophecy Title", name: "title", widget: "string", required: true }
+      - { label: "Prophecy Date", name: "date", widget: "datetime", required: false }
+      - { label: "Prophecy Type", name: "type", widget: "select", required: true, options: ["moonshot", "rug-pull", "market-crash", "cult-awakening", "frog-unification"] }
+      - { label: "Description", name: "description", widget: "markdown", required: true }
+      - { label: "Fulfillment Date", name: "fulfillment_date", widget: "datetime", required: false }
+      - { label: "Status", name: "status", widget: "select", required: true, options: ["pending", "fulfilled", "failed", "ongoing"] }
+      - { label: "Confidence Level", name: "confidence", widget: "select", required: true, options: ["low", "medium", "high", "certain"] }
+
+  - name: "cult_members"
+    label: "Cult Members"
+    label_singular: "Cult Member"
+    description: "Manage notable cult members and their ranks"
+    folder: "content/members"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Member Name", name: "name", widget: "string", required: true }
+      - { label: "Cult Title", name: "title", widget: "string", required: true }
+      - { label: "Join Date", name: "join_date", widget: "datetime", required: false }
+      - { label: "Rank", name: "rank", widget: "select", required: true, options: ["newborn", "devotee", "sage", "prophet", "og"] }
+      - { label: "Notable Achievements", name: "achievements", widget: "list", required: false, field: { widget: "string" } }
+      - { label: "Favorite Frog", name: "favorite_frog", widget: "relation", collection: "frog_archetypes", search_fields: ["name", "number"], value_field: "slug", required: false }
+      - { label: "Bio", name: "bio", widget: "markdown", required: false }

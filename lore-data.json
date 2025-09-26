@@ -1,0 +1,207 @@
+[
+  {
+    "id": "intro",
+    "title": "The Schwepe Genesis",
+    "subtitle": "24/7/420 Chaos Protocol Activated",
+    "icon": "🚀",
+    "theme": "cyberpunk",
+    "mood": "chaotic",
+    "sections": [
+      {
+        "type": "manifesto",
+        "title": "Schwepe: The Anti-Coin",
+        "content": [
+          {
+            "headline": "Born in the 3AM Void",
+            "copy": "When the crypto world sleeps, 247420 awakens. Schwepe manifested from the collective psychosis of degens watching 5-minute candles until sunrise."
+          },
+          {
+            "headline": "No Roadmap. Just Chaos.",
+            "copy": "We don't have milestones. We have meme moments. No utility. No promises. Just pure, unfiltered digital degeneracy."
+          },
+          {
+            "headline": "The 247420 Trifecta",
+            "copy": "24/7 markets. 420 vibes. Infinite chaos. This isn't just a token—it's a lifestyle for those who know charts only go up when everyone else is sleeping."
+          }
+        ]
+      },
+      {
+        "type": "rules",
+        "title": "The Schwepe Commandments",
+        "content": [
+          "Thou shalt not take crypto seriously",
+          "Thou shalt meme harder than thou trades",
+          "Thou shalt embrace the red candles as they come",
+          "Thou shalt remember: WAGMI or WAGMI-n't",
+          "Thou shalt never, ever touch grass during bull runs"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "culture",
+    "title": "247420: The Digital Wasteland",
+    "subtitle": "Where Memes Become Reality",
+    "icon": "🌟",
+    "theme": "neon-noir",
+    "mood": "rebellious",
+    "sections": [
+      {
+        "type": "ecosystem",
+        "title": "The 247420 Ecosystem",
+        "content": [
+          {
+            "headline": "Always Online",
+            "copy": "Time zones are for normies. In 247420, 3AM is peak hour. Sleep deprivation is our competitive advantage."
+          },
+          {
+            "headline": "420 State of Mind",
+            "copy": "That blissed-out detachment where losing 80% feels like a spiritual experience. We're not just holding bags—we're meditating with them."
+          },
+          {
+            "headline": "Infinite Loop",
+            "copy": "The cycle never ends: buy the dip, sell the rip, repeat. Find solace in the chaos of perpetual degen."
+          }
+        ]
+      },
+      {
+        "type": "philosophy",
+        "title": "Schwepe Philosophy: Anti-Finance Manifesto",
+        "content": [
+          {
+            "headline": "Chaos Over Charts",
+            "copy": "Technical analysis is for people who believe patterns mean anything. We trade vibes. We hold memes. We worship the RNG."
+          },
+          {
+            "headline": "Community Over Capital",
+            "copy": "Your fellow degen is worth more than your portfolio. When everyone's down 90%, at least we're down together."
+          },
+          {
+            "headline": "Authenticity Over Authority",
+            "copy": "No CEOs. No whitepapers. No VCs. Just anonymous frogs in a digital pond, making noise and hoping someone notices."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "multiverse",
+    "title": "The 28 Frogs",
+    "subtitle": "Each One a Glitch in the Matrix",
+    "icon": "🌌",
+    "theme": "cosmic-horror",
+    "mood": "mysterious",
+    "sections": [
+      {
+        "type": "prophecy",
+        "title": "The Great Prophecy",
+        "content": [
+          {
+            "headline": "28 Chosen Ones",
+            "copy": "In the vast digital swamp, 28 unique frogs emerged. Each represents a different flavor of degen energy—from the diamond-handed to the paper-handed coward."
+          },
+          {
+            "headline": "The Schwepe Effect",
+            "copy": "When all 28 frogs unite, reality bends. Markets move. Memes manifest. The simulation reveals itself."
+          }
+        ]
+      },
+      {
+        "type": "archetypes",
+        "title": "The Frog Archetypes",
+        "content": [
+          "The Diamond Degen: HODLs through -90% with a smile",
+          "The Paper Prince: Sells at 2x profit, misses 100x",
+          "The FOMO Frog: Always late to every party, always down bad",
+          "The Meme Lord: Creates content that pumps harder than fundamentals",
+          "The Zen Degen: Loses everything but finds enlightenment"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cult",
+    "title": "The Schwepe Cult",
+    "subtitle": "Rituals of the Digital Doomed",
+    "icon": "🎭",
+    "theme": "occult-cyber",
+    "mood": "ritualistic",
+    "sections": [
+      {
+        "type": "rituals",
+        "title": "Sacred Rituals",
+        "content": [
+          {
+            "headline": "The 3AM Sacrifice",
+            "copy": "When the market dips, true Schwepers sacrifice sleep to stare at charts, believing their collective consciousness can reverse the red."
+          },
+          {
+            "headline": "The Meme Offering",
+            "copy": "Creating and sharing Schwepe memes isn't just engagement—it's prayer. Each meme is an offering to the algorithm gods."
+          },
+          {
+            "headline": "The Paper Hand Confessional",
+            "copy": "Those who sell too early must confess their sins in the group chat and perform penance through 24 hours of non-stop memeing."
+          }
+        ]
+      },
+      {
+        "type": "hierarchy",
+        "title": "The Degen Hierarchy",
+        "content": [
+          "The OG: Here since genesis, diamond hands forged in bear market fire",
+          "The Prophet: Sees patterns in chaos, guides the flock through red candles",
+          "The Meme Sage: Words become memes, memes become pumps",
+          "The Discord Devotee: Lives in chat, knows every frog's life story",
+          "The Newborn: Fresh from fiat world, still believes in fundamentals"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "economics",
+    "title": "Memenomics: The Art of Losing Beautifully",
+    "subtitle": "Where Emotional Damage Is the Real ROI",
+    "icon": "💎",
+    "theme": "cyberpunk-finance",
+    "mood": "satirical",
+    "sections": [
+      {
+        "type": "memenomics",
+        "title": "The Principles of Memenomics",
+        "content": [
+          {
+            "headline": "The Greater Fool Theory",
+            "copy": "There's always someone dumber than you. That's not just investment strategy—it's our core belief system."
+          },
+          {
+            "headline": "Vibe-Based Valuation",
+            "copy": "Market cap is determined by meme quality, community vibes, and how much the founders hate each other."
+          },
+          {
+            "headline": "The Emotional ROI",
+            "copy": "Financial returns are temporary. The trauma, friendships, and memes are forever. That's the real dividend."
+          }
+        ]
+      },
+      {
+        "type": "future",
+        "title": "Future Scenarios",
+        "content": [
+          {
+            "headline": "The Great Rug",
+            "copy": "Everyone gets rugged, but we meme about it so hard that the rug itself becomes legendary and we all buy the next one anyway."
+          },
+          {
+            "headline": "The Moonshot",
+            "copy": "Against all odds, Schwepe actually moons. The OGs sell at 100x, the cultists hodl to zero, and the cycle begins anew."
+          },
+          {
+            "headline": "The Zombie Protocol",
+            "copy": "Schwepe enters that beautiful state of being dead yet eternally memeing, achieving immortality through sheer stubbornness."
+          }
+        ]
+      }
+    ]
+  }
+]
