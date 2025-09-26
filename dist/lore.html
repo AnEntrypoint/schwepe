@@ -284,6 +284,8 @@
             }
         }
     </style>
+  <script type="module" crossorigin src="/assets/lore-DKvrGyD3.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/lore-Dk5gcTIw.css">
 </head>
 <body>
     <div class="animated-bg"></div>
@@ -293,83 +295,20 @@
 
     <div class="container">
         <div class="header">
-            <h1 class="lore-title glow-text">🚀🐸 Schwepe Lore Library 🐸🚀</h1>
-            <p class="lore-subtitle">Choose Your Chapter in the Saga of 247420</p>
+            <h1 class="lore-title glow-text" id="main-title">🚀🐸 Schwepe Lore Library 🐸🚀</h1>
+            <p class="lore-subtitle" id="main-subtitle">Choose Your Chapter in the Saga of 247420</p>
         </div>
 
-        <div class="progress-indicator">
-            <p>📚 Complete Schwepe Saga (5 Chapters)</p>
-            <div class="progress-dots">
-                <div class="progress-dot" title="Introduction"></div>
-                <div class="progress-dot" title="Culture"></div>
-                <div class="progress-dot" title="Multiverse"></div>
-                <div class="progress-dot" title="Cult"></div>
-                <div class="progress-dot" title="Economics"></div>
-            </div>
-        </div>
+        <div id="dynamic-lore-nav"></div>
 
-        <div class="lore-grid">
-            <a href="lore-intro.html" class="lore-card">
-                <span class="lore-card-icon">🚀</span>
-                <h3>Introduction</h3>
-                <p>Begin your journey into the world of Schwepe</p>
-                <ul class="lore-card-topics">
-                    <li>What is Schwepe?</li>
-                    <li>The Culture of 247420</li>
-                    <li>Why Schwepe Matters</li>
-                </ul>
-            </a>
-
-            <a href="lore-culture.html" class="lore-card">
-                <span class="lore-card-icon">🌟</span>
-                <h3>Culture & Philosophy</h3>
-                <p>Understand the 247420 ecosystem</p>
-                <ul class="lore-card-topics">
-                    <li>Origin Story</li>
-                    <li>247420 Way of Life</li>
-                    <li>Schwepe Manifesto</li>
-                </ul>
-            </a>
-
-            <a href="lore-multiverse.html" class="lore-card">
-                <span class="lore-card-icon">🌌</span>
-                <h3>Multiverse & Prophecy</h3>
-                <p>Explore the frogs and their destinies</p>
-                <ul class="lore-card-topics">
-                    <li>28 Unique Frogs</li>
-                    <li>Great Prophecy</li>
-                    <li>Schwepe Effect</li>
-                </ul>
-            </a>
-
-            <a href="lore-cult.html" class="lore-card">
-                <span class="lore-card-icon">🎭</span>
-                <h3>Cult & Hierarchy</h3>
-                <p>Discover the rituals and social structure</p>
-                <ul class="lore-card-topics">
-                    <li>Sacred Rituals</li>
-                    <li>Degen Hierarchy</li>
-                    <li>Inner Circle</li>
-                </ul>
-            </a>
-
-            <a href="lore-economics.html" class="lore-card">
-                <span class="lore-card-icon">💎</span>
-                <h3>Economics & Future</h3>
-                <p>Learn about memenomics and what's next</p>
-                <ul class="lore-card-topics">
-                    <li>Memenomics</li>
-                    <li>Future Scenarios</li>
-                    <li>Complete TL;DR</li>
-                </ul>
-            </a>
+        <div id="lore-chapters-container">
         </div>
 
         <div class="start-here">
             <p style="font-size: 1.3rem; margin-bottom: 30px; color: rgba(255, 255, 255, 0.9);">
-                New to the Schwepe universe? Start with the introduction and work your way through the saga.
+                New to the Schwepe universe? <span id="random-lore-snippet">Click to discover your destiny...</span>
             </p>
-            <a href="lore-intro.html" class="cta-button">
+            <a href="#intro" class="cta-button" id="start-journey">
                 <i class="fas fa-play"></i> Begin Your Journey
             </a>
         </div>
@@ -419,20 +358,103 @@
             }
         }
 
-        // Add click effects to progress dots
+        // Initialize dynamic lore system
+        async function initializeLoreSystem() {
+            try {
+                // Wait for lore engine to initialize
+                if (window.loreEngine && window.loreEngine.loreData) {
+                    renderDynamicLore();
+                } else {
+                    // Wait a bit and try again
+                    setTimeout(initializeLoreSystem, 100);
+                }
+            } catch (error) {
+                console.error('❌ Error initializing lore system:', error);
+            }
+        }
+
+        function renderDynamicLore() {
+            const chapters = window.loreEngine.getAllChapters();
+            const container = document.getElementById('lore-chapters-container');
+            const navContainer = document.getElementById('dynamic-lore-nav');
+
+            if (!container || !navContainer) return;
+
+            // Render navigation
+            navContainer.innerHTML = `
+                <div class="progress-indicator">
+                    <p>📚 Complete Schwepe Saga (${chapters.length} Chapters)</p>
+                    <div class="progress-dots">
+                        ${chapters.map((chapter, index) =>
+                            `<div class="progress-dot" title="${chapter.title}" data-chapter="${chapter.id}" onclick="scrollToChapter('${chapter.id}')"></div>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Render chapter cards
+            container.innerHTML = chapters.map(chapter => {
+                const theme = window.loreEngine.getThemeConfig(chapter.theme);
+                return `
+                    <a href="#${chapter.id}" class="lore-card" data-chapter="${chapter.id}" onclick="scrollToChapter('${chapter.id}')">
+                        <span class="lore-card-icon">${chapter.icon}</span>
+                        <h3>${chapter.title}</h3>
+                        <p>${chapter.subtitle}</p>
+                        <div class="lore-card-mood">${chapter.mood}</div>
+                    </a>
+                `;
+            }).join('');
+
+            // Update random lore snippet
+            updateRandomLoreSnippet();
+        }
+
+        function scrollToChapter(chapterId) {
+            const chapter = window.loreEngine.getChapter(chapterId);
+            if (chapter) {
+                // Store chapter data for modal or navigate to detailed view
+                localStorage.setItem('currentChapter', JSON.stringify(chapter));
+                // For now, let's show the chapter content in a modal
+                showChapterModal(chapter);
+            }
+        }
+
+        function showChapterModal(chapter) {
+            const theme = window.loreEngine.getThemeConfig(chapter.theme);
+            const modalHTML = `
+                <div class="chapter-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; overflow-y: auto;">
+                    <div class="modal-content" style="background: ${theme.background}; margin: 20px auto; max-width: 900px; padding: 40px; border-radius: 20px; border: 1px solid ${theme.colors[0]}40; color: white;">
+                        <div style="text-align: right; margin-bottom: 20px;">
+                            <button onclick="this.closest('.chapter-modal').remove()" style="background: ${theme.colors[0]}; border: none; color: white; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-size: 18px;">×</button>
+                        </div>
+                        ${window.loreEngine.generateLoreHTML(chapter.id)}
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function updateRandomLoreSnippet() {
+            const snippet = window.loreEngine.getRandomLoreSnippet();
+            const snippetElement = document.getElementById('random-lore-snippet');
+            if (snippetElement && snippet) {
+                snippetElement.textContent = snippet;
+            }
+        }
+
+        // Set active navigation and load navbar
         document.addEventListener('DOMContentLoaded', function() {
             // Load shared navbar
             loadNavbar();
 
-            const progressDots = document.querySelectorAll('.progress-dot');
-            const lorePages = ['lore-intro.html', 'lore-culture.html', 'lore-multiverse.html', 'lore-cult.html', 'lore-economics.html'];
+            // Initialize lore system
+            setTimeout(initializeLoreSystem, 500);
 
-            progressDots.forEach((dot, index) => {
-                dot.style.cursor = 'pointer';
-                dot.addEventListener('click', () => {
-                    window.location.href = lorePages[index];
-                });
-            });
+            // Update random lore snippet every 10 seconds
+            setInterval(updateRandomLoreSnippet, 10000);
+
+            // Random lore snippet click handler
+            document.getElementById('random-lore-snippet')?.addEventListener('click', updateRandomLoreSnippet);
         });
     </script>
 </body>

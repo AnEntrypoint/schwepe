@@ -12,11 +12,6 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         gallery: resolve(__dirname, 'gallery.html'),
         lore: resolve(__dirname, 'lore.html'),
-        'lore-intro': resolve(__dirname, 'lore-intro.html'),
-        'lore-culture': resolve(__dirname, 'lore-culture.html'),
-        'lore-multiverse': resolve(__dirname, 'lore-multiverse.html'),
-        'lore-cult': resolve(__dirname, 'lore-cult.html'),
-        'lore-economics': resolve(__dirname, 'lore-economics.html'),
         stats: resolve(__dirname, 'stats.html')
       }
     },
@@ -44,6 +39,45 @@ export default defineConfig({
           if (existsSync(navbarFile)) {
             copyFileSync(navbarFile, resolve(__dirname, 'dist', 'navbar.html'))
             console.log('✅ Copied navbar.html')
+          }
+
+          // Copy lore data file
+          const loreDataFile = resolve(__dirname, 'lore-data.json')
+          if (existsSync(loreDataFile)) {
+            copyFileSync(loreDataFile, resolve(__dirname, 'dist', 'lore-data.json'))
+            console.log('✅ Copied lore-data.json')
+          }
+
+          // Copy lore CSS file
+          const loreCssFile = resolve(__dirname, 'lore.css')
+          if (existsSync(loreCssFile)) {
+            copyFileSync(loreCssFile, resolve(__dirname, 'dist', 'lore.css'))
+            console.log('✅ Copied lore.css')
+          }
+
+          // Copy decap CMS config
+          const decapConfigFile = resolve(__dirname, 'decap-cms.yml')
+          if (existsSync(decapConfigFile)) {
+            copyFileSync(decapConfigFile, resolve(__dirname, 'dist', 'decap-cms.yml'))
+            console.log('✅ Copied decap-cms.yml')
+          }
+
+          // Copy static folder
+          const sourceStaticDir = resolve(__dirname, 'static')
+          const destStaticDir = resolve(__dirname, 'dist', 'static')
+          if (existsSync(sourceStaticDir)) {
+            if (!existsSync(destStaticDir)) {
+              mkdirSync(destStaticDir, { recursive: true })
+            }
+
+            // Copy all files from static folder
+            const staticFiles = readdirSync(sourceStaticDir)
+            staticFiles.forEach(file => {
+              const srcFile = join(sourceStaticDir, file)
+              const destFile = join(destStaticDir, file)
+              copyFileSync(srcFile, destFile)
+            })
+            console.log('✅ Copied static folder')
           }
 
           // Copy schwepe folder if it doesn't exist in dist
