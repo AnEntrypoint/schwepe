@@ -244,6 +244,96 @@
             50% { text-shadow: 0 0 20px rgba(240, 147, 251, 0.8); }
         }
 
+        /* Adult Content Warning Styles */
+        .age-verification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .age-verification-modal {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid rgba(240, 147, 251, 0.5);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 50px rgba(240, 147, 251, 0.3);
+        }
+
+        .age-verification-modal h2 {
+            color: #f093fb;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(240, 147, 251, 0.5);
+        }
+
+        .age-verification-modal p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .age-verification-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .enter-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+
+        .enter-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
+        }
+
+        .leave-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .leave-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .content-blurred {
+            filter: blur(10px);
+            pointer-events: none;
+            user-select: none;
+        }
+
         .glow-text {
             animation: glow 2s ease-in-out infinite;
         }
@@ -308,12 +398,25 @@
     </style>
 </head>
 <body>
-    <div class="animated-bg"></div>
+    <!-- Age Verification Overlay -->
+    <div id="age-verification" class="age-verification-overlay">
+        <div class="age-verification-modal">
+            <h2>⚠️ Age Verification Required</h2>
+            <p>This content contains mature themes, strong language, and existential dread that may not be suitable for all audiences. By proceeding, you confirm that you are 18+ years of age and mentally prepared for the financial trauma ahead.</p>
+            <div class="age-verification-buttons">
+                <button onclick="enterSite()" class="enter-button">I'm 18+ and Ready to Lose Money</button>
+                <a href="https://google.com" class="leave-button">Take Me to Safety</a>
+            </div>
+        </div>
+    </div>
 
-    <!-- Navigation -->
-    <div id="navbar-container"></div>
+    <div id="main-content" class="content-blurred">
+        <div class="animated-bg"></div>
 
-    <div class="container">
+        <!-- Navigation -->
+        <div id="navbar-container"></div>
+
+        <div class="container">
         <div class="header">
             <h1 class="lore-title glow-text" id="main-title">🚀🐸 Schwepe Lore Library 🐸🚀</h1>
             <p class="lore-subtitle" id="main-subtitle">Choose Your Chapter in the Saga of 247420</p>
@@ -333,8 +436,27 @@
             </a>
         </div>
     </div>
+    </div>
 
     <script>
+        // Age verification function
+        function enterSite() {
+            document.getElementById('age-verification').style.display = 'none';
+            document.getElementById('main-content').classList.remove('content-blurred');
+            // Set a cookie to remember verification
+            document.cookie = 'age_verified=true; max-age=86400; path=/';
+        }
+
+        // Check if user is already verified
+        function checkAgeVerification() {
+            const cookies = document.cookie.split(';');
+            const isVerified = cookies.some(cookie => cookie.trim().startsWith('age_verified=true'));
+
+            if (isVerified) {
+                document.getElementById('age-verification').style.display = 'none';
+                document.getElementById('main-content').classList.remove('content-blurred');
+            }
+        }
         // Stats function
         function showStats() {
             const statsContent = `
@@ -477,6 +599,9 @@
 
         // Set active navigation and load navbar
         document.addEventListener('DOMContentLoaded', function() {
+            // Check age verification first
+            checkAgeVerification();
+
             // Load shared navbar
             loadNavbar();
 
