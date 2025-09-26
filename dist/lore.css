@@ -209,12 +209,55 @@
 
 /* Modal Styles */
 .chapter-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10000;
+  overflow-y: auto;
   animation: fadeIn 0.3s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
 .modal-content {
-  animation: slideUp 0.3s ease-out;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  margin: 0 auto;
+  max-width: 900px;
+  width: 100%;
+  padding: 40px;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
   position: relative;
+  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.close-button {
+  background: var(--primary-color, #f093fb);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.close-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 5px 15px rgba(240, 147, 251, 0.5);
 }
 
 @keyframes fadeIn {
