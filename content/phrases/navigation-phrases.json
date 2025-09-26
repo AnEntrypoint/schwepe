@@ -1,0 +1,23 @@
+{
+  "navHome": [
+    "Home",
+    "Base",
+    "Launchpad",
+    "Hub",
+    "Command Center"
+  ],
+  "navLore": [
+    "Lore",
+    "Stories",
+    "Saga",
+    "Chronicles",
+    "Legends"
+  ],
+  "navStats": [
+    "Stats",
+    "Data",
+    "Analytics",
+    "Metrics",
+    "Intel"
+  ]
+}

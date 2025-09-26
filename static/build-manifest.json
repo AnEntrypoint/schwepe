@@ -1,0 +1,911 @@
+{
+  "buildTime": "2025-09-26T11:18:59.040Z",
+  "phraseStats": {
+    "totalPhrases": 4694,
+    "totalGroups": 28,
+    "totalKeys": 145,
+    "averagePhrasesPerKey": 32.37241379310345,
+    "phraseCounts": [
+      {
+        "group": "pageTitle",
+        "key": "0",
+        "count": 24
+      },
+      {
+        "group": "pageTitle",
+        "key": "1",
+        "count": 24
+      },
+      {
+        "group": "pageTitle",
+        "key": "2",
+        "count": 24
+      },
+      {
+        "group": "pageTitle",
+        "key": "3",
+        "count": 22
+      },
+      {
+        "group": "pageTitle",
+        "key": "4",
+        "count": 23
+      },
+      {
+        "group": "subtitle",
+        "key": "0",
+        "count": 43
+      },
+      {
+        "group": "subtitle",
+        "key": "1",
+        "count": 40
+      },
+      {
+        "group": "subtitle",
+        "key": "2",
+        "count": 34
+      },
+      {
+        "group": "subtitle",
+        "key": "3",
+        "count": 43
+      },
+      {
+        "group": "subtitle",
+        "key": "4",
+        "count": 38
+      },
+      {
+        "group": "mainSectionTitle",
+        "key": "0",
+        "count": 40
+      },
+      {
+        "group": "mainSectionTitle",
+        "key": "1",
+        "count": 44
+      },
+      {
+        "group": "mainSectionTitle",
+        "key": "2",
+        "count": 48
+      },
+      {
+        "group": "mainSectionTitle",
+        "key": "3",
+        "count": 43
+      },
+      {
+        "group": "mainSectionTitle",
+        "key": "4",
+        "count": 48
+      },
+      {
+        "group": "featureTitle",
+        "key": "0",
+        "count": 24
+      },
+      {
+        "group": "featureTitle",
+        "key": "1",
+        "count": 26
+      },
+      {
+        "group": "featureTitle",
+        "key": "2",
+        "count": 27
+      },
+      {
+        "group": "featureTitle",
+        "key": "3",
+        "count": 27
+      },
+      {
+        "group": "featureTitle",
+        "key": "4",
+        "count": 25
+      },
+      {
+        "group": "ageVerification",
+        "key": "0",
+        "count": 36
+      },
+      {
+        "group": "ageVerification",
+        "key": "1",
+        "count": 43
+      },
+      {
+        "group": "ageVerification",
+        "key": "2",
+        "count": 40
+      },
+      {
+        "group": "ageVerification",
+        "key": "3",
+        "count": 40
+      },
+      {
+        "group": "ageVerification",
+        "key": "4",
+        "count": 43
+      },
+      {
+        "group": "interactiveLore",
+        "key": "0",
+        "count": 44
+      },
+      {
+        "group": "interactiveLore",
+        "key": "1",
+        "count": 52
+      },
+      {
+        "group": "interactiveLore",
+        "key": "2",
+        "count": 50
+      },
+      {
+        "group": "interactiveLore",
+        "key": "3",
+        "count": 34
+      },
+      {
+        "group": "interactiveLore",
+        "key": "4",
+        "count": 34
+      },
+      {
+        "group": "responsiveDesign",
+        "key": "0",
+        "count": 46
+      },
+      {
+        "group": "responsiveDesign",
+        "key": "1",
+        "count": 42
+      },
+      {
+        "group": "responsiveDesign",
+        "key": "2",
+        "count": 44
+      },
+      {
+        "group": "responsiveDesign",
+        "key": "3",
+        "count": 58
+      },
+      {
+        "group": "responsiveDesign",
+        "key": "4",
+        "count": 42
+      },
+      {
+        "group": "memeGeneratorTitle",
+        "key": "0",
+        "count": 27
+      },
+      {
+        "group": "memeGeneratorTitle",
+        "key": "1",
+        "count": 29
+      },
+      {
+        "group": "memeGeneratorTitle",
+        "key": "2",
+        "count": 38
+      },
+      {
+        "group": "memeGeneratorTitle",
+        "key": "3",
+        "count": 40
+      },
+      {
+        "group": "memeGeneratorTitle",
+        "key": "4",
+        "count": 32
+      },
+      {
+        "group": "memeGeneratorSubtitle",
+        "key": "0",
+        "count": 52
+      },
+      {
+        "group": "memeGeneratorSubtitle",
+        "key": "1",
+        "count": 57
+      },
+      {
+        "group": "memeGeneratorSubtitle",
+        "key": "2",
+        "count": 48
+      },
+      {
+        "group": "memeGeneratorSubtitle",
+        "key": "3",
+        "count": 51
+      },
+      {
+        "group": "memeGeneratorSubtitle",
+        "key": "4",
+        "count": 43
+      },
+      {
+        "group": "bullishVibes",
+        "key": "0",
+        "count": 13
+      },
+      {
+        "group": "bullishVibes",
+        "key": "1",
+        "count": 19
+      },
+      {
+        "group": "bullishVibes",
+        "key": "2",
+        "count": 18
+      },
+      {
+        "group": "bullishVibes",
+        "key": "3",
+        "count": 12
+      },
+      {
+        "group": "bullishVibes",
+        "key": "4",
+        "count": 12
+      },
+      {
+        "group": "bearishCopium",
+        "key": "0",
+        "count": 14
+      },
+      {
+        "group": "bearishCopium",
+        "key": "1",
+        "count": 18
+      },
+      {
+        "group": "bearishCopium",
+        "key": "2",
+        "count": 16
+      },
+      {
+        "group": "bearishCopium",
+        "key": "3",
+        "count": 18
+      },
+      {
+        "group": "bearishCopium",
+        "key": "4",
+        "count": 13
+      },
+      {
+        "group": "gamblingAddiction",
+        "key": "0",
+        "count": 18
+      },
+      {
+        "group": "gamblingAddiction",
+        "key": "1",
+        "count": 15
+      },
+      {
+        "group": "gamblingAddiction",
+        "key": "2",
+        "count": 13
+      },
+      {
+        "group": "gamblingAddiction",
+        "key": "3",
+        "count": 11
+      },
+      {
+        "group": "gamblingAddiction",
+        "key": "4",
+        "count": 15
+      },
+      {
+        "group": "diamondHands",
+        "key": "0",
+        "count": 13
+      },
+      {
+        "group": "diamondHands",
+        "key": "1",
+        "count": 15
+      },
+      {
+        "group": "diamondHands",
+        "key": "2",
+        "count": 13
+      },
+      {
+        "group": "diamondHands",
+        "key": "3",
+        "count": 16
+      },
+      {
+        "group": "diamondHands",
+        "key": "4",
+        "count": 18
+      },
+      {
+        "group": "tokenInfoTitle",
+        "key": "0",
+        "count": 47
+      },
+      {
+        "group": "tokenInfoTitle",
+        "key": "1",
+        "count": 42
+      },
+      {
+        "group": "tokenInfoTitle",
+        "key": "2",
+        "count": 32
+      },
+      {
+        "group": "tokenInfoTitle",
+        "key": "3",
+        "count": 37
+      },
+      {
+        "group": "tokenInfoTitle",
+        "key": "4",
+        "count": 33
+      },
+      {
+        "group": "tokenAddressLabel",
+        "key": "0",
+        "count": 16
+      },
+      {
+        "group": "tokenAddressLabel",
+        "key": "1",
+        "count": 19
+      },
+      {
+        "group": "tokenAddressLabel",
+        "key": "2",
+        "count": 17
+      },
+      {
+        "group": "tokenAddressLabel",
+        "key": "3",
+        "count": 19
+      },
+      {
+        "group": "tokenAddressLabel",
+        "key": "4",
+        "count": 29
+      },
+      {
+        "group": "howToBuyTitle",
+        "key": "0",
+        "count": 39
+      },
+      {
+        "group": "howToBuyTitle",
+        "key": "1",
+        "count": 39
+      },
+      {
+        "group": "howToBuyTitle",
+        "key": "2",
+        "count": 28
+      },
+      {
+        "group": "howToBuyTitle",
+        "key": "3",
+        "count": 40
+      },
+      {
+        "group": "howToBuyTitle",
+        "key": "4",
+        "count": 36
+      },
+      {
+        "group": "navHome",
+        "key": "0",
+        "count": 4
+      },
+      {
+        "group": "navHome",
+        "key": "1",
+        "count": 4
+      },
+      {
+        "group": "navHome",
+        "key": "2",
+        "count": 9
+      },
+      {
+        "group": "navHome",
+        "key": "3",
+        "count": 3
+      },
+      {
+        "group": "navHome",
+        "key": "4",
+        "count": 14
+      },
+      {
+        "group": "navLore",
+        "key": "0",
+        "count": 4
+      },
+      {
+        "group": "navLore",
+        "key": "1",
+        "count": 7
+      },
+      {
+        "group": "navLore",
+        "key": "2",
+        "count": 4
+      },
+      {
+        "group": "navLore",
+        "key": "3",
+        "count": 10
+      },
+      {
+        "group": "navLore",
+        "key": "4",
+        "count": 7
+      },
+      {
+        "group": "navStats",
+        "key": "0",
+        "count": 5
+      },
+      {
+        "group": "navStats",
+        "key": "1",
+        "count": 4
+      },
+      {
+        "group": "navStats",
+        "key": "2",
+        "count": 9
+      },
+      {
+        "group": "navStats",
+        "key": "3",
+        "count": 7
+      },
+      {
+        "group": "navStats",
+        "key": "4",
+        "count": 5
+      },
+      {
+        "group": "ageVerificationTitle",
+        "key": "0",
+        "count": 28
+      },
+      {
+        "group": "ageVerificationTitle",
+        "key": "1",
+        "count": 22
+      },
+      {
+        "group": "ageVerificationTitle",
+        "key": "2",
+        "count": 22
+      },
+      {
+        "group": "ageVerificationTitle",
+        "key": "3",
+        "count": 19
+      },
+      {
+        "group": "ageVerificationTitle",
+        "key": "4",
+        "count": 20
+      },
+      {
+        "group": "ageVerificationText",
+        "key": "0",
+        "count": 230
+      },
+      {
+        "group": "ageVerificationText",
+        "key": "1",
+        "count": 185
+      },
+      {
+        "group": "ageVerificationText",
+        "key": "2",
+        "count": 190
+      },
+      {
+        "group": "ageVerificationText",
+        "key": "3",
+        "count": 151
+      },
+      {
+        "group": "ageVerificationText",
+        "key": "4",
+        "count": 154
+      },
+      {
+        "group": "enterButton",
+        "key": "0",
+        "count": 31
+      },
+      {
+        "group": "enterButton",
+        "key": "1",
+        "count": 19
+      },
+      {
+        "group": "enterButton",
+        "key": "2",
+        "count": 26
+      },
+      {
+        "group": "enterButton",
+        "key": "3",
+        "count": 26
+      },
+      {
+        "group": "enterButton",
+        "key": "4",
+        "count": 32
+      },
+      {
+        "group": "statsPageTitle",
+        "key": "0",
+        "count": 30
+      },
+      {
+        "group": "statsPageTitle",
+        "key": "1",
+        "count": 26
+      },
+      {
+        "group": "statsPageTitle",
+        "key": "2",
+        "count": 21
+      },
+      {
+        "group": "statsPageTitle",
+        "key": "3",
+        "count": 27
+      },
+      {
+        "group": "statsPageTitle",
+        "key": "4",
+        "count": 24
+      },
+      {
+        "group": "statsHeader",
+        "key": "0",
+        "count": 41
+      },
+      {
+        "group": "statsHeader",
+        "key": "1",
+        "count": 30
+      },
+      {
+        "group": "statsHeader",
+        "key": "2",
+        "count": 27
+      },
+      {
+        "group": "statsHeader",
+        "key": "3",
+        "count": 30
+      },
+      {
+        "group": "statsHeader",
+        "key": "4",
+        "count": 28
+      },
+      {
+        "group": "statsSubtitle",
+        "key": "0",
+        "count": 56
+      },
+      {
+        "group": "statsSubtitle",
+        "key": "1",
+        "count": 45
+      },
+      {
+        "group": "statsSubtitle",
+        "key": "2",
+        "count": 49
+      },
+      {
+        "group": "statsSubtitle",
+        "key": "3",
+        "count": 40
+      },
+      {
+        "group": "statsSubtitle",
+        "key": "4",
+        "count": 41
+      },
+      {
+        "group": "lorePageTitle",
+        "key": "0",
+        "count": 32
+      },
+      {
+        "group": "lorePageTitle",
+        "key": "1",
+        "count": 22
+      },
+      {
+        "group": "lorePageTitle",
+        "key": "2",
+        "count": 23
+      },
+      {
+        "group": "lorePageTitle",
+        "key": "3",
+        "count": 23
+      },
+      {
+        "group": "lorePageTitle",
+        "key": "4",
+        "count": 24
+      },
+      {
+        "group": "loadingError",
+        "key": "0",
+        "count": 21
+      },
+      {
+        "group": "loadingError",
+        "key": "1",
+        "count": 28
+      },
+      {
+        "group": "loadingError",
+        "key": "2",
+        "count": 29
+      },
+      {
+        "group": "loadingError",
+        "key": "3",
+        "count": 19
+      },
+      {
+        "group": "loadingError",
+        "key": "4",
+        "count": 24
+      },
+      {
+        "group": "encouragement",
+        "key": "0",
+        "count": 16
+      },
+      {
+        "group": "encouragement",
+        "key": "1",
+        "count": 9
+      },
+      {
+        "group": "encouragement",
+        "key": "2",
+        "count": 14
+      },
+      {
+        "group": "encouragement",
+        "key": "3",
+        "count": 17
+      },
+      {
+        "group": "encouragement",
+        "key": "4",
+        "count": 18
+      },
+      {
+        "group": "encouragement",
+        "key": "5",
+        "count": 23
+      },
+      {
+        "group": "encouragement",
+        "key": "6",
+        "count": 13
+      },
+      {
+        "group": "encouragement",
+        "key": "7",
+        "count": 18
+      },
+      {
+        "group": "encouragement",
+        "key": "8",
+        "count": 27
+      },
+      {
+        "group": "encouragement",
+        "key": "9",
+        "count": 23
+      }
+    ],
+    "validation": {
+      "isValid": true,
+      "errors": []
+    }
+  },
+  "selections": {
+    "pageTitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "subtitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "mainSectionTitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "featureTitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "ageVerification": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "interactiveLore": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "responsiveDesign": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "memeGeneratorTitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "memeGeneratorSubtitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "bullishVibes": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "bearishCopium": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "gamblingAddiction": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "diamondHands": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "tokenInfoTitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "tokenAddressLabel": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "howToBuyTitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "navHome": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "navLore": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "navStats": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "ageVerificationTitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "ageVerificationText": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "enterButton": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "statsPageTitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "statsHeader": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "statsSubtitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "lorePageTitle": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "loadingError": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    },
+    "encouragement": {
+      "selectedIndex": {},
+      "selectedPhrase": {},
+      "totalPhrases": {},
+      "allPhrases": {}
+    }
+  },
+  "files": []
+}

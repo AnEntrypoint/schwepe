@@ -1,0 +1,1083 @@
+{
+  "selections": {
+    "pageTitle": {
+      "selectedIndex": 0,
+      "selectedPhrase": "Schwepe's Funky Universe",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Schwepe's Funky Universe",
+        "Schwepe's Degen Paradise",
+        "Schwepe's Meme Dimension",
+        "Schwepe's 247420 Realm",
+        "Schwepe's Crypto Circus"
+      ]
+    },
+    "subtitle": {
+      "selectedIndex": 1,
+      "selectedPhrase": "Maximum Degen Energy with Zero Filter 💎",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Where 247420 Energy Meets Pure Meme Magic ✨",
+        "Maximum Degen Energy with Zero Filter 💎",
+        "Your Daily Dose of Crypto Chaos 🚀",
+        "Where Memes Become Financial Instruments 🎲",
+        "The Last Bastion of True Degeneracy 🐸"
+      ]
+    },
+    "mainSectionTitle": {
+      "selectedIndex": 3,
+      "selectedPhrase": "🎪 The Circus of Maximum Financial Chaos 🎪",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "💎 The Degenerate Lifeblood of 247420 💎",
+        "🔥 The Eternal Flame of Crypto Degeneracy 🔥",
+        "⚡ Where 247420 Energy Flows Through Your Veins ⚡",
+        "🎪 The Circus of Maximum Financial Chaos 🎪",
+        "🌊 The Ocean of Endless Memetic Possibilities 🌊"
+      ]
+    },
+    "featureTitle": {
+      "selectedIndex": 1,
+      "selectedPhrase": "🎲 The Degen Experience 🎲",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "🎯 Why We're All Here 🎯",
+        "🎲 The Degen Experience 🎲",
+        "🚀 Why This Space Exists 🚀",
+        "💎 What Makes Us Special 💎",
+        "🐸 The Frog Philosophy 🐸"
+      ]
+    },
+    "ageVerification": {
+      "selectedIndex": 3,
+      "selectedPhrase": "⚠️ Warning: May contain financial trauma",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "✅ Age-gated for maximum degen safety",
+        "🔞 Adult swim only - no paper hands allowed",
+        "🎭 Mature content for mature degenerates",
+        "⚠️ Warning: May contain financial trauma",
+        "🎪 Enter at your own risk (we recommend it)"
+      ]
+    },
+    "interactiveLore": {
+      "selectedIndex": 0,
+      "selectedPhrase": "📚 Dynamic lore system with multiple endings",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "📚 Dynamic lore system with multiple endings",
+        "🎭 Interactive stories that change with your choices",
+        "📖 Living documents that evolve with the community",
+        "🎲 Never the same experience twice",
+        "🌙 Choose your own degen adventure"
+      ]
+    },
+    "responsiveDesign": {
+      "selectedIndex": 2,
+      "selectedPhrase": "📱🖥️ Responsive design for all your devices",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "📱 Works on your phone during bathroom trading",
+        "💻 Desktop mode for maximum degen analysis",
+        "📱🖥️ Responsive design for all your devices",
+        "📱 Perfect for checking charts while you should be working",
+        "📱 Mobile-friendly degen content on the go"
+      ]
+    },
+    "memeGeneratorTitle": {
+      "selectedIndex": 3,
+      "selectedPhrase": "🎭 Your Daily Dose of Crypto Insanity 🎭",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "🎲 247420 Meme Generator 🎲",
+        "🎰 Degen Copypasta Factory 🎰",
+        "🎪 Maximum Meme Production Facility 🎪",
+        "🎭 Your Daily Dose of Crypto Insanity 🎭",
+        "🎯 Precision Meme Engineering 🎯"
+      ]
+    },
+    "memeGeneratorSubtitle": {
+      "selectedIndex": 1,
+      "selectedPhrase": "Generate memes that perfectly capture your financial pain",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Click the button to generate maximum degen copypasta",
+        "Generate memes that perfectly capture your financial pain",
+        "Create copypastas that will haunt your portfolio",
+        "The perfect tool for expressing your degen emotions",
+        "Turn your trading trauma into viral content"
+      ]
+    },
+    "bullishVibes": {
+      "selectedIndex": 1,
+      "selectedPhrase": "Green Candle Energy",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Bullish Vibes",
+        "Green Candle Energy",
+        "Moonshot Mentality",
+        "Lambo Dreams",
+        "WAGMI Spirit"
+      ]
+    },
+    "bearishCopium": {
+      "selectedIndex": 3,
+      "selectedPhrase": "Rekt Support Group",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Bearish Copium",
+        "Red Candle Therapy",
+        "Portfolio Trauma",
+        "Rekt Support Group",
+        "NGMI Recovery"
+      ]
+    },
+    "gamblingAddiction": {
+      "selectedIndex": 3,
+      "selectedPhrase": "YOLO Energy",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Gambling Addiction",
+        "Degen Instincts",
+        "Risk Appetite",
+        "YOLO Energy",
+        "Ape Mode Active"
+      ]
+    },
+    "diamondHands": {
+      "selectedIndex": 0,
+      "selectedPhrase": "Diamond Hands",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Diamond Hands",
+        "HODL Philosophy",
+        "Never Selling",
+        "Long Term Vision",
+        "Diamond Conviction"
+      ]
+    },
+    "tokenInfoTitle": {
+      "selectedIndex": 4,
+      "selectedPhrase": "🌊 Diving Into the Token Ocean 🌊",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "🔥 Token Information & How to Join the Chaos 🔥",
+        "💎 The Tokenomics of Maximum Degeneracy 💎",
+        "🚀 How to Ape Into the Future 🚀",
+        "🎪 Your Guide to Financial Madness 🎪",
+        "🌊 Diving Into the Token Ocean 🌊"
+      ]
+    },
+    "tokenAddressLabel": {
+      "selectedIndex": 1,
+      "selectedPhrase": "💎 Contract Address",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "🎯 Token Address",
+        "💎 Contract Address",
+        "🚀 Token Contract",
+        "🎪 The Magic String",
+        "🌊 Your Gateway to Degeneracy"
+      ]
+    },
+    "howToBuyTitle": {
+      "selectedIndex": 4,
+      "selectedPhrase": "🌊 How to Dive Into the Meme Pool 🌊",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "🎮 How to Join the 247420 Revolution 🎮",
+        "💎 Your Path to Maximum Degen Status 💎",
+        "🚀 The Ultimate Ape Guide 🚀",
+        "🎪 Step-by-Step Financial Destruction 🎪",
+        "🌊 How to Dive Into the Meme Pool 🌊"
+      ]
+    },
+    "navHome": {
+      "selectedIndex": 4,
+      "selectedPhrase": "Command Center",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Home",
+        "Base",
+        "Launchpad",
+        "Hub",
+        "Command Center"
+      ]
+    },
+    "navLore": {
+      "selectedIndex": 2,
+      "selectedPhrase": "Saga",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Lore",
+        "Stories",
+        "Saga",
+        "Chronicles",
+        "Legends"
+      ]
+    },
+    "navStats": {
+      "selectedIndex": 0,
+      "selectedPhrase": "Stats",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Stats",
+        "Data",
+        "Analytics",
+        "Metrics",
+        "Intel"
+      ]
+    },
+    "ageVerificationTitle": {
+      "selectedIndex": 1,
+      "selectedPhrase": "🔞 Adult Content Ahead",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "⚠️ Age Verification Required",
+        "🔞 Adult Content Ahead",
+        "🎭 Maturity Checkpoint",
+        "⚠️ Degen Zone Entry",
+        "🎪 Age Gate of Chaos"
+      ]
+    },
+    "ageVerificationText": {
+      "selectedIndex": 0,
+      "selectedPhrase": "This content contains mature themes, strong language, and existential dread that may not be suitable for all audiences. By proceeding, you confirm that you are 18+ years of age and mentally prepared for the financial trauma ahead.",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "This content contains mature themes, strong language, and existential dread that may not be suitable for all audiences. By proceeding, you confirm that you are 18+ years of age and mentally prepared for the financial trauma ahead.",
+        "Warning: This area contains maximum degen energy, unfiltered crypto culture, and content that may trigger trading PTSD. Enter only if you have diamond hands and a strong sense of humor.",
+        "Attention: You are about to enter a space of unapologetic memetic warfare, financial chaos, and 247420 culture. Please verify you're emotionally and financially prepared for what lies ahead.",
+        "Caution: Beyond this point lies content that celebrates financial irresponsibility, crypto gambling, and the beautiful tragedy of degen life. 18+ only.",
+        "Alert: You're entering a dimension where memes have monetary value, losses are worn as badges of honor, and sanity is optional. Age verification required."
+      ]
+    },
+    "enterButton": {
+      "selectedIndex": 2,
+      "selectedPhrase": "I'm 18+ and Diamond Handed",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "I'm 18+ and Ready to Lose Money",
+        "I'm 18+ and 99% Ape",
+        "I'm 18+ and Diamond Handed",
+        "I'm 18+ and Ready to WAGMI",
+        "I'm 18+ and Emotionally Prepared"
+      ]
+    },
+    "statsPageTitle": {
+      "selectedIndex": 0,
+      "selectedPhrase": "Schwepe Stats - Real-time Data",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Schwepe Stats - Real-time Data",
+        "247420 Analytics Dashboard",
+        "Degen Metrics Central",
+        "Schwepe Intelligence Agency",
+        "Live Market Intelligence"
+      ]
+    },
+    "statsHeader": {
+      "selectedIndex": 0,
+      "selectedPhrase": "🔥 Live Schwepe Intelligence Dashboard 🔥",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "🔥 Live Schwepe Intelligence Dashboard 🔥",
+        "⚡ Real-time 247420 Analytics ⚡",
+        "🎯 Degen Metrics Central 🎯",
+        "📊 Live Market Intelligence 📊",
+        "🚀 Schwepe Command Center 🚀"
+      ]
+    },
+    "statsSubtitle": {
+      "selectedIndex": 0,
+      "selectedPhrase": "Real-time market data, degen scoring, and meme analytics",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Real-time market data, degen scoring, and meme analytics",
+        "Live metrics for the maximum degen experience",
+        "Real-time intelligence for your trading decisions",
+        "Live data feeds from the heart of 247420",
+        "Continuous market surveillance for degens"
+      ]
+    },
+    "lorePageTitle": {
+      "selectedIndex": 2,
+      "selectedPhrase": "247420 Story Collection",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Schwepe Lore - The Complete Saga",
+        "The Schwepe Chronicles",
+        "247420 Story Collection",
+        "The Complete Degen Saga",
+        "Schwepe Universe History"
+      ]
+    },
+    "loadingError": {
+      "selectedIndex": 2,
+      "selectedPhrase": "Something went horribly wrong",
+      "totalPhrases": 5,
+      "allPhrases": [
+        "Error loading content",
+        "Failed to load degen content",
+        "Something went horribly wrong",
+        "Meme loading failed",
+        "Degen system malfunction"
+      ]
+    },
+    "encouragement": {
+      "selectedIndex": 9,
+      "selectedPhrase": "Believe in the meme! 🐸",
+      "totalPhrases": 10,
+      "allPhrases": [
+        "Keep hodling! 💪",
+        "WAGMI! 🚀",
+        "Stay degen! 🎲",
+        "Diamond hands! 💎",
+        "This is the way! ⚡",
+        "Ape together strong! 🦍",
+        "Moon soon! 🌙",
+        "Trust the plan! 🎯",
+        "We're all gonna make it! 💪",
+        "Believe in the meme! 🐸"
+      ]
+    }
+  },
+  "generatedAt": "2025-09-26T11:18:59.035Z",
+  "stats": {
+    "totalPhrases": 4694,
+    "totalGroups": 28,
+    "totalKeys": 145,
+    "averagePhrasesPerKey": 32.37241379310345,
+    "phraseCounts": [
+      {
+        "group": "pageTitle",
+        "key": "0",
+        "count": 24
+      },
+      {
+        "group": "pageTitle",
+        "key": "1",
+        "count": 24
+      },
+      {
+        "group": "pageTitle",
+        "key": "2",
+        "count": 24
+      },
+      {
+        "group": "pageTitle",
+        "key": "3",
+        "count": 22
+      },
+      {
+        "group": "pageTitle",
+        "key": "4",
+        "count": 23
+      },
+      {
+        "group": "subtitle",
+        "key": "0",
+        "count": 43
+      },
+      {
+        "group": "subtitle",
+        "key": "1",
+        "count": 40
+      },
+      {
+        "group": "subtitle",
+        "key": "2",
+        "count": 34
+      },
+      {
+        "group": "subtitle",
+        "key": "3",
+        "count": 43
+      },
+      {
+        "group": "subtitle",
+        "key": "4",
+        "count": 38
+      },
+      {
+        "group": "mainSectionTitle",
+        "key": "0",
+        "count": 40
+      },
+      {
+        "group": "mainSectionTitle",
+        "key": "1",
+        "count": 44
+      },
+      {
+        "group": "mainSectionTitle",
+        "key": "2",
+        "count": 48
+      },
+      {
+        "group": "mainSectionTitle",
+        "key": "3",
+        "count": 43
+      },
+      {
+        "group": "mainSectionTitle",
+        "key": "4",
+        "count": 48
+      },
+      {
+        "group": "featureTitle",
+        "key": "0",
+        "count": 24
+      },
+      {
+        "group": "featureTitle",
+        "key": "1",
+        "count": 26
+      },
+      {
+        "group": "featureTitle",
+        "key": "2",
+        "count": 27
+      },
+      {
+        "group": "featureTitle",
+        "key": "3",
+        "count": 27
+      },
+      {
+        "group": "featureTitle",
+        "key": "4",
+        "count": 25
+      },
+      {
+        "group": "ageVerification",
+        "key": "0",
+        "count": 36
+      },
+      {
+        "group": "ageVerification",
+        "key": "1",
+        "count": 43
+      },
+      {
+        "group": "ageVerification",
+        "key": "2",
+        "count": 40
+      },
+      {
+        "group": "ageVerification",
+        "key": "3",
+        "count": 40
+      },
+      {
+        "group": "ageVerification",
+        "key": "4",
+        "count": 43
+      },
+      {
+        "group": "interactiveLore",
+        "key": "0",
+        "count": 44
+      },
+      {
+        "group": "interactiveLore",
+        "key": "1",
+        "count": 52
+      },
+      {
+        "group": "interactiveLore",
+        "key": "2",
+        "count": 50
+      },
+      {
+        "group": "interactiveLore",
+        "key": "3",
+        "count": 34
+      },
+      {
+        "group": "interactiveLore",
+        "key": "4",
+        "count": 34
+      },
+      {
+        "group": "responsiveDesign",
+        "key": "0",
+        "count": 46
+      },
+      {
+        "group": "responsiveDesign",
+        "key": "1",
+        "count": 42
+      },
+      {
+        "group": "responsiveDesign",
+        "key": "2",
+        "count": 44
+      },
+      {
+        "group": "responsiveDesign",
+        "key": "3",
+        "count": 58
+      },
+      {
+        "group": "responsiveDesign",
+        "key": "4",
+        "count": 42
+      },
+      {
+        "group": "memeGeneratorTitle",
+        "key": "0",
+        "count": 27
+      },
+      {
+        "group": "memeGeneratorTitle",
+        "key": "1",
+        "count": 29
+      },
+      {
+        "group": "memeGeneratorTitle",
+        "key": "2",
+        "count": 38
+      },
+      {
+        "group": "memeGeneratorTitle",
+        "key": "3",
+        "count": 40
+      },
+      {
+        "group": "memeGeneratorTitle",
+        "key": "4",
+        "count": 32
+      },
+      {
+        "group": "memeGeneratorSubtitle",
+        "key": "0",
+        "count": 52
+      },
+      {
+        "group": "memeGeneratorSubtitle",
+        "key": "1",
+        "count": 57
+      },
+      {
+        "group": "memeGeneratorSubtitle",
+        "key": "2",
+        "count": 48
+      },
+      {
+        "group": "memeGeneratorSubtitle",
+        "key": "3",
+        "count": 51
+      },
+      {
+        "group": "memeGeneratorSubtitle",
+        "key": "4",
+        "count": 43
+      },
+      {
+        "group": "bullishVibes",
+        "key": "0",
+        "count": 13
+      },
+      {
+        "group": "bullishVibes",
+        "key": "1",
+        "count": 19
+      },
+      {
+        "group": "bullishVibes",
+        "key": "2",
+        "count": 18
+      },
+      {
+        "group": "bullishVibes",
+        "key": "3",
+        "count": 12
+      },
+      {
+        "group": "bullishVibes",
+        "key": "4",
+        "count": 12
+      },
+      {
+        "group": "bearishCopium",
+        "key": "0",
+        "count": 14
+      },
+      {
+        "group": "bearishCopium",
+        "key": "1",
+        "count": 18
+      },
+      {
+        "group": "bearishCopium",
+        "key": "2",
+        "count": 16
+      },
+      {
+        "group": "bearishCopium",
+        "key": "3",
+        "count": 18
+      },
+      {
+        "group": "bearishCopium",
+        "key": "4",
+        "count": 13
+      },
+      {
+        "group": "gamblingAddiction",
+        "key": "0",
+        "count": 18
+      },
+      {
+        "group": "gamblingAddiction",
+        "key": "1",
+        "count": 15
+      },
+      {
+        "group": "gamblingAddiction",
+        "key": "2",
+        "count": 13
+      },
+      {
+        "group": "gamblingAddiction",
+        "key": "3",
+        "count": 11
+      },
+      {
+        "group": "gamblingAddiction",
+        "key": "4",
+        "count": 15
+      },
+      {
+        "group": "diamondHands",
+        "key": "0",
+        "count": 13
+      },
+      {
+        "group": "diamondHands",
+        "key": "1",
+        "count": 15
+      },
+      {
+        "group": "diamondHands",
+        "key": "2",
+        "count": 13
+      },
+      {
+        "group": "diamondHands",
+        "key": "3",
+        "count": 16
+      },
+      {
+        "group": "diamondHands",
+        "key": "4",
+        "count": 18
+      },
+      {
+        "group": "tokenInfoTitle",
+        "key": "0",
+        "count": 47
+      },
+      {
+        "group": "tokenInfoTitle",
+        "key": "1",
+        "count": 42
+      },
+      {
+        "group": "tokenInfoTitle",
+        "key": "2",
+        "count": 32
+      },
+      {
+        "group": "tokenInfoTitle",
+        "key": "3",
+        "count": 37
+      },
+      {
+        "group": "tokenInfoTitle",
+        "key": "4",
+        "count": 33
+      },
+      {
+        "group": "tokenAddressLabel",
+        "key": "0",
+        "count": 16
+      },
+      {
+        "group": "tokenAddressLabel",
+        "key": "1",
+        "count": 19
+      },
+      {
+        "group": "tokenAddressLabel",
+        "key": "2",
+        "count": 17
+      },
+      {
+        "group": "tokenAddressLabel",
+        "key": "3",
+        "count": 19
+      },
+      {
+        "group": "tokenAddressLabel",
+        "key": "4",
+        "count": 29
+      },
+      {
+        "group": "howToBuyTitle",
+        "key": "0",
+        "count": 39
+      },
+      {
+        "group": "howToBuyTitle",
+        "key": "1",
+        "count": 39
+      },
+      {
+        "group": "howToBuyTitle",
+        "key": "2",
+        "count": 28
+      },
+      {
+        "group": "howToBuyTitle",
+        "key": "3",
+        "count": 40
+      },
+      {
+        "group": "howToBuyTitle",
+        "key": "4",
+        "count": 36
+      },
+      {
+        "group": "navHome",
+        "key": "0",
+        "count": 4
+      },
+      {
+        "group": "navHome",
+        "key": "1",
+        "count": 4
+      },
+      {
+        "group": "navHome",
+        "key": "2",
+        "count": 9
+      },
+      {
+        "group": "navHome",
+        "key": "3",
+        "count": 3
+      },
+      {
+        "group": "navHome",
+        "key": "4",
+        "count": 14
+      },
+      {
+        "group": "navLore",
+        "key": "0",
+        "count": 4
+      },
+      {
+        "group": "navLore",
+        "key": "1",
+        "count": 7
+      },
+      {
+        "group": "navLore",
+        "key": "2",
+        "count": 4
+      },
+      {
+        "group": "navLore",
+        "key": "3",
+        "count": 10
+      },
+      {
+        "group": "navLore",
+        "key": "4",
+        "count": 7
+      },
+      {
+        "group": "navStats",
+        "key": "0",
+        "count": 5
+      },
+      {
+        "group": "navStats",
+        "key": "1",
+        "count": 4
+      },
+      {
+        "group": "navStats",
+        "key": "2",
+        "count": 9
+      },
+      {
+        "group": "navStats",
+        "key": "3",
+        "count": 7
+      },
+      {
+        "group": "navStats",
+        "key": "4",
+        "count": 5
+      },
+      {
+        "group": "ageVerificationTitle",
+        "key": "0",
+        "count": 28
+      },
+      {
+        "group": "ageVerificationTitle",
+        "key": "1",
+        "count": 22
+      },
+      {
+        "group": "ageVerificationTitle",
+        "key": "2",
+        "count": 22
+      },
+      {
+        "group": "ageVerificationTitle",
+        "key": "3",
+        "count": 19
+      },
+      {
+        "group": "ageVerificationTitle",
+        "key": "4",
+        "count": 20
+      },
+      {
+        "group": "ageVerificationText",
+        "key": "0",
+        "count": 230
+      },
+      {
+        "group": "ageVerificationText",
+        "key": "1",
+        "count": 185
+      },
+      {
+        "group": "ageVerificationText",
+        "key": "2",
+        "count": 190
+      },
+      {
+        "group": "ageVerificationText",
+        "key": "3",
+        "count": 151
+      },
+      {
+        "group": "ageVerificationText",
+        "key": "4",
+        "count": 154
+      },
+      {
+        "group": "enterButton",
+        "key": "0",
+        "count": 31
+      },
+      {
+        "group": "enterButton",
+        "key": "1",
+        "count": 19
+      },
+      {
+        "group": "enterButton",
+        "key": "2",
+        "count": 26
+      },
+      {
+        "group": "enterButton",
+        "key": "3",
+        "count": 26
+      },
+      {
+        "group": "enterButton",
+        "key": "4",
+        "count": 32
+      },
+      {
+        "group": "statsPageTitle",
+        "key": "0",
+        "count": 30
+      },
+      {
+        "group": "statsPageTitle",
+        "key": "1",
+        "count": 26
+      },
+      {
+        "group": "statsPageTitle",
+        "key": "2",
+        "count": 21
+      },
+      {
+        "group": "statsPageTitle",
+        "key": "3",
+        "count": 27
+      },
+      {
+        "group": "statsPageTitle",
+        "key": "4",
+        "count": 24
+      },
+      {
+        "group": "statsHeader",
+        "key": "0",
+        "count": 41
+      },
+      {
+        "group": "statsHeader",
+        "key": "1",
+        "count": 30
+      },
+      {
+        "group": "statsHeader",
+        "key": "2",
+        "count": 27
+      },
+      {
+        "group": "statsHeader",
+        "key": "3",
+        "count": 30
+      },
+      {
+        "group": "statsHeader",
+        "key": "4",
+        "count": 28
+      },
+      {
+        "group": "statsSubtitle",
+        "key": "0",
+        "count": 56
+      },
+      {
+        "group": "statsSubtitle",
+        "key": "1",
+        "count": 45
+      },
+      {
+        "group": "statsSubtitle",
+        "key": "2",
+        "count": 49
+      },
+      {
+        "group": "statsSubtitle",
+        "key": "3",
+        "count": 40
+      },
+      {
+        "group": "statsSubtitle",
+        "key": "4",
+        "count": 41
+      },
+      {
+        "group": "lorePageTitle",
+        "key": "0",
+        "count": 32
+      },
+      {
+        "group": "lorePageTitle",
+        "key": "1",
+        "count": 22
+      },
+      {
+        "group": "lorePageTitle",
+        "key": "2",
+        "count": 23
+      },
+      {
+        "group": "lorePageTitle",
+        "key": "3",
+        "count": 23
+      },
+      {
+        "group": "lorePageTitle",
+        "key": "4",
+        "count": 24
+      },
+      {
+        "group": "loadingError",
+        "key": "0",
+        "count": 21
+      },
+      {
+        "group": "loadingError",
+        "key": "1",
+        "count": 28
+      },
+      {
+        "group": "loadingError",
+        "key": "2",
+        "count": 29
+      },
+      {
+        "group": "loadingError",
+        "key": "3",
+        "count": 19
+      },
+      {
+        "group": "loadingError",
+        "key": "4",
+        "count": 24
+      },
+      {
+        "group": "encouragement",
+        "key": "0",
+        "count": 16
+      },
+      {
+        "group": "encouragement",
+        "key": "1",
+        "count": 9
+      },
+      {
+        "group": "encouragement",
+        "key": "2",
+        "count": 14
+      },
+      {
+        "group": "encouragement",
+        "key": "3",
+        "count": 17
+      },
+      {
+        "group": "encouragement",
+        "key": "4",
+        "count": 18
+      },
+      {
+        "group": "encouragement",
+        "key": "5",
+        "count": 23
+      },
+      {
+        "group": "encouragement",
+        "key": "6",
+        "count": 13
+      },
+      {
+        "group": "encouragement",
+        "key": "7",
+        "count": 18
+      },
+      {
+        "group": "encouragement",
+        "key": "8",
+        "count": 27
+      },
+      {
+        "group": "encouragement",
+        "key": "9",
+        "count": 23
+      }
+    ],
+    "validation": {
+      "isValid": true,
+      "errors": []
+    }
+  }
+}

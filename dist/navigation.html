@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schwepe's Funky Universe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: bgShift 10s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            25% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+            50% { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+            75% { background: linear-gradient(135deg, #2d8f5f 0%, #25a67a 100%); }
+        }
+
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 10px 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .navbar a.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .navbar i {
+            font-size: 16px;
+        }
+
+        .content-container {
+            margin-top: 100px;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                max-width: 90%;
+                gap: 10px;
+            }
+
+            .navbar a {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+
+            .content-container {
+                margin-top: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+
+    <nav class="navbar">
+        <a href="index.html" id="nav-home">
+            <i class="fas fa-home"></i>
+            Home
+        </a>
+        <a href="gallery.html" id="nav-gallery">
+            <i class="fas fa-images"></i>
+            Gallery
+        </a>
+        <a href="lore.html" id="nav-lore">
+            <i class="fas fa-book"></i>
+            Lore
+        </a>
+        <a href="#" onclick="showStats()" id="nav-stats">
+            <i class="fas fa-chart-bar"></i>
+            Stats
+        </a>
+    </nav>
+
+    <div class="content-container">
+        <!-- Content will be inserted here -->
+    </div>
+
+    <script>
+        // Set active navigation based on current page
+        function setActiveNav() {
+            const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.navbar a');
+
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPath || (currentPath === 'index.html' && href === 'index.html')) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        // Stats function (from original index.html)
+        function showStats() {
+            const statsContent = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; text-align: center; color: white; border: 1px solid rgba(255,255,255,0.2);">
+                        <h2 style="margin-bottom: 20px; color: #f093fb;">🚀 Schwepe Stats 🚀</h2>
+                        <div style="font-size: 1.2rem; line-height: 1.8;">
+                            <p>🐸 Total Schwepes: 28 Unique Frogs</p>
+                            <p>💎 Diamond Hands: Infinite</p>
+                            <p>🎯 Memes Created: Countless</p>
+                            <p>🌙 Moonshots: Many</p>
+                            <p>💀 Bags Held: All of them</p>
+                            <p>⚡ Degeneracy Level: Maximum</p>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; padding: 10px 20px; background: #f093fb; border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer;">Close Stats</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', statsContent);
+        }
+
+        // Initialize navigation on page load
+        document.addEventListener('DOMContentLoaded', setActiveNav);
+    </script>
+</body>
+</html>
