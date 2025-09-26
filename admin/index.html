@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Schwepe Phrase Management</title>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms-preview.js"></script>
+</head>
+<body>
+    <script>
+        // Initialize Decap CMS with configuration
+        CMS.init({
+            config: {
+                backend: {
+                    name: 'git-gateway',
+                    branch: 'main',
+                },
+                local_backend: true,
+                locale: 'en',
+                site_url: 'https://yourdomain.com',
+                collections: [
+                    {
+                        name: 'phrases',
+                        label: 'Dynamic Phrases',
+                        description: 'Manage all dynamic phrases throughout the site',
+                        files: [
+                            {
+                                name: 'page_phrases',
+                                label: 'Page Phrases',
+                                file: 'content/phrases/page-phrases.json',
+                                fields: [
+                                    {
+                                        label: 'Page Titles',
+                                        name: 'pageTitle',
+                                        widget: 'list',
+                                        fields: [{ widget: 'string', name: 'phrase' }],
+                                        default: [
+                                            "Schwepe's Funky Universe",
+                                            "Schwepe's Degen Paradise",
+                                            "Schwepe's Meme Dimension",
+                                            "Schwepe's 247420 Realm",
+                                            "Schwepe's Crypto Circus"
+                                        ]
+                                    },
+                                    {
+                                        label: 'Subtitles',
+                                        name: 'subtitle',
+                                        widget: 'list',
+                                        fields: [{ widget: 'string', name: 'phrase' }],
+                                        default: [
+                                            "Where 247420 Energy Meets Pure Meme Magic ✨",
+                                            "Maximum Degen Energy with Zero Filter 💎",
+                                            "Your Daily Dose of Crypto Chaos 🚀",
+                                            "Where Memes Become Financial Instruments 🎲",
+                                            "The Last Bastion of True Degeneracy 🐸"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                name: 'meme_phrases',
+                                label: 'Meme Generator Phrases',
+                                file: 'content/phrases/meme-phrases.json',
+                                fields: [
+                                    {
+                                        label: 'Meme Generator Titles',
+                                        name: 'memeGeneratorTitle',
+                                        widget: 'list',
+                                        fields: [{ widget: 'string', name: 'phrase' }],
+                                        default: [
+                                            "🎲 247420 Meme Generator 🎲",
+                                            "🎰 Degen Copypasta Factory 🎰",
+                                            "🎪 Maximum Meme Production Facility 🎪",
+                                            "🎭 Your Daily Dose of Crypto Insanity 🎭",
+                                            "🎯 Precision Meme Engineering 🎯"
+                                        ]
+                                    },
+                                    {
+                                        label: 'Meme Generator Subtitles',
+                                        name: 'memeGeneratorSubtitle',
+                                        widget: 'list',
+                                        fields: [{ widget: 'string', name: 'phrase' }],
+                                        default: [
+                                            "Click the button to generate maximum degen copypasta",
+                                            "Generate memes that perfectly capture your financial pain",
+                                            "Create copypastas that will haunt your portfolio",
+                                            "The perfect tool for expressing your degen emotions",
+                                            "Turn your trading trauma into viral content"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,10 +1,10 @@
 {
-  "buildTime": "2025-09-26T11:18:59.040Z",
+  "buildTime": "2025-09-26T11:42:59.668Z",
   "phraseStats": {
-    "totalPhrases": 4694,
-    "totalGroups": 28,
-    "totalKeys": 145,
-    "averagePhrasesPerKey": 32.37241379310345,
+    "totalPhrases": 4804,
+    "totalGroups": 35,
+    "totalKeys": 167,
+    "averagePhrasesPerKey": 28.766467065868262,
     "phraseCounts": [
       {
         "group": "pageTitle",
@@ -730,6 +730,116 @@
         "group": "encouragement",
         "key": "9",
         "count": 23
+      },
+      {
+        "group": "age-verification",
+        "key": "ageVerificationTitle",
+        "count": 5
+      },
+      {
+        "group": "age-verification",
+        "key": "ageVerificationText",
+        "count": 5
+      },
+      {
+        "group": "age-verification",
+        "key": "enterButton",
+        "count": 5
+      },
+      {
+        "group": "meme",
+        "key": "memeGeneratorTitle",
+        "count": 5
+      },
+      {
+        "group": "meme",
+        "key": "memeGeneratorSubtitle",
+        "count": 5
+      },
+      {
+        "group": "meme",
+        "key": "bullishVibes",
+        "count": 5
+      },
+      {
+        "group": "meme",
+        "key": "bearishCopium",
+        "count": 5
+      },
+      {
+        "group": "meme",
+        "key": "gamblingAddiction",
+        "count": 5
+      },
+      {
+        "group": "meme",
+        "key": "diamondHands",
+        "count": 5
+      },
+      {
+        "group": "navigation",
+        "key": "navHome",
+        "count": 5
+      },
+      {
+        "group": "navigation",
+        "key": "navLore",
+        "count": 5
+      },
+      {
+        "group": "navigation",
+        "key": "navStats",
+        "count": 5
+      },
+      {
+        "group": "page",
+        "key": "pageTitle",
+        "count": 5
+      },
+      {
+        "group": "page",
+        "key": "subtitle",
+        "count": 5
+      },
+      {
+        "group": "section",
+        "key": "mainSectionTitle",
+        "count": 5
+      },
+      {
+        "group": "section",
+        "key": "featureTitle",
+        "count": 5
+      },
+      {
+        "group": "stats-page",
+        "key": "statsPageTitle",
+        "count": 5
+      },
+      {
+        "group": "stats-page",
+        "key": "statsHeader",
+        "count": 5
+      },
+      {
+        "group": "stats-page",
+        "key": "statsSubtitle",
+        "count": 5
+      },
+      {
+        "group": "token",
+        "key": "tokenInfoTitle",
+        "count": 5
+      },
+      {
+        "group": "token",
+        "key": "tokenAddressLabel",
+        "count": 5
+      },
+      {
+        "group": "token",
+        "key": "howToBuyTitle",
+        "count": 5
       }
     ],
     "validation": {

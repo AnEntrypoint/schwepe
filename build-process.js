@@ -28,7 +28,9 @@ class PhraseBuildProcess {
                 if (file.endsWith('.json')) {
                     const filePath = path.join(phrasesDir, file);
                     const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-                    Object.assign(phraseData, content);
+                    // Use the filename (without .json) as the group name
+                    const groupName = file.replace('-phrases.json', '').replace('.json', '');
+                    phraseData[groupName] = content;
                 }
             });
         }
@@ -39,11 +41,16 @@ class PhraseBuildProcess {
     // Update phrase system with CMS data
     updatePhrasesFromCMS(cmsData) {
         Object.keys(cmsData).forEach(group => {
-            if (Array.isArray(cmsData[group])) {
-                // The CMS data has arrays like ["phrase1", "phrase2", "phrase3"]
-                // The phrase system expects arrays directly
-                this.phraseSystem.phraseGroups[group] = cmsData[group];
+            if (!this.phraseSystem.phraseGroups[group]) {
+                this.phraseSystem.phraseGroups[group] = {};
             }
+
+            Object.keys(cmsData[group]).forEach(key => {
+                const phrases = cmsData[group][key];
+                if (Array.isArray(phrases)) {
+                    this.phraseSystem.phraseGroups[group][key] = phrases;
+                }
+            });
         });
     }
 
