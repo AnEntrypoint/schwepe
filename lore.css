@@ -188,29 +188,31 @@
 }
 
 /* Enhanced Lore Card Styles */
-.lore-card {
-  position: relative;
-  overflow: hidden;
+a.lore-card {
+  display: block !important;
+  position: relative !important;
+  overflow: hidden !important;
   cursor: pointer;
+  text-decoration: none !important;
 }
 
 .lore-card-mood {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  backdrop-filter: blur(8px);
-  color: #f093fb;
-  border: 1px solid rgba(240, 147, 251, 0.4);
-  z-index: 15;
-  pointer-events: none;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: absolute !important;
+  top: 15px !important;
+  right: 15px !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  padding: 4px 10px !important;
+  border-radius: 12px !important;
+  font-size: 0.7rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  backdrop-filter: blur(8px) !important;
+  color: #f093fb !important;
+  border: 1px solid rgba(240, 147, 251, 0.4) !important;
+  z-index: 15 !important;
+  pointer-events: none !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
 }
 
 
