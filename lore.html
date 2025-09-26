@@ -404,7 +404,7 @@
             <h2>⚠️ Age Verification Required</h2>
             <p>This content contains mature themes, strong language, and existential dread that may not be suitable for all audiences. By proceeding, you confirm that you are 18+ years of age and mentally prepared for the financial trauma ahead.</p>
             <div class="age-verification-buttons">
-                <button onclick="enterSite()" class="enter-button">I'm 18+ and Ready to Lose Money</button>
+                <button onclick="enterSite()" class="enter-button">I'm 18+ and 99% Ape</button>
                 <a href="https://google.com" class="leave-button">Take Me to Safety</a>
             </div>
         </div>
@@ -439,23 +439,24 @@
     </div>
 
     <script>
-        // Age verification function
-        function enterSite() {
-            document.getElementById('age-verification').style.display = 'none';
-            document.getElementById('main-content').classList.remove('content-blurred');
-            // Set a cookie to remember verification
-            document.cookie = 'age_verified=true; max-age=86400; path=/';
-        }
+        // enterSite function is now defined globally above
 
         // Check if user is already verified
         function checkAgeVerification() {
-            const cookies = document.cookie.split(';');
-            const isVerified = cookies.some(cookie => cookie.trim().startsWith('age_verified=true'));
+            const isVerified = localStorage.getItem('age_verified') === 'true';
 
             if (isVerified) {
                 document.getElementById('age-verification').style.display = 'none';
                 document.getElementById('main-content').classList.remove('content-blurred');
             }
+        }
+
+        // Global enterSite function to ensure consistency
+        function enterSite() {
+            document.getElementById('age-verification').style.display = 'none';
+            document.getElementById('main-content').classList.remove('content-blurred');
+            // Use localStorage instead of cookies for file:// protocol compatibility
+            localStorage.setItem('age_verified', 'true');
         }
         // Stats function
         function showStats() {
