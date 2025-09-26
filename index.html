@@ -692,6 +692,96 @@
         }
 
   
+        /* Adult Content Warning Styles */
+        .age-verification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .age-verification-modal {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid rgba(240, 147, 251, 0.5);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 50px rgba(240, 147, 251, 0.3);
+        }
+
+        .age-verification-modal h2 {
+            color: #f093fb;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(240, 147, 251, 0.5);
+        }
+
+        .age-verification-modal p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .age-verification-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .enter-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+
+        .enter-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
+        }
+
+        .leave-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .leave-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .content-blurred {
+            filter: blur(10px);
+            pointer-events: none;
+            user-select: none;
+        }
+
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: 1fr;
@@ -708,31 +798,44 @@
     </style>
 </head>
 <body>
-    <div class="animated-bg"></div>
-
-    <div class="floating-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
+    <!-- Age Verification Overlay -->
+    <div id="age-verification" class="age-verification-overlay">
+        <div class="age-verification-modal">
+            <h2>⚠️ Age Verification Required</h2>
+            <p>This content contains mature themes, strong language, and existential dread that may not be suitable for all audiences. By proceeding, you confirm that you are 18+ years of age and mentally prepared for the financial trauma ahead.</p>
+            <div class="age-verification-buttons">
+                <button onclick="enterSite()" class="enter-button">I'm 18+ and Ready to Lose Money</button>
+                <a href="https://google.com" class="leave-button">Take Me to Safety</a>
+            </div>
+        </div>
     </div>
 
-    <div class="degen-emojis">
-        <div class="floating-emoji">🚀</div>
-        <div class="floating-emoji">💎</div>
-        <div class="floating-emoji">🔥</div>
-        <div class="floating-emoji">🎲</div>
-        <div class="floating-emoji">⚡</div>
-        <div class="floating-emoji">🌙</div>
-    </div>
+    <div id="main-content" class="content-blurred">
+        <div class="animated-bg"></div>
 
-    <div id="degen-phrases" class="degen-phrases-popup"></div>
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
 
-    <!-- Corner Man Element -->
-    <div id="corner-man" style="position: fixed; bottom: 0; width: 150px; height: 150px; z-index: 100; cursor: pointer; transition: all 0.8s ease; opacity: 0; transform: translateX(0);" onclick="loadRandomCornerImage()">
-        <img src="" alt="Corner Man" style="width: 100%; height: 100%; object-fit: stretch;">
-    </div>
+        <div class="degen-emojis">
+            <div class="floating-emoji">🚀</div>
+            <div class="floating-emoji">💎</div>
+            <div class="floating-emoji">🔥</div>
+            <div class="floating-emoji">🎲</div>
+            <div class="floating-emoji">⚡</div>
+            <div class="floating-emoji">🌙</div>
+        </div>
 
-    <div class="container">
+        <div id="degen-phrases" class="degen-phrases-popup"></div>
+
+        <!-- Corner Man Element -->
+        <div id="corner-man" style="position: fixed; bottom: 0; width: 150px; height: 150px; z-index: 100; cursor: pointer; transition: all 0.8s ease; opacity: 0; transform: translateX(0);" onclick="loadRandomCornerImage()">
+            <img src="" alt="Corner Man" style="width: 100%; height: 100%; object-fit: stretch;">
+        </div>
+
+        <div class="container">
         <header>
             <h1 class="title">🚀 Schwepe's Degen Universe 🚀</h1>
             <p class="subtitle">Where 247420 Energy Meets Pure Meme Magic ✨</p>
@@ -881,7 +984,7 @@
             <h2 class="cta-title">🔥 Join the Degen Revolution 🔥</h2>
             <p class="cta-description">Welcome to 247420 — where memes > metrics and community > charts. Ready to ape in? 🚀</p>
             <div class="cta-buttons">
-                      <a href="lore.html" class="cta-button lore-button">📜 Read the Sacred Lore</a>
+                      <a href="lore.html" class="cta-button lore-button" onclick="handleBeginJourney(event)">🚀 Begin Your Journey</a>
             </div>
         </div>
 
@@ -1153,6 +1256,110 @@
 
             // CTA button navigation (now goes to gallery.html)
             // No need for smooth scrolling since we're navigating to a new page
+
+            // Age verification functions
+            function enterSite() {
+                document.getElementById('age-verification').style.display = 'none';
+                document.getElementById('main-content').classList.remove('content-blurred');
+                document.cookie = 'age_verified=true; max-age=86400; path=/';
+            }
+
+            // Check if user has already verified age
+            function checkAgeVerification() {
+                const cookies = document.cookie.split(';');
+                const ageVerified = cookies.find(cookie => cookie.trim().startsWith('age_verified=true'));
+
+                if (ageVerified) {
+                    document.getElementById('age-verification').style.display = 'none';
+                    document.getElementById('main-content').classList.remove('content-blurred');
+                }
+            }
+
+            // Run age verification check on page load
+            checkAgeVerification();
+
+            // Random alt text system for SEO diversity
+            const altTextOptions = {
+                'Corner Man': [
+                    "The mysterious corner dweller watching your degen antics",
+                    "Silent observer of your questionable financial decisions",
+                    "Shadowy figure who knows you're gonna rug",
+                    "The entity that judges your 3AM trades",
+                    "Corner spectral presence laughing at your portfolio"
+                ],
+                'Official Schwepe Logo': [
+                    "The amphibious overlord of your financial demise",
+                    "Supreme frog leader of the 247420 movement",
+                    "Your guide to losing money stylishly",
+                    "Chief amphibian architect of degen culture",
+                    "The frog that witnessed your worst trading decisions"
+                ]
+            };
+
+            // Function to get random alt text
+            function getRandomAltText(baseAlt) {
+                const options = altTextOptions[baseAlt];
+                if (options && options.length > 0) {
+                    return options[Math.floor(Math.random() * options.length)];
+                }
+                return baseAlt;
+            }
+
+            // Apply random alt text on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                // Corner Man image
+                const cornerManImg = document.querySelector('#corner-man img');
+                if (cornerManImg) {
+                    cornerManImg.alt = getRandomAltText('Corner Man');
+                }
+
+                // Featured logo
+                const featuredImg = document.querySelector('.featured-image');
+                if (featuredImg) {
+                    featuredImg.alt = getRandomAltText('Official Schwepe Logo');
+                }
+
+                // Schwepe card images (will be updated when cards load)
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === 1) { // Element node
+                                const imgs = node.querySelectorAll('.pepe-image');
+                                imgs.forEach(img => {
+                                    const title = img.alt;
+                                    const schwepeAlts = [
+                                        `${title} - your financial disaster wrapped in pixels`,
+                                        `${title} - the frog that laughs at your stop losses`,
+                                        `${title} - 247420's answer to your existence crisis`,
+                                        `${title} - because WAGMI is for normies, we're here for the chaos`,
+                                        `${title} - the amphibious embodiment of your poor choices`
+                                    ];
+                                    img.alt = schwepeAlts[Math.floor(Math.random() * schwepeAlts.length)];
+                                });
+                            }
+                        });
+                    });
+                });
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            });
+
+            // Handle Begin Your Journey button click
+            function handleBeginJourney(event) {
+                const cookies = document.cookie.split(';');
+                const ageVerified = cookies.find(cookie => cookie.trim().startsWith('age_verified=true'));
+
+                if (!ageVerified) {
+                    event.preventDefault();
+                    // Show age verification by making it visible and blurring content
+                    document.getElementById('age-verification').style.display = 'flex';
+                    document.getElementById('main-content').classList.add('content-blurred');
+                }
+                // If age verified, allow normal navigation to lore.html
+            }
         });
     </script>
 </body>
