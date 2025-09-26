@@ -4,6 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 import { BuildTimePhraseSystem } from './static/build-time-phrases.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -177,7 +178,8 @@ class PhraseBuildProcess {
         const {
             inputDir = path.join(__dirname),
             outputDir = path.join(__dirname, 'dist'),
-            loadFromCMS = true
+            loadFromCMS = true,
+            runViteBuild = true
         } = options;
 
         try {
@@ -204,6 +206,47 @@ class PhraseBuildProcess {
 
             console.log('🎉 Phrase build process completed successfully!');
             console.log(`📊 Processed ${this.phraseSystem.getStats().totalPhrases} phrases across ${this.phraseSystem.getStats().totalGroups} groups`);
+
+            // Run Vite build if enabled
+            if (runViteBuild) {
+                console.log('🔨 Starting Vite build process...');
+                try {
+                    // Backup phrase-processed files
+                    const backupDir = path.join(__dirname, 'dist-backup');
+                    if (!fs.existsSync(backupDir)) {
+                        fs.mkdirSync(backupDir);
+                    }
+
+                    const filesToBackup = ['index.html', 'gallery.html', 'lore.html', 'stats.html'];
+                    filesToBackup.forEach(file => {
+                        const src = path.join(outputDir, file);
+                        const dest = path.join(backupDir, file);
+                        if (fs.existsSync(src)) {
+                            fs.copyFileSync(src, dest);
+                        }
+                    });
+
+                    // Run Vite build
+                    execSync('npm run build:vite-only', { stdio: 'inherit', cwd: __dirname });
+
+                    // Restore phrase-processed files
+                    filesToBackup.forEach(file => {
+                        const src = path.join(backupDir, file);
+                        const dest = path.join(outputDir, file);
+                        if (fs.existsSync(src)) {
+                            fs.copyFileSync(src, dest);
+                        }
+                    });
+
+                    // Clean up backup
+                    fs.rmSync(backupDir, { recursive: true, force: true });
+
+                    console.log('✅ Vite build completed successfully!');
+                } catch (viteError) {
+                    console.error('❌ Vite build failed:', viteError);
+                    throw viteError;
+                }
+            }
 
         } catch (error) {
             console.error('❌ Build process failed:', error);

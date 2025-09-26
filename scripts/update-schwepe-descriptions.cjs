@@ -13,10 +13,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
-const { execFileSync } = require('child_process');
 const https = require('https');
-const http = require('http');
 
 const SCHWEPE_FOLDER = path.join(__dirname, '..', 'schwepe');
 const CORNERMEN_FOLDER = path.join(__dirname, '..', 'cornermen');

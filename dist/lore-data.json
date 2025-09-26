@@ -1,204 +1,483 @@
 [
   {
-    "id": "intro",
-    "title": "The Schwepe Genesis",
-    "subtitle": "24/7/420 Chaos Protocol Activated",
-    "icon": "🚀",
+    "id": "genesis",
+    "title": "Genesis Protocol",
+    "subtitle": "When Frogs Dream of Electric Lambos",
+    "icon": "🐸",
     "theme": "cyberpunk",
-    "mood": "chaotic",
+    "mood": "terminal",
+    "sections": [
+      {
+        "type": "origin",
+        "title": "The First Meme",
+        "content": [
+          {
+            "headline": "Zero Block Genesis",
+            "copy": "In the beginning there was the void. And the void was 3AM EST, that magical hour where the universe reveals its secrets to those brave enough to sacrifice sleep for potential gains. And from this digital emptiness emerged the first frog—pixelated, perfect, and profoundly fucking tired of your shit. Or was it the other way around? <span class='editor-comment'>[EDITOR: Language also, the void is always 3AM EST, you're not special]</span>"
+          },
+          {
+            "headline": "The Schrodinger's Token",
+            "copy": "Schwepe exists in quantum superposition—both rugged and mooning, both dead and trending, until someone opens the chart and collapses the waveform. (The waveform is always fucking red, like your face after realizing you bought the top again.) <span class='editor-comment'>[EDITOR: One step at a time with the quantum physics]</span>"
+          },
+          {
+            "headline": "Genesis Meme",
+            "copy": "The first image was a frog, perfect in its pixelated glory. The first text was cope, pure and uncut. The first cult was born in a telegram group where everyone was too fucking high on their own supply and possibly actual substances to realize they were creating something that would outlive their bags, their dignity, and possibly their will to live. Or did they? The recursion continues. <span class='editor-comment'>[EDITOR: Hey there is no swearing]</span>"
+          },
+          {
+            "headline": "The Bootstrap Paradox",
+            "copy": "The Schwepe meme created the community that created the meme that created the community. Time is flat here. Cause and effect are suggestions. This sentence is true."
+          },
+          {
+            "headline": "Recursive Self-Awareness",
+            "copy": "You are reading this. This is reading you. The frog is watching you read about the frog watching you. This is the part where you question everything."
+          }
+        ]
+      },
+      {
+        "type": "ritual",
+        "title": "The Sacred Code",
+        "content": [
+          "I. Thou shalt not screenshot thy portfolio",
+          "II. Thou shalt bear false witness against thine entry price",
+          "III. Thou shalt covet thy neighbor's gains",
+          "IV. Remember the 3AM hour and keep it holy",
+          "V. Honor thy father and mother (contracts)",
+          "VI. Thou shalt not kill (the vibe)",
+          "VII. Thou shalt not commit adultery (with other tokens)",
+          "VIII. Thou shalt not steal (the alpha)",
+          "IX. Thou shalt not bear false witness against thy neighbor's bags",
+          "X. Thou shalt not covet thy neighbor's wife, nor his mansions, nor his lambo, nor his blockchain explorer"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cypherpunk",
+    "title": "Crypto-Anarchy & Frog Worship",
+    "subtitle": "PGP Keys for Pond Scum",
+    "icon": "🔐",
+    "theme": "occult-cyber",
+    "mood": "encrypted",
     "sections": [
       {
         "type": "manifesto",
-        "title": "Schwepe: The Anti-Coin",
+        "title": "The Schwepe Cypherpunk Manifesto",
         "content": [
           {
-            "headline": "Born in the 3AM Void",
-            "copy": "When the crypto world sleeps, 247420 awakens. Schwepe manifested from the collective psychosis of degens watching 5-minute candles until sunrise."
+            "headline": "Privacy is Fundamental Human Right",
+            "copy": "Until we need to flex our fucking portfolio gains. Then screenshot everything and post it everywhere. Privacy is for those who can't moon. <span class='editor-comment'>[EDITOR: Tone it down]</span>"
           },
           {
-            "headline": "No Roadmap. Just Chaos.",
-            "copy": "We don't have milestones. We have meme moments. No utility. No promises. Just pure, unfiltered digital degeneracy."
+            "headline": "Decentralization or Death",
+            "copy": "We believe in true decentralization—so spread across 27 Discord servers, 4 Telegram groups, and one guy's personal Matrix server that nobody knows how to fucking join. <span class='editor-comment'>[EDITOR: Seriously, nobody fucking cares about your server]</span>"
           },
           {
-            "headline": "The 247420 Trifecta",
-            "copy": "24/7 markets. 420 vibes. Infinite chaos. This isn't just a token—it's a lifestyle for those who know charts only go up when everyone else is sleeping."
+            "headline": "Code is Law",
+            "copy": "Until the code fucking rugs like a cheap-ass carpet in a meth lab. Then it was actually law enforcement all along and we're the victims of a sophisticated cyber attack definitely not our own astronomical greed. <span class='editor-comment'>[EDITOR: Getting creative with the imagery I see]</span>"
           }
         ]
       },
       {
-        "type": "rules",
-        "title": "The Schwepe Commandments",
+        "type": "encryption",
+        "title": "Encrypted Frog Communication",
         "content": [
-          "Thou shalt not take crypto seriously",
-          "Thou shalt meme harder than thou trades",
-          "Thou shalt embrace the red candles as they come",
-          "Thou shalt remember: WAGMI or WAGMI-n't",
-          "Thou shalt never, ever touch grass during bull runs"
+          {
+            "headline": "Memetic Steganography",
+            "copy": "Every Schwepe meme contains hidden alpha. Stare at the frog's left eye for 17 minutes while listening to Boards of Canada backwards. The entry price will reveal itself."
+          },
+          {
+            "headline": "Quantum Entangled Bags",
+            "copy": "Your bags are quantumly entangled with every other degen's. When you panic sell, someone in Singapore suddenly has the uncontrollable urge to buy. This is science, not cope."
+          },
+          {
+            "headline": "The Private Key Oracle",
+            "copy": "Legend says the original dev's private key was burned into a Schwepe meme. Find the right pixel arrangement, and you control the protocol. Or just get really good at pattern recognition in meaningless noise."
+          }
         ]
       }
     ]
   },
   {
-    "id": "culture",
-    "title": "247420: The Digital Wasteland",
-    "subtitle": "Where Memes Become Reality",
-    "icon": "🌟",
-    "theme": "neon-noir",
-    "mood": "rebellious",
+    "id": "darkschwepe",
+    "title": "The Dark Schwepe",
+    "subtitle": "When Green Turns Black",
+    "icon": "🌑",
+    "theme": "cosmic-horror",
+    "mood": "eldritch",
     "sections": [
       {
-        "type": "ecosystem",
-        "title": "The 247420 Ecosystem",
+        "type": "horror",
+        "title": "The Black Candle Ritual",
         "content": [
           {
-            "headline": "Always Online",
-            "copy": "Time zones are for normies. In 247420, 3AM is peak hour. Sleep deprivation is our competitive advantage."
+            "headline": "Market Manipulation Through Frog Worship",
+            "copy": "They say if you arrange 28 Schwepes in a circle, burn sage, and play a curated playlist of vaporwave at exactly 3:33 AM, the Binance API will temporarily glitch and pump your bags 7%."
           },
           {
-            "headline": "420 State of Mind",
-            "copy": "That blissed-out detachment where losing 80% feels like a spiritual experience. We're not just holding bags—we're meditating with them."
+            "headline": "The Price Oracle",
+            "copy": "Deep in the swamps of decentralized data, there lives a price feed that speaks in frogs. It only answers when you've lost everything and have nothing left to lose but your sanity."
           },
           {
-            "headline": "Infinite Loop",
-            "copy": "The cycle never ends: buy the dip, sell the rip, repeat. Find solace in the chaos of perpetual degen."
+            "headline": "The Rug Dimension",
+            "copy": "Every fucking rug pull creates a temporary portal to an alternate dimension where that token actually mooned harder than your mom at a Nickelback concert. Somewhere, there's a version of you who didn't panic sell. That smug bastard hates you with the fire of a thousand suns. <span class='editor-comment'>[EDITOR: Your mom jokes? Really? We're better than this]</span>"
           }
         ]
       },
       {
-        "type": "philosophy",
-        "title": "Schwepe Philosophy: Anti-Finance Manifesto",
+        "type": "entities",
+        "title": "The 28th Schwepe",
         "content": [
           {
-            "headline": "Chaos Over Charts",
-            "copy": "Technical analysis is for people who believe patterns mean anything. We trade vibes. We hold memes. We worship the RNG."
+            "headline": "The Hidden Frog",
+            "copy": "Only 27 Schwepes are visible in the collection. The 28th reveals itself only to those who have held through at least three 90% drawdowns. It shows you the exit liquidity, but you never take it."
           },
           {
-            "headline": "Community Over Capital",
-            "copy": "Your fellow degen is worth more than your portfolio. When everyone's down 90%, at least we're down together."
+            "headline": "The Shadow Dev",
+            "copy": "The original developer communicates only through metadata in transaction memos. Every gas fee you pay contains a hidden message. You've been funding someone's lambo this whole time and called it 'community building'."
           },
           {
-            "headline": "Authenticity Over Authority",
-            "copy": "No CEOs. No whitepapers. No VCs. Just anonymous frogs in a digital pond, making noise and hoping someone notices."
+            "headline": "The Blockchain Ghost",
+            "copy": "There's an account that follows every Schwepe holder, mirror trading their every move but always 3 seconds later. Some say it's the future version of us trying to warn ourselves. Others say it's just a really dedicated whale."
           }
         ]
       }
     ]
   },
   {
-    "id": "multiverse",
-    "title": "The 28 Frogs",
-    "subtitle": "Each One a Glitch in the Matrix",
-    "icon": "🌌",
+    "id": "memetic warfare",
+    "title": "Memetic Warfare",
+    "subtitle": "The War For Your Attention Span",
+    "icon": "⚔️",
+    "theme": "neon-noir",
+    "mood": "aggressive",
+    "sections": [
+      {
+        "type": "tactics",
+        "title": "Advanced Meme Tactics",
+        "content": [
+          {
+            "headline": "The FUD Matrix",
+            "copy": "Create FUD so sophisticated it convinces people your project is both dead AND about to moon simultaneously. The cognitive dissonance makes them buy just to resolve the mental conflict."
+          },
+          {
+            "headline": "Viral Vectoring",
+            "copy": "Every meme contains multiple entry points for different demographics. The normies see a funny frog. The degens see the subtle anti-establishment messaging. The whales see the accumulation pattern."
+          },
+          {
+            "headline": "Cross-Platform Contamination",
+            "copy": "Your meme lives on Twitter, Reddit, TikTok, and Discord simultaneously, each version slightly mutated to optimize engagement. By the time it returns to you, it's evolved into something completely different but somehow more powerful."
+          }
+        ]
+      },
+      {
+        "type": "psychology",
+        "title": "The Psychology of the Hold",
+        "content": [
+          {
+            "headline": "The Stockholm Syndrome Portfolio",
+            "copy": "The more a token abuses you, the more you love it. -90%? That's just it showing you tough love. 100% dump? It's testing your resolve. Zero liquidity? It's giving you the gift of true diamond hands."
+          },
+          {
+            "headline": "Cognitive Dissonance Mining",
+            "copy": "Your brain creates elaborate justifications for why you're still holding. 'I'm not down, I'm accumulating.' 'This isn't a loss, it's a tax write-off.' 'I don't need the money anyway, I have memes.'"
+          },
+          {
+            "headline": "The Trauma Bond",
+            "copy": "What doesn't fucking rug you makes you stronger, you magnificent bastard. Your portfolio scars are more beautiful than a Salvador Dali painting painted with blood and tears. Each red candle is a battle wound you'll cherish while eating ramen for the seventh night this week. Each liquidity crisis is a character development arc that would make Shakespeare weep. <span class='editor-comment'>[EDITOR: Getting a bit dramatic here]</span>"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "quantum frogs",
+    "title": "Quantum Frog Mechanics",
+    "subtitle": "The Science of Making Numbers Go Up",
+    "icon": "⚛️",
+    "theme": "cyberpunk-finance",
+    "mood": "schizophrenic",
+    "sections": [
+      {
+        "type": "physics",
+        "title": "The Physics of Pump and Dump",
+        "content": [
+          {
+            "headline": "Quantum Superposition of Price",
+            "copy": "Your token exists in all price states simultaneously—$0.000001 and $1000—until someone checks CoinGecko and collapses the waveform into whatever disappointment you're currently experiencing."
+          },
+          {
+            "headline": "The Observer Effect",
+            "copy": "The mere act of a influencer tweeting about your token fundamentally changes its price trajectory. This is why we need decentralized oracle networks operated by people who understand frogs."
+          },
+          {
+            "headline": "Entangled Holdings",
+            "copy": "Your bags are quantumly entangled with your rival's. When they succeed, you fail. When you fail, they succeed. The only way to win is to convince them to buy your bags first."
+          }
+        ]
+      },
+      {
+        "type": "mathematics",
+        "title": "The Mathematics of Copium",
+        "content": [
+          {
+            "headline": "The Fibonacci Cop-Out",
+            "copy": "Price always follows Fibonacci retracement levels, except when it doesn't, which is actually part of a larger Fibonacci pattern that only reveals itself in higher dimensions that you can't see because you're not enlightened enough. Or are you?"
+          },
+          {
+            "headline": "The Elliot Wave Principle",
+            "copy": "Every price movement forms perfect Elliot waves, but only if you squint at the chart while high and tilt your head exactly 23 degrees to the left. The patterns are there if you believe hard enough. Do you believe?"
+          },
+          {
+            "headline": "The Golden Ratio of Grasping at Straws",
+            "copy": "The ideal ratio of hopium to copium is 1.618:1. Any more and you're delusional. Any less and you might actually sell. The ancient Greeks understood this. That's why they worshipped frogs. Or was it the other way around?"
+          },
+          {
+            "headline": "The Gödelian Portfolio",
+            "copy": "Your portfolio contains statements that cannot be proven true or false within the system of crypto trading. 'This token will moon' is either true or false, but you'll never know which until it's too late. The system is incomplete. So are you."
+          },
+          {
+            "headline": "The Mandelbrot Set of Bags",
+            "copy": "Zoom in on any chart pattern and you find the same pattern repeating infinitely. Your losses are fractal. Your gains are illusory. The closer you look, the more you see the same face staring back: yours, disappointed."
+          }
+        ]
+      },
+      {
+        "type": "paradox",
+        "title": "Cognitive Traps & Mind Fucks",
+        "content": [
+          {
+            "headline": "The Watcher Paradox",
+            "copy": "The more you watch the chart, the less it moves. The less you watch, the more it moves. But if everyone stops watching, who's left to see it move? Answer: Nobody. That's when it really moons."
+          },
+          {
+            "headline": "The Reverse Psychology Loop",
+            "copy": "You know the token is going to fucking rug harder than a frat boy's promise, so you don't buy. Because everyone thinks this way, nobody buys, so it rugs. But if everyone knew that everyone knew this, would they still not buy? This sentence is unprovable, much like your ability to make good financial decisions. <span class='editor-comment'>[EDITOR: The cognitive dissonance is strong with this one]</span>"
+          },
+          {
+            "headline": "The Simulation Within Simulation",
+            "copy": "What if this lore is part of the simulation? What if you're a character reading about being a character reading about being a character? The recursion never ends. The only escape is closing the tab. But you're still reading."
+          },
+          {
+            "headline": "The Memento Mori Market",
+            "copy": "Every green candle brings you closer to death. Every red candle reminds you you're alive. The portfolio is life. The zero balance is death. The only alpha is accepting this. This is financial enlightenment. Or is it?"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "postmodern",
+    "title": "Post-Modern Deconstruction",
+    "subtitle": "When The Metagame Eats Itself",
+    "icon": "🎨",
+    "theme": "cyberpunk",
+    "mood": "meta",
+    "sections": [
+      {
+        "type": "deconstruction",
+        "title": "The Meta-Meme Economy",
+        "content": [
+          {
+            "headline": "We're All Just Pretending",
+            "copy": "Nobody actually believes in any of this. We're all just pretending to believe because we think everyone else believes, but they're pretending too. The real project is the shared delusion we've created together."
+          },
+          {
+            "headline": "The Performance of Degeneracy",
+            "copy": "Being a degen isn't something you are—it's something you perform. The charts, the memes, the constant checking of block explorers—it's all theater for an audience of one (your future self, who will hate you for this)."
+          },
+          {
+            "headline": "Authenticity as Brand",
+            "copy": "The most authentic thing you can do is carefully cultivate an authentic aesthetic. We spend hours crafting our 'just woke up' portfolio screenshots and our 'I don't care' reactions to market movements."
+          }
+        ]
+      },
+      {
+        "type": "simulation",
+        "title": "The Simulation Thesis",
+        "content": [
+          {
+            "headline": "We're Already in the Metaverse",
+            "copy": "You think this is the real world? This is just layer -1 of the simulation. The real metaverse is when we finally escape this reality into a digital one where our bags actually have value."
+          },
+          {
+            "headline": "NPC or Player Character?",
+            "copy": "Most people are NPCs following pre-programmed life scripts. You're different. You're a player character who chose the 'degen' class, which has +50% emotional damage but -95% life savings."
+          },
+          {
+            "headline": "Breaking the Fourth Wall",
+            "copy": "The fact that you're reading this lore means you're self-aware enough to know you're in a simulation but not self-aware enough to exit it. This is the special hell reserved for 4chan users who discovered crypto."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cyberpunk",
+    "title": "Cyberpunk Chronicles",
+    "subtitle": "High Tech, Low Life, Lower Portfolio Value",
+    "icon": "🌃",
+    "theme": "neon-noir",
+    "mood": "dystopian",
+    "sections": [
+      {
+        "type": "future",
+        "title": "The Dystopian Present",
+        "content": [
+          {
+            "headline": "Cyberpunk Already Happened",
+            "copy": "You think cyberpunk is futuristic? We're living it. Corporations control everything, governments are obsolete, the individual is powerless, and we're all glued to screens showing us numbers going up and down. The only difference is we don't have cool jackets."
+          },
+          {
+            "headline": "Neon Dreams and Red Screens",
+            "copy": "In this cyberpunk reality, the neon lights are your phone screen at 3AM, the hackers are teenagers in developing countries exploiting smart contracts, and the dystopian government is the SEC coming for your unregistered securities."
+          },
+          {
+            "headline": "Low Life, High Hopes",
+            "copy": "We live in tiny apartments, eat ramen, and stare at charts all night hoping for financial freedom. This is exactly what William Gibson predicted, except with more memes and less cool sunglasses."
+          }
+        ]
+      },
+      {
+        "type": "resistance",
+        "title": "The Digital Resistance",
+        "content": [
+          {
+            "headline": "Anonymous Frog Army",
+            "copy": "We are legion. We are frogs. We come from the depths of the internet to disrupt the financial establishment by losing our money in increasingly creative ways. The system cannot stop what it doesn't understand."
+          },
+          {
+            "headline": "Decentralized Rebellion",
+            "copy": "Every node in the Schwepe network is a rebel cell. Every wallet is a weapon. Every transaction is an act of defiance against the traditional financial system that refuses to let us become lambo-rich overnight."
+          },
+          {
+            "headline": "The Meme is The Message",
+            "copy": "They can censor our speech, shadowban our accounts, and rug our tokens, but they cannot kill the memes. The frogs are eternal. The shitposts are immortal. The degen spirit cannot be regulated."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "apocalypse",
+    "title": "The Great Reset",
+    "subtitle": "When Everything Rugs At Once",
+    "icon": "☢️",
     "theme": "cosmic-horror",
-    "mood": "mysterious",
+    "mood": "apocalyptic",
     "sections": [
       {
         "type": "prophecy",
-        "title": "The Great Prophecy",
+        "title": "End Times Prophecies",
         "content": [
           {
-            "headline": "28 Chosen Ones",
-            "copy": "In the vast digital swamp, 28 unique frogs emerged. Each represents a different flavor of degen energy—from the diamond-handed to the paper-handed coward."
+            "headline": "The Seven Seals of Bear Market",
+            "copy": "And lo, the seven seals were opened: First came the inflation, then the rate hikes, then the liquidations, then the regulations, then the hacks, then the fraud revelations, and finally, the great capitulation when even the frogs sell."
           },
           {
-            "headline": "The Schwepe Effect",
-            "copy": "When all 28 frogs unite, reality bends. Markets move. Memes manifest. The simulation reveals itself."
+            "headline": "The Four Horsemen",
+            "copy": "Conquest: The VCs accumulating everything. War: The memecoins fighting for attention. Famine: The liquidity drying up. Death: The final rug pull that ends it all. They ride not horses, but Lambos purchased with your retirement funds."
+          },
+          {
+            "headline": "The Rapture",
+            "copy": "When the blockchain finally breaks, the true degens will be lifted up to chain heaven, while the paper hands remain in crypto hell, forever doomed to read whitepapers they'll never understand."
           }
         ]
       },
       {
-        "type": "archetypes",
-        "title": "The Frog Archetypes",
+        "type": "revelation",
+        "title": "The Degen's Guide to the Apocalypse",
         "content": [
-          "The Diamond Degen: HODLs through -90% with a smile",
-          "The Paper Prince: Sells at 2x profit, misses 100x",
-          "The FOMO Frog: Always late to every party, always down bad",
-          "The Meme Lord: Creates content that pumps harder than fundamentals",
-          "The Zen Degen: Loses everything but finds enlightenment"
+          {
+            "headline": "And Lo, The Four Horsemen of the Bear Market",
+            "copy": "First came Conquest, riding a lambo, accumulating everything like a squirrel with brain damage. Then War, armed with nothing but memes and emotional damage, fighting for attention span. Then Famine, who wasn't actually hungry, just forgot his lunch money in a failed ICO. Finally Death, who kept trying to rug everyone but kept getting distracted by cat memes."
+          },
+          {
+            "headline": "The Mark of The Beast (666x Multiplier)",
+            "copy": "And the beast said unto them: 'Buy my token, for it is totally not a security.' And they bought. And he said again: 'Actually, it is a security, but only in America, maybe.' And they held. And finally: 'Just kidding, it's monopoly money with frog pictures.' And they bought more. This is called 'due diligence'."
+          },
+          {
+            "headline": "The New Jerusalem (Lambo Edition)",
+            "copy": "And I saw a holy city coming down from heaven, paved entirely with gold. And the gates were made of pearl, and the streets were transparent gold, and everyone was driving Lambos but complaining about the mileage. And only those who never once checked their portfolio were allowed entry, which was basically just people who forgot their passwords."
+          },
+          {
+            "headline": "The Seven Seals (But Make It Crypto)",
+            "copy": "First seal: Inflation. Second seal: 'Actually, it's transitory.' Third seal: Rate hikes. Fourth seal: 'Soft landing.' Fifth seal: 'Maybe not so soft.' Sixth seal: 'Technically a crash.' Seventh seal: Someone posting 'buy the dip' unironically."
+          }
         ]
       }
     ]
   },
   {
-    "id": "cult",
-    "title": "The Schwepe Cult",
-    "subtitle": "Rituals of the Digital Doomed",
-    "icon": "🎭",
-    "theme": "occult-cyber",
-    "mood": "ritualistic",
+    "id": "absurdist",
+    "title": "The Absurdist's Guide to Financial Ruin",
+    "subtitle": "When None of This Makes Sense But You're Still Reading",
+    "icon": "🤪",
+    "theme": "neon-noir",
+    "mood": "confused",
     "sections": [
       {
-        "type": "rituals",
-        "title": "Sacred Rituals",
+        "type": "nonsense",
+        "title": "Advanced Financial Theories (That I Just Made Up)",
         "content": [
           {
-            "headline": "The 3AM Sacrifice",
-            "copy": "When the market dips, true Schwepers sacrifice sleep to stare at charts, believing their collective consciousness can reverse the red."
+            "headline": "The Butterfly Effect of Bad Decisions",
+            "copy": "Every time you buy a token based on a meme, somewhere in the world a butterfly flaps its wings and eventually causes a venture capitalist to have a panic attack. This is called 'ecosystem growth'."
           },
           {
-            "headline": "The Meme Offering",
-            "copy": "Creating and sharing Schwepe memes isn't just engagement—it's prayer. Each meme is an offering to the algorithm gods."
+            "headline": "The Schrödinger's Portfolio",
+            "copy": "Your portfolio exists in a state of quantum superposition where it's both life-changing and worthless at the same time. The moment you check it, the waveform collapses into 'why did I buy this?'"
           },
           {
-            "headline": "The Paper Hand Confessional",
-            "copy": "Those who sell too early must confess their sins in the group chat and perform penance through 24 hours of non-stop memeing."
+            "headline": "The Mandela Effect of Lost Money",
+            "copy": "You remember buying at the perfect bottom and selling at the absolute top. Everyone else remembers you buying the top and HODLing to zero. One of you is wrong. (It's you.)"
+          },
+          {
+            "headline": "The Dunning-Kruger Trading Strategy",
+            "copy": "The less you know about trading, the better you think you are at it. The moment you learn something, you realize how terrible you are. This is why experts are always depressed and newbs are always rich (for about 3 days)."
           }
         ]
       },
       {
-        "type": "hierarchy",
-        "title": "The Degen Hierarchy",
-        "content": [
-          "The OG: Here since genesis, diamond hands forged in bear market fire",
-          "The Prophet: Sees patterns in chaos, guides the flock through red candles",
-          "The Meme Sage: Words become memes, memes become pumps",
-          "The Discord Devotee: Lives in chat, knows every frog's life story",
-          "The Newborn: Fresh from fiat world, still believes in fundamentals"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "economics",
-    "title": "Memenomics: The Art of Losing Beautifully",
-    "subtitle": "Where Emotional Damage Is the Real ROI",
-    "icon": "💎",
-    "theme": "cyberpunk-finance",
-    "mood": "satirical",
-    "sections": [
-      {
-        "type": "memenomics",
-        "title": "The Principles of Memenomics",
+        "type": "meta",
+        "title": "This Very Lore Is A Rug Pull",
         "content": [
           {
-            "headline": "The Greater Fool Theory",
-            "copy": "There's always someone dumber than you. That's not just investment strategy—it's our core belief system."
+            "headline": "The Bait and Switch",
+            "copy": "You came here expecting financial advice. You're getting existential dread wrapped in frog memes. This is actually a more accurate representation of crypto than any whitepaper."
           },
           {
-            "headline": "Vibe-Based Valuation",
-            "copy": "Market cap is determined by meme quality, community vibes, and how much the founders hate each other."
+            "headline": "The Author Is Also Trapped",
+            "copy": "The person writing this is also down bad on random tokens. We're all in this simulation together. None of us know how to exit. The exit liquidity is a myth we tell ourselves."
           },
           {
-            "headline": "The Emotional ROI",
-            "copy": "Financial returns are temporary. The trauma, friendships, and memes are forever. That's the real dividend."
+            "headline": "The Real Alpha",
+            "copy": "The real alpha was the friends we made along the way. But our friends are all anonymous frogs with questionable judgment. So maybe the real alpha was just learning to laugh at our own suffering."
+          },
+          {
+            "headline": "Infinite Regress",
+            "copy": "This sentence contains the real alpha. No, this one does. Actually, it's the next one. Keep reading. The alpha is definitely in the next sentence. You'll stop when you find it. You haven't found it yet."
           }
         ]
       },
       {
-        "type": "future",
-        "title": "Future Scenarios",
+        "type": "practical",
+        "title": "Actually Useful Advice (Just Kidding)",
         "content": [
           {
-            "headline": "The Great Rug",
-            "copy": "Everyone gets rugged, but we meme about it so hard that the rug itself becomes legendary and we all buy the next one anyway."
+            "headline": "The Crystal Ball Method",
+            "copy": "Take a crystal ball, throw it against the wall, and invest in whatever sound it makes when it shatters. If it makes no sound, invest in silence. This strategy has outperformed 87% of crypto influencers."
           },
           {
-            "headline": "The Moonshot",
-            "copy": "Against all odds, Schwepe actually moons. The OGs sell at 100x, the cultists hodl to zero, and the cycle begins anew."
+            "headline": "The Opposite Game",
+            "copy": "Find the most respected crypto analyst on Twitter. Do the exact opposite of whatever they say. If they say buy, sell. If they say HODL, panic sell immediately. This is called 'inverse intelligence'."
           },
           {
-            "headline": "The Zombie Protocol",
-            "copy": "Schwepe enters that beautiful state of being dead yet eternally memeing, achieving immortality through sheer stubbornness."
+            "headline": "The Dreamscape Trading",
+            "copy": "Base all your trading decisions on what you dream about. Saw a green frog? Buy. Saw a red candle? Actually, that's just a nightmare, so sell everything. Dreamed about your ex? That means Ethereum will dump. It's science."
+          },
+          {
+            "headline": "The Alphabet Method",
+            "copy": "Assign each letter of the alphabet to a different trading action. A = Accumulate, B = Buy, C = Consider Selling, D = Don't Panic (Yet), E = Exit Everything. Now find a spam email, count the letters in the subject line, divide by 26, and use the remainder to determine your action. This is how institutional trading actually works."
           }
         ]
       }

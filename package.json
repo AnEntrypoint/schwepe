@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node build-process.js build",
+    "build:vite-only": "vite build",
+    "build:phrases": "node build-process.js build",
     "preview": "vite preview",
     "update-schwepes": "node scripts/update-schwepe-descriptions.cjs",
     "scan-schwepes": "node scripts/update-schwepe-descriptions.cjs --scan-only",

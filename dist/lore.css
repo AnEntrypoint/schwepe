@@ -362,3 +362,23 @@ a.lore-card {
   40% { content: '..'; }
   60%, 100% { content: '...'; }
 }
+
+/* Editor Comments Styling */
+.editor-comment {
+  background: rgba(255, 255, 0, 0.1);
+  border-left: 3px solid #ffff00;
+  padding: 2px 8px;
+  margin: 5px 0;
+  border-radius: 4px;
+  font-style: italic;
+  font-size: 0.9em;
+  color: #ffffcc;
+  text-shadow: 0 0 5px rgba(255, 255, 0, 0.3);
+  font-family: 'Courier New', monospace;
+}
+
+.editor-comment:hover {
+  background: rgba(255, 255, 0, 0.2);
+  transform: translateX(5px);
+  transition: all 0.3s ease;
+}
