@@ -123,8 +123,9 @@
             text-decoration: none;
             color: #fff;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            position: relative !important;
+            display: block !important;
+            overflow: hidden !important;
         }
 
         .lore-card::before {
@@ -243,6 +244,25 @@
 
         .glow-text {
             animation: glow 2s ease-in-out infinite;
+        }
+
+        .lore-card-mood {
+            position: absolute !important;
+            top: 15px !important;
+            right: 15px !important;
+            background: rgba(0, 0, 0, 0.8) !important;
+            padding: 4px 10px !important;
+            border-radius: 12px !important;
+            font-size: 0.7rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            backdrop-filter: blur(8px) !important;
+            color: #f093fb !important;
+            border: 1px solid rgba(240, 147, 251, 0.4) !important;
+            z-index: 15 !important;
+            pointer-events: none !important;
+            font-weight: 600 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
         }
 
         @media (max-width: 768px) {
