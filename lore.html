@@ -412,28 +412,41 @@
         function scrollToChapter(chapterId) {
             const chapter = window.loreEngine.getChapter(chapterId);
             if (chapter) {
-                // Store chapter data for modal or navigate to detailed view
+                // Store chapter data and navigate to chapter page
                 localStorage.setItem('currentChapter', JSON.stringify(chapter));
-                // For now, let's show the chapter content in a modal
-                showChapterModal(chapter);
+                window.location.href = `#${chapterId}`;
+                renderChapterInline(chapterId);
             }
         }
 
-        function showChapterModal(chapter) {
-            const theme = window.loreEngine.getThemeConfig(chapter.theme);
-            const modalHTML = `
-                <div class="chapter-modal" data-theme="${chapter.theme}">
-                    <div class="modal-content">
-                        <div class="modal-close">
-                            <button onclick="this.closest('.chapter-modal').remove()" class="close-button">×</button>
-                        </div>
-                        ${window.loreEngine.generateLoreHTML(chapter.id)}
-                    </div>
-                </div>
+        function renderChapterInline(chapterId) {
+            const chapter = window.loreEngine.getChapter(chapterId);
+            if (!chapter) return;
+
+            const container = document.getElementById('lore-chapters-container');
+            if (!container) return;
+
+            // Replace the chapter cards with full chapter content
+            container.innerHTML = window.loreEngine.generateLoreHTML(chapterId);
+
+            // Add back button
+            const backButton = document.createElement('div');
+            backButton.className = 'back-button-container';
+            backButton.innerHTML = `
+                <button onclick="showAllChapters()" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to All Chapters
+                </button>
             `;
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            container.insertBefore(backButton, container.firstChild);
         }
 
+        function showAllChapters() {
+            // Remove hash and re-render all chapters
+            history.pushState("", document.title, window.location.pathname + window.location.search);
+            renderDynamicLore();
+        }
+
+        
         function updateRandomLoreSnippet() {
             const snippet = window.loreEngine.getRandomLoreSnippet();
             const snippetElement = document.getElementById('random-lore-snippet');

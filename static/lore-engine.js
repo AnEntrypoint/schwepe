@@ -53,14 +53,14 @@ class LoreEngine {
     return this.themes[theme] || this.themes['cyberpunk'];
   }
 
-  generateLoreHTML(chapterId) {
+  generateLoreHTML(chapterId, isInline = false) {
     const chapter = this.getChapter(chapterId);
     if (!chapter) return '<div>Chapter not found</div>';
 
     const theme = this.getThemeConfig(chapter.theme);
 
     let html = `
-      <div class="lore-chapter" data-theme="${chapter.theme}">
+      <div class="lore-chapter ${isInline ? 'chapter-inline' : ''}" data-theme="${chapter.theme}">
         <div class="chapter-header">
           <div class="chapter-icon">${chapter.icon}</div>
           <h1 class="chapter-title">${chapter.title}</h1>
