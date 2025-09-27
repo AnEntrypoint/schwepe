@@ -1,0 +1,41 @@
+{
+  "name": "Schwepe's Meme Dimension",
+  "short_name": "Schwepe",
+  "description": "Where 247420 energy meets pure meme magic. Experience the ultimate degen culture with interactive features, lore, and community vibes.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2c3e50",
+  "theme_color": "#2c3e50",
+  "orientation": "portrait-primary",
+  "categories": ["entertainment", "games", "social"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/schwepe/schwepe.gif",
+      "sizes": "1200x630",
+      "type": "image/gif",
+      "purpose": "any"
+    },
+    {
+      "src": "/schwepe/schwepe.gif",
+      "sizes": "512x512",
+      "type": "image/gif",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/schwepe/schwepe.gif",
+      "sizes": "192x192",
+      "type": "image/gif",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/schwepe/schwepe.gif",
+      "sizes": "1200x630",
+      "type": "image/gif",
+      "form_factor": "wide",
+      "label": "Schwepe's Meme Dimension - Main Interface"
+    }
+  ]
+}
