@@ -976,20 +976,7 @@
         </header>
 
         <!-- Navigation -->
-        <nav class="navbar">
-    <a href="index.html" class="active">
-        <i class="fas fa-home"></i>
-        <span data-phrase-group="navigation" data-phrase-key="navHome">Home</span>
-    </a>
-    <a href="lore.html">
-        <i class="fas fa-book"></i>
-        <span data-phrase-group="navigation" data-phrase-key="navLore">Lore</span>
-    </a>
-    <a href="stats.html">
-        <i class="fas fa-chart-bar"></i>
-        <span data-phrase-group="navigation" data-phrase-key="navStats">Stats</span>
-    </a>
-</nav>
+        <div id="navbar-container"></div>
 
         <div class="featured-section">
             <h2 class="featured-title" data-phrase-group="sections" data-phrase-key="mainSectionTitle">💎 The Degenerate Lifeblood of 247420 💎</h2>
@@ -1016,38 +1003,7 @@
             </div>
         </div>
 
-        <!-- Interactive Meme Section -->
-        <section class="meme-section">
-            <div class="meme-header">
-                <h2 class="meme-title" data-phrase-group="meme" data-phrase-key="memeGeneratorTitle">🎲 247420 Meme Generator 🎲</h2>
-                <p class="meme-subtitle" data-phrase-group="meme" data-phrase-key="memeGeneratorSubtitle">Click the button to generate maximum degen copypasta</p>
-            </div>
-
-            <div class="meme-generator">
-                <button class="meme-btn" onclick="generateMeme()">🎰 GENERATE DEGEN MEME 🎰</button>
-                <div id="meme-output" class="meme-output"></div>
-            </div>
-
-            <div class="meme-stats">
-                <div class="meme-stat">
-                    <div class="meme-emoji">📈</div>
-                    <div class="meme-text" data-phrase-group="meme" data-phrase-key="bullishVibes">Bullish Vibes</div>
-                </div>
-                <div class="meme-stat">
-                    <div class="meme-emoji">📉</div>
-                    <div class="meme-text" data-phrase-group="meme" data-phrase-key="bearishCopium">Bearish Copium</div>
-                </div>
-                <div class="meme-stat">
-                    <div class="meme-emoji">🎲</div>
-                    <div class="meme-text" data-phrase-group="meme" data-phrase-key="gamblingAddiction">Gambling Addiction</div>
-                </div>
-                <div class="meme-stat">
-                    <div class="meme-emoji">💎</div>
-                    <div class="meme-text" data-phrase-group="meme" data-phrase-key="diamondHands">Diamond Hands</div>
-                </div>
-            </div>
-        </section>
-
+        
         <!-- Token Information Section -->
         <section class="token-info">
             <div class="token-header">
@@ -1180,6 +1136,31 @@
     </div>
 
     <script>
+        // Load shared navbar
+        async function loadNavbar() {
+            try {
+                const response = await fetch('navbar.html');
+                const navbarHTML = await response.text();
+                document.getElementById('navbar-container').innerHTML = navbarHTML;
+
+                // Set active state for current page
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                const navLinks = document.querySelectorAll('#navbar-container a');
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === currentPage) {
+                        link.classList.add('active');
+                    }
+                });
+
+                console.log('✅ Navbar loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading navbar:', error);
+            }
+        }
+
+        // Load navbar when page loads
+        document.addEventListener('DOMContentLoaded', loadNavbar);
+
         // Copy address functionality
         function copyAddress() {
             const address = '0xdd10620866c4f586b1213d3818811faf3718fce3';
@@ -1199,81 +1180,7 @@
             });
         }
 
-        // Meme Generator Function - MAXIMUM 247420 DEGENERACY
-        function generateMeme() {
-            const memeOutput = document.getElementById('meme-output');
-            const memes = [
-                "🚀 WEN MOON??? I've been hodling since 2021 and my portfolio looks like a graveyard of dreams. Every red candle is another nail in my coffin. But I'm not selling. Diamond hands till the end. Or till I run out of ramen money. Whichever comes first. 💎🙌",
-
-                "🐸 MY FELLOW DEGENS! The charts are looking more bearish than my ex's personality, but that's not stopping us! We're not just trading, we're participating in a global social experiment to see how much pain the human psyche can endure before breaking. Spoiler: We're already broken. 🤡",
-
-                "💀 JUST GOT RUGGED AGAIN! The token that promised 'revolutionary tech' turned out to be a copy-pasted smart contract with a Pepe jpeg attached. Doxxed dev? More like doxxed scammer. But you know what? I'm gonna ape into the next one. Because that's what degens do. We never learn. 🦍",
-
-                "📈 CHART GOING PARABOLIC! This is it! This is the moonshot we've been waiting for! My portfolio is finally green! Time to tell my family I was right about crypto all along! ...oh wait, false breakout. Back to red. Back to coping. Back to hodling. 😭",
-
-                "🎲 YOLO'D my life savings into a memecoin called 'SuperDogeElonMoonShot420Inu'. The whitepaper was written in Comic Sans. The total supply is 69,420,000,000,000. The devs are anonymous. This is either the smartest investment I've ever made or the dumbest. There is no in-between. 🃏",
-
-                "💸 FOMO INTENSIFIES! Watching my friends make 100x on shitcoins while I'm stuck holding blue-chip crypto that's dumping harder than my ex's self-esteem. Should I sell my BTC and ape into this new token with a frog mascot? YES. ABSOLUTELY. SEND HELP. 🚨",
-
-                "🍻 AT THE DIGITAL DIVE BAR OF WEB3! The drinks are overpriced, the music is terrible, and everyone's lying about their gains. But we keep coming back because where else can we discuss tokenomics with strangers at 3 AM while our portfolios burn? This is our community. This is our curse. 🐸",
-
-                "⚠️ WARNING: This investment opportunity comes with a 99.9% chance of financial ruin. The remaining 0.1% is reserved for divine intervention or a coordinated pump from whales who will inevitably dump on you. Invest only what you're willing to lose, which should be nothing, but you'll ape in anyway. 🔥",
-
-                "🤖 THE BOTS ARE WINNING! While you're asleep, bots are trading circles around you. While you're eating, bots are arbitraging. While you're crying about your losses, bots are compounding gains. The future of trading is automated, and you're just here for the entertainment. Welcome to the show. 🎭",
-
-                "🌙 MOON CONFIRMED! My uncle's friend's cousin who knows a guy who heard from a whale that Elon is about to tweet about this token. The charts are forming a perfect cup and handle pattern. The RSI is oversold. The stars have aligned. This is it. This is the one. (It's not the one.) 🚀",
-
-                "📉 TECHNICAL ANALYSIS: I've drawn so many trend lines on this chart that it looks like a spider web of delusion. Every indicator says 'BUY' but the price keeps saying 'LOL'. My TA skills are impeccable - I can predict the past with 100% accuracy. The future? Not so much. 🕸️",
-
-                "💎 DIAMOND HANDS: They're not just a mindset, they're a medical condition. Symptoms include: inability to sell at a loss, compulsive checking of block explorers, and a pathological belief that 'this time it's different'. Treatment options are limited. Prognosis: poor. 🙏",
-
-                "🔥 THE BEAR MARKET: Where portfolios go to die and dreams get liquidated. But you know what they say - bear markets build character. And also ulcers, anxiety disorders, and a deep understanding of ramen nutrition facts. We're all gonna make it (probably not). 🐻",
-
-                "🎰 CASINO MODE: ACTIVATED! Stop losses? More like stop losses of dignity. Risk management? That's for people who don't believe in magic. Due diligence? I read the first sentence of the whitepaper and that's good enough for me! All in! Let's gooooo! 🎲",
-
-                "🐋 WHALE WATCHING: They swim in the depths with their massive bags, manipulating the market with a single transaction. One moment they're accumulating, the next they're dumping. We're just plankton in their ocean, hoping to catch some scraps. Or getting eaten alive. Same thing. 🌊",
-
-                "🏦 INSTITUTIONAL ADOPTION: When your Wall Street cousin who laughed at you for buying crypto suddenly has a 'digital assets strategy' and wants your 'alpha'. Sorry cuz, the ship has sailed. And it was a pirate ship full of degens and frogs. 🏴‍☠️",
-
-                "📱 ON-CHAIN ANALYSIS: I've spent 18 hours staring at Etherscan like it's the Oracle of Delphi. Smart money is moving! Wait, that's just the same wallet washing tokens through 47 different addresses. Never mind. Back to the crystal ball. 🔮",
-
-                "🎪 THE CIRCUS: clowns (influencers), acrobats (day traders), lion tamers (whales), and bearded ladies (NFT avatars). You're here because you heard the show was amazing, but really you're just part of the act. The ticket price? Your sanity. 🤡",
-
-                "🌈 HODL THROUGH THE PAIN: They said it would be easy. They said we'd all be rich. They said lambo. They said moon. Instead, we got trauma, therapy bills, and a deep understanding of coping mechanisms. But the memes? The memes are priceless. 🙃",
-
-                "⛓️ BLOCKCHAIN TECHNOLOGY: A revolutionary distributed ledger that enables peer-to-peer transfer of value without intermediaries. Also perfect for trading pictures of frogs, apes, and dogs. We're not just changing finance - we're redefining absurdity. 🔗",
-
-                "🎭 MARKET PSYCHOLOGY: When green candles make you feel like a genius and red candles make you question your life choices. Your emotional state is tied to numbers on a screen that you can't control. This is healthy. This is normal. This is crypto. 😵",
-
-                "🔄 DEGEN CYCLE: 1. See token 2. Think 'this is different' 3. Ape in 4. Watch it dump 5. Blame whales 6. Swear to never again 7. See new token 8. Return to step 1. We're trapped in a loop of our own making. And we love it. 🔄",
-
-                "🍀 LUCKY NUMBERS: 4/20/69 - these aren't just numbers, they're a way of life. They represent the holy trinity of degen culture: getting high, getting lucky, and getting rekt. It's not gambling if it's a lifestyle choice. 🎰",
-
-                "⚡ 247420 ENERGY: Not just a number, it's a frequency. It's the vibration of diamond hands refusing to sell. It's the resonance of hopium in a bear market. It's the cosmic force that makes you buy the dip even when common sense says otherwise. We are all connected. We are all degen. 🧠",
-
-                "🐸 SCHWEPE SUPREMACY: While other memes come and go, the frog remains eternal. Pepe, Schwepe, Kermit - amphibians have survived mass extinctions before, and they'll survive this crypto winter too. Ribbit means 'diamond hands' in ancient frog. 🐸💎",
-
-                "🚨 PORTFOLIO RED ALERT: Everything is dumping. BTC, ETH, your shitcoins, your hopes, your dreams. But you know what's not dumping? Your spirit. Your degen resolve. Your ability to find humor in financial ruin. That's the real alpha. 💪",
-
-                "🎲 GAMBLING ADDICTION: They say the first step is admitting you have a problem. But we're not addicted - we're early. This isn't gambling, it's strategic allocation of capital to high-risk, high-reward digital assets with fundamentally unsound value propositions. See? Totally different. 🎰",
-
-                "🌊 LIQUIDITY: It comes, it goes. One moment you're swimming in it, the next you're high and dry. Like the tide, like the seasons, like your hopes and dreams. The only constant is the promise that 'liquidity is coming soon' in the Telegram group. 🏊‍♂️",
-
-                "🔮 PRICE PREDICTION: 'Token to reach $1 EOY!' says random Twitter account with 50 followers. 'Actually, $10!' says another. 'Actually, $0!' says reality. We listen to whoever tells us what we want to hear. That's how we got here in the first place. 🤷‍♂️",
-
-                "💰 PROFITS: Some people take profits. Some people compound gains. Some people diversify. We? We buy more Pepe derivatives. Because if one frog meme made us 2x, surely buying 47 different frog memes will make us 94x. That's not how math works, but that's how degen math works. 🐸",
-
-                "🎪 THE SHOW MUST GO ON: Even when the music stops, even when the lights go out, even when the circus tent collapses - we keep building, keep trading, keep believing. Because somewhere in this chaos, this madness, this beautiful disaster - we found our people. And we wouldn't have it any other way. 🎭"
-            ];
-
-            const randomMeme = memes[Math.floor(Math.random() * memes.length)];
-            memeOutput.textContent = randomMeme;
-            memeOutput.classList.add('show');
-
-            // Scroll to the meme output
-            memeOutput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
+        
         // SECRET EASTER EGG - ULTIMATE 247420 MODE
         let easterEggCount = 0;
         function secretEasterEgg() {

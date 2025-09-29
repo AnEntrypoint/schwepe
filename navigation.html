@@ -106,24 +106,7 @@
 <body>
     <div class="animated-bg"></div>
 
-    <nav class="navbar">
-        <a href="index.html" id="nav-home">
-            <i class="fas fa-home"></i>
-            Home
-        </a>
-        <a href="gallery.html" id="nav-gallery">
-            <i class="fas fa-images"></i>
-            Gallery
-        </a>
-        <a href="lore.html" id="nav-lore">
-            <i class="fas fa-book"></i>
-            Lore
-        </a>
-        <a href="#" onclick="showStats()" id="nav-stats">
-            <i class="fas fa-chart-bar"></i>
-            Stats
-        </a>
-    </nav>
+    <div id="navbar-container"></div>
 
     <div class="content-container">
         <!-- Content will be inserted here -->
@@ -166,8 +149,33 @@
             document.body.insertAdjacentHTML('beforeend', statsContent);
         }
 
-        // Initialize navigation on page load
-        document.addEventListener('DOMContentLoaded', setActiveNav);
+        // Load shared navbar
+        async function loadNavbar() {
+            try {
+                const response = await fetch('navbar.html');
+                const navbarHTML = await response.text();
+                document.getElementById('navbar-container').innerHTML = navbarHTML;
+
+                // Set active state for current page
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                const navLinks = document.querySelectorAll('#navbar-container a');
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === currentPage) {
+                        link.classList.add('active');
+                    }
+                });
+
+                console.log('✅ Navbar loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading navbar:', error);
+            }
+        }
+
+        // Initialize navigation and navbar on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setActiveNav();
+            loadNavbar();
+        });
     </script>
 </body>
 </html>

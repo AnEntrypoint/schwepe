@@ -1,8 +1,8 @@
 {
   "selections": {
     "pageTitle": {
-      "selectedIndex": 3,
-      "selectedPhrase": "Schwepe's 247420 Realm",
+      "selectedIndex": 0,
+      "selectedPhrase": "Schwepe's Funky Universe",
       "totalPhrases": 5,
       "allPhrases": [
         "Schwepe's Funky Universe",
@@ -37,8 +37,8 @@
       ]
     },
     "featureTitle": {
-      "selectedIndex": 2,
-      "selectedPhrase": "🚀 Why This Space Exists 🚀",
+      "selectedIndex": 1,
+      "selectedPhrase": "🎲 The Degen Experience 🎲",
       "totalPhrases": 5,
       "allPhrases": [
         "🎯 Why We're All Here 🎯",
@@ -49,8 +49,8 @@
       ]
     },
     "ageVerification": {
-      "selectedIndex": 1,
-      "selectedPhrase": "🔞 Adult swim only - no paper hands allowed",
+      "selectedIndex": 4,
+      "selectedPhrase": "🎪 Enter at your own risk (we recommend it)",
       "totalPhrases": 5,
       "allPhrases": [
         "✅ Age-gated for maximum degen safety",
@@ -61,8 +61,8 @@
       ]
     },
     "interactiveLore": {
-      "selectedIndex": 1,
-      "selectedPhrase": "🎭 Interactive stories that change with your choices",
+      "selectedIndex": 3,
+      "selectedPhrase": "🎲 Never the same experience twice",
       "totalPhrases": 5,
       "allPhrases": [
         "📚 Dynamic lore system with multiple endings",
@@ -73,8 +73,8 @@
       ]
     },
     "responsiveDesign": {
-      "selectedIndex": 4,
-      "selectedPhrase": "📱 Mobile-friendly degen content on the go",
+      "selectedIndex": 3,
+      "selectedPhrase": "📱 Perfect for checking charts while you should be working",
       "totalPhrases": 5,
       "allPhrases": [
         "📱 Works on your phone during bathroom trading",
@@ -85,8 +85,8 @@
       ]
     },
     "memeGeneratorTitle": {
-      "selectedIndex": 1,
-      "selectedPhrase": "🎰 Degen Copypasta Factory 🎰",
+      "selectedIndex": 3,
+      "selectedPhrase": "🎭 Your Daily Dose of Crypto Insanity 🎭",
       "totalPhrases": 5,
       "allPhrases": [
         "🎲 247420 Meme Generator 🎲",
@@ -97,8 +97,8 @@
       ]
     },
     "memeGeneratorSubtitle": {
-      "selectedIndex": 4,
-      "selectedPhrase": "Turn your trading trauma into viral content",
+      "selectedIndex": 0,
+      "selectedPhrase": "Click the button to generate maximum degen copypasta",
       "totalPhrases": 5,
       "allPhrases": [
         "Click the button to generate maximum degen copypasta",
@@ -109,8 +109,8 @@
       ]
     },
     "bullishVibes": {
-      "selectedIndex": 3,
-      "selectedPhrase": "Lambo Dreams",
+      "selectedIndex": 4,
+      "selectedPhrase": "WAGMI Spirit",
       "totalPhrases": 5,
       "allPhrases": [
         "Bullish Vibes",
@@ -145,8 +145,8 @@
       ]
     },
     "diamondHands": {
-      "selectedIndex": 3,
-      "selectedPhrase": "Long Term Vision",
+      "selectedIndex": 2,
+      "selectedPhrase": "Never Selling",
       "totalPhrases": 5,
       "allPhrases": [
         "Diamond Hands",
@@ -157,8 +157,8 @@
       ]
     },
     "tokenInfoTitle": {
-      "selectedIndex": 4,
-      "selectedPhrase": "🌊 Diving Into the Token Ocean 🌊",
+      "selectedIndex": 3,
+      "selectedPhrase": "🎪 Your Guide to Financial Madness 🎪",
       "totalPhrases": 5,
       "allPhrases": [
         "🔥 Token Information & How to Join the Chaos 🔥",
@@ -169,8 +169,8 @@
       ]
     },
     "tokenAddressLabel": {
-      "selectedIndex": 0,
-      "selectedPhrase": "🎯 Token Address",
+      "selectedIndex": 2,
+      "selectedPhrase": "🚀 Token Contract",
       "totalPhrases": 5,
       "allPhrases": [
         "🎯 Token Address",
@@ -181,8 +181,8 @@
       ]
     },
     "howToBuyTitle": {
-      "selectedIndex": 3,
-      "selectedPhrase": "🎪 Step-by-Step Financial Destruction 🎪",
+      "selectedIndex": 1,
+      "selectedPhrase": "💎 Your Path to Maximum Degen Status 💎",
       "totalPhrases": 5,
       "allPhrases": [
         "🎮 How to Join the 247420 Revolution 🎮",
@@ -193,8 +193,8 @@
       ]
     },
     "navHome": {
-      "selectedIndex": 1,
-      "selectedPhrase": "Base",
+      "selectedIndex": 4,
+      "selectedPhrase": "Command Center",
       "totalPhrases": 5,
       "allPhrases": [
         "Home",
@@ -217,8 +217,8 @@
       ]
     },
     "navStats": {
-      "selectedIndex": 2,
-      "selectedPhrase": "Analytics",
+      "selectedIndex": 0,
+      "selectedPhrase": "Stats",
       "totalPhrases": 5,
       "allPhrases": [
         "Stats",
@@ -229,8 +229,8 @@
       ]
     },
     "ageVerificationTitle": {
-      "selectedIndex": 1,
-      "selectedPhrase": "🔞 Adult Content Ahead",
+      "selectedIndex": 3,
+      "selectedPhrase": "⚠️ Degen Zone Entry",
       "totalPhrases": 5,
       "allPhrases": [
         "⚠️ Age Verification Required",
@@ -241,8 +241,8 @@
       ]
     },
     "ageVerificationText": {
-      "selectedIndex": 0,
-      "selectedPhrase": "This content contains mature themes, strong language, and existential dread that may not be suitable for all audiences. By proceeding, you confirm that you are 18+ years of age and mentally prepared for the financial trauma ahead.",
+      "selectedIndex": 1,
+      "selectedPhrase": "Warning: This area contains maximum degen energy, unfiltered crypto culture, and content that may trigger trading PTSD. Enter only if you have diamond hands and a strong sense of humor.",
       "totalPhrases": 5,
       "allPhrases": [
         "This content contains mature themes, strong language, and existential dread that may not be suitable for all audiences. By proceeding, you confirm that you are 18+ years of age and mentally prepared for the financial trauma ahead.",
@@ -253,8 +253,8 @@
       ]
     },
     "enterButton": {
-      "selectedIndex": 2,
-      "selectedPhrase": "I'm 18+ and Diamond Handed",
+      "selectedIndex": 0,
+      "selectedPhrase": "I'm 18+ and Ready to Lose Money",
       "totalPhrases": 5,
       "allPhrases": [
         "I'm 18+ and Ready to Lose Money",
@@ -265,8 +265,8 @@
       ]
     },
     "statsPageTitle": {
-      "selectedIndex": 2,
-      "selectedPhrase": "Degen Metrics Central",
+      "selectedIndex": 0,
+      "selectedPhrase": "Schwepe Stats - Real-time Data",
       "totalPhrases": 5,
       "allPhrases": [
         "Schwepe Stats - Real-time Data",
@@ -277,8 +277,8 @@
       ]
     },
     "statsHeader": {
-      "selectedIndex": 4,
-      "selectedPhrase": "🚀 Schwepe Command Center 🚀",
+      "selectedIndex": 3,
+      "selectedPhrase": "📊 Live Market Intelligence 📊",
       "totalPhrases": 5,
       "allPhrases": [
         "🔥 Live Schwepe Intelligence Dashboard 🔥",
@@ -301,8 +301,8 @@
       ]
     },
     "lorePageTitle": {
-      "selectedIndex": 1,
-      "selectedPhrase": "The Schwepe Chronicles",
+      "selectedIndex": 4,
+      "selectedPhrase": "Schwepe Universe History",
       "totalPhrases": 5,
       "allPhrases": [
         "Schwepe Lore - The Complete Saga",
@@ -313,8 +313,8 @@
       ]
     },
     "loadingError": {
-      "selectedIndex": 3,
-      "selectedPhrase": "Meme loading failed",
+      "selectedIndex": 1,
+      "selectedPhrase": "Failed to load degen content",
       "totalPhrases": 5,
       "allPhrases": [
         "Error loading content",
@@ -325,8 +325,8 @@
       ]
     },
     "encouragement": {
-      "selectedIndex": 2,
-      "selectedPhrase": "Stay degen! 🎲",
+      "selectedIndex": 4,
+      "selectedPhrase": "This is the way! ⚡",
       "totalPhrases": 10,
       "allPhrases": [
         "Keep hodling! 💪",
@@ -342,7 +342,7 @@
       ]
     }
   },
-  "generatedAt": "2025-09-27T10:05:22.620Z",
+  "generatedAt": "2025-09-29T12:37:59.738Z",
   "stats": {
     "totalPhrases": 4804,
     "totalGroups": 35,
