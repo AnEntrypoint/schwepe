@@ -1185,7 +1185,7 @@
                         </div>
                         <div class="stat-info">
                             <div class="stat-label">Market Cap</div>
-                            <div class="stat-value" data-token-marketcap>$TBA</div>
+                            <div class="stat-value" data-token-marketcap>Loading...</div>
                         </div>
                     </div>
 
@@ -1749,6 +1749,9 @@
             document.getElementById('main-content').classList.remove('content-blurred');
             // Use localStorage instead of cookies for file:// protocol compatibility
             localStorage.setItem('age_verified', 'true');
+
+            // Dispatch custom event to signal age verification is complete
+            window.dispatchEvent(new CustomEvent('ageVerified'));
         }
 
         // Add some interactive magic
@@ -1793,6 +1796,9 @@
                 if (ageVerified === 'true') {
                     document.getElementById('age-verification').style.display = 'none';
                     document.getElementById('main-content').classList.remove('content-blurred');
+
+                    // Dispatch custom event to signal age verification is complete
+                    window.dispatchEvent(new CustomEvent('ageVerified'));
                 }
             }
 

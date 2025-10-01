@@ -371,6 +371,24 @@ document.addEventListener('DOMContentLoaded', () => {
     window.tokenDataFetcher.init();
 });
 
+// Also try to initialize immediately if DOM is already loaded
+if (document.readyState === 'loading') {
+    // DOM is still loading, event will handle it
+} else {
+    // DOM is already loaded, initialize immediately
+    if (!window.tokenDataFetcher) {
+        window.tokenDataFetcher = new TokenDataFetcher();
+        window.tokenDataFetcher.init();
+    }
+}
+
+// Re-initialize after age verification to ensure data loads
+window.addEventListener('ageVerified', () => {
+    if (window.tokenDataFetcher) {
+        window.tokenDataFetcher.fetchAllData();
+    }
+});
+
 // Cleanup on page unload
 window.addEventListener('beforeunload', () => {
     if (window.tokenDataFetcher) {
