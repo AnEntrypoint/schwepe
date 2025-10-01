@@ -8,11 +8,11 @@ class TokenDataFetcher {
         this.somniaApiBase = 'https://explorer.somnia.network/api/v2';
         this.somnexUrl = 'https://somnex.xyz';
 
-        // Use integrated CORS proxy on main server
-        this.corsProxyBase = window.location.origin;
-        this.useLocalProxy = true; // Always use integrated proxy
+        // Use AllOrigins CORS proxy for production reliability
+        this.corsProxyBase = 'https://api.allorigins.win/get?url=';
+        this.useLocalProxy = false;
 
-        console.log('🔗 Using integrated CORS proxy:', this.corsProxyBase);
+        console.log('🔗 Using AllOrigins CORS proxy:', this.corsProxyBase);
 
         this.cache = new Map();
         this.cacheTimeout = 15000; // 15 seconds for live data
@@ -137,13 +137,15 @@ class TokenDataFetcher {
         try {
             let response, data;
 
-            // Use integrated CORS proxy on main server
-            const apiUrl = `${this.corsProxyBase}/api/token/${this.tokenAddress}`;
-            console.log('🔗 Fetching from integrated proxy:', apiUrl);
-            response = await fetch(apiUrl);
+            // Use AllOrigins CORS proxy
+            const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}`;
+            const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
+            console.log('🔗 Fetching from AllOrigins proxy:', proxyUrl);
+            response = await fetch(proxyUrl);
 
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            data = await response.json();
+            const result = await response.json();
+            data = result.contents ? JSON.parse(result.contents) : null;
 
             this.setCache(cacheKey, data);
             return data;
@@ -165,13 +167,15 @@ class TokenDataFetcher {
         try {
             let response, data;
 
-            // Use integrated CORS proxy on main server
-            const apiUrl = `${this.corsProxyBase}/api/token/${this.tokenAddress}/counters`;
-            console.log('🔗 Fetching holders from integrated proxy:', apiUrl);
-            response = await fetch(apiUrl);
+            // Use AllOrigins CORS proxy
+            const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`;
+            const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
+            console.log('🔗 Fetching holders from AllOrigins proxy:', proxyUrl);
+            response = await fetch(proxyUrl);
 
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            data = await response.json();
+            const result = await response.json();
+            data = result.contents ? JSON.parse(result.contents) : null;
 
             this.setCache(cacheKey, data);
             return data;
@@ -192,20 +196,21 @@ class TokenDataFetcher {
 
         try {
             // Since Somnex doesn't have a public API, we'll scrape the data from their page
-            // Use CORS proxy for all environments to fix CORS issues completely
+            // Use AllOrigins CORS proxy for all environments to fix CORS issues completely
             const url = `${this.somnexUrl}/#/token/${this.tokenAddress}`;
             const headers = {
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
             };
 
-            // Use integrated CORS proxy on main server
-            const proxiedUrl = `${this.corsProxyBase}/api/proxy?url=${encodeURIComponent(url)}`;
-            console.log('🔗 Fetching Somnex data from integrated proxy:', proxiedUrl);
+            // Use AllOrigins CORS proxy
+            const proxiedUrl = `${this.corsProxyBase}${encodeURIComponent(url)}`;
+            console.log('🔗 Fetching Somnex data from AllOrigins proxy:', proxiedUrl);
             const response = await fetch(proxiedUrl, { headers });
 
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const html = await response.text();
+            const result = await response.json();
+            const html = result.contents || '';
 
             const data = this.parseSomnexData(html);
             this.setCache(cacheKey, data);
