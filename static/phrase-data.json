@@ -1,8 +1,8 @@
 {
   "selections": {
     "pageTitle": {
-      "selectedIndex": 2,
-      "selectedPhrase": "Schwepe's Meme Dimension",
+      "selectedIndex": 1,
+      "selectedPhrase": "Schwepe's Degen Paradise",
       "totalPhrases": 5,
       "allPhrases": [
         "Schwepe's Funky Universe",
@@ -13,8 +13,8 @@
       ]
     },
     "subtitle": {
-      "selectedIndex": 4,
-      "selectedPhrase": "The Last Bastion of True Degeneracy 🐸",
+      "selectedIndex": 3,
+      "selectedPhrase": "Where Memes Become Financial Instruments 🎲",
       "totalPhrases": 5,
       "allPhrases": [
         "Where 247420 Energy Meets Pure Meme Magic ✨",
@@ -25,8 +25,8 @@
       ]
     },
     "mainSectionTitle": {
-      "selectedIndex": 3,
-      "selectedPhrase": "🎪 The Circus of Maximum Financial Chaos 🎪",
+      "selectedIndex": 2,
+      "selectedPhrase": "⚡ Where 247420 Energy Flows Through Your Veins ⚡",
       "totalPhrases": 5,
       "allPhrases": [
         "💎 The Degenerate Lifeblood of 247420 💎",
@@ -37,8 +37,8 @@
       ]
     },
     "featureTitle": {
-      "selectedIndex": 4,
-      "selectedPhrase": "🐸 The Frog Philosophy 🐸",
+      "selectedIndex": 1,
+      "selectedPhrase": "🎲 The Degen Experience 🎲",
       "totalPhrases": 5,
       "allPhrases": [
         "🎯 Why We're All Here 🎯",
@@ -49,8 +49,8 @@
       ]
     },
     "ageVerification": {
-      "selectedIndex": 3,
-      "selectedPhrase": "⚠️ Warning: May contain financial trauma",
+      "selectedIndex": 1,
+      "selectedPhrase": "🔞 Adult swim only - no paper hands allowed",
       "totalPhrases": 5,
       "allPhrases": [
         "✅ Age-gated for maximum degen safety",
@@ -61,8 +61,8 @@
       ]
     },
     "interactiveLore": {
-      "selectedIndex": 1,
-      "selectedPhrase": "🎭 Interactive stories that change with your choices",
+      "selectedIndex": 0,
+      "selectedPhrase": "📚 Dynamic lore system with multiple endings",
       "totalPhrases": 5,
       "allPhrases": [
         "📚 Dynamic lore system with multiple endings",
@@ -85,8 +85,8 @@
       ]
     },
     "memeGeneratorTitle": {
-      "selectedIndex": 2,
-      "selectedPhrase": "🎪 Maximum Meme Production Facility 🎪",
+      "selectedIndex": 0,
+      "selectedPhrase": "🎲 247420 Meme Generator 🎲",
       "totalPhrases": 5,
       "allPhrases": [
         "🎲 247420 Meme Generator 🎲",
@@ -97,8 +97,8 @@
       ]
     },
     "memeGeneratorSubtitle": {
-      "selectedIndex": 3,
-      "selectedPhrase": "The perfect tool for expressing your degen emotions",
+      "selectedIndex": 0,
+      "selectedPhrase": "Click the button to generate maximum degen copypasta",
       "totalPhrases": 5,
       "allPhrases": [
         "Click the button to generate maximum degen copypasta",
@@ -109,8 +109,8 @@
       ]
     },
     "bullishVibes": {
-      "selectedIndex": 4,
-      "selectedPhrase": "WAGMI Spirit",
+      "selectedIndex": 0,
+      "selectedPhrase": "Bullish Vibes",
       "totalPhrases": 5,
       "allPhrases": [
         "Bullish Vibes",
@@ -121,8 +121,8 @@
       ]
     },
     "bearishCopium": {
-      "selectedIndex": 3,
-      "selectedPhrase": "Rekt Support Group",
+      "selectedIndex": 1,
+      "selectedPhrase": "Red Candle Therapy",
       "totalPhrases": 5,
       "allPhrases": [
         "Bearish Copium",
@@ -133,8 +133,8 @@
       ]
     },
     "gamblingAddiction": {
-      "selectedIndex": 2,
-      "selectedPhrase": "Risk Appetite",
+      "selectedIndex": 0,
+      "selectedPhrase": "Gambling Addiction",
       "totalPhrases": 5,
       "allPhrases": [
         "Gambling Addiction",
@@ -181,8 +181,8 @@
       ]
     },
     "howToBuyTitle": {
-      "selectedIndex": 0,
-      "selectedPhrase": "🎮 How to Join the 247420 Revolution 🎮",
+      "selectedIndex": 4,
+      "selectedPhrase": "🌊 How to Dive Into the Meme Pool 🌊",
       "totalPhrases": 5,
       "allPhrases": [
         "🎮 How to Join the 247420 Revolution 🎮",
@@ -193,8 +193,8 @@
       ]
     },
     "navHome": {
-      "selectedIndex": 3,
-      "selectedPhrase": "Hub",
+      "selectedIndex": 2,
+      "selectedPhrase": "Launchpad",
       "totalPhrases": 5,
       "allPhrases": [
         "Home",
@@ -205,8 +205,8 @@
       ]
     },
     "navLore": {
-      "selectedIndex": 2,
-      "selectedPhrase": "Saga",
+      "selectedIndex": 4,
+      "selectedPhrase": "Legends",
       "totalPhrases": 5,
       "allPhrases": [
         "Lore",
@@ -217,8 +217,8 @@
       ]
     },
     "navStats": {
-      "selectedIndex": 3,
-      "selectedPhrase": "Metrics",
+      "selectedIndex": 0,
+      "selectedPhrase": "Stats",
       "totalPhrases": 5,
       "allPhrases": [
         "Stats",
@@ -265,8 +265,8 @@
       ]
     },
     "statsPageTitle": {
-      "selectedIndex": 4,
-      "selectedPhrase": "Live Market Intelligence",
+      "selectedIndex": 3,
+      "selectedPhrase": "Schwepe Intelligence Agency",
       "totalPhrases": 5,
       "allPhrases": [
         "Schwepe Stats - Real-time Data",
@@ -277,8 +277,8 @@
       ]
     },
     "statsHeader": {
-      "selectedIndex": 0,
-      "selectedPhrase": "🔥 Live Schwepe Intelligence Dashboard 🔥",
+      "selectedIndex": 3,
+      "selectedPhrase": "📊 Live Market Intelligence 📊",
       "totalPhrases": 5,
       "allPhrases": [
         "🔥 Live Schwepe Intelligence Dashboard 🔥",
@@ -289,8 +289,8 @@
       ]
     },
     "statsSubtitle": {
-      "selectedIndex": 3,
-      "selectedPhrase": "Live data feeds from the heart of 247420",
+      "selectedIndex": 2,
+      "selectedPhrase": "Real-time intelligence for your trading decisions",
       "totalPhrases": 5,
       "allPhrases": [
         "Real-time market data, degen scoring, and meme analytics",
@@ -301,8 +301,8 @@
       ]
     },
     "lorePageTitle": {
-      "selectedIndex": 0,
-      "selectedPhrase": "Schwepe Lore - The Complete Saga",
+      "selectedIndex": 1,
+      "selectedPhrase": "The Schwepe Chronicles",
       "totalPhrases": 5,
       "allPhrases": [
         "Schwepe Lore - The Complete Saga",
@@ -313,8 +313,8 @@
       ]
     },
     "loadingError": {
-      "selectedIndex": 4,
-      "selectedPhrase": "Degen system malfunction",
+      "selectedIndex": 2,
+      "selectedPhrase": "Something went horribly wrong",
       "totalPhrases": 5,
       "allPhrases": [
         "Error loading content",
@@ -325,8 +325,8 @@
       ]
     },
     "encouragement": {
-      "selectedIndex": 9,
-      "selectedPhrase": "Believe in the meme! 🐸",
+      "selectedIndex": 4,
+      "selectedPhrase": "This is the way! ⚡",
       "totalPhrases": 10,
       "allPhrases": [
         "Keep hodling! 💪",
@@ -342,7 +342,7 @@
       ]
     }
   },
-  "generatedAt": "2025-10-01T16:42:46.078Z",
+  "generatedAt": "2025-10-01T16:53:04.919Z",
   "stats": {
     "totalPhrases": 4804,
     "totalGroups": 35,
