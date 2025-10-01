@@ -35,17 +35,11 @@ class TokenDataFetcher {
      * Detect which CORS proxy to use
      */
     detectCORSProxy() {
-        // For development (localhost) - try local proxy first
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            this.corsProxyBase = `http://localhost:${this.localProxyPort}`;
-            this.useLocalProxy = true;
-            console.log('🔧 Using local CORS proxy:', this.corsProxyBase);
-        } else {
-            // For production - use allorigins.win
-            this.corsProxyBase = 'https://api.allorigins.win/get?url=';
-            this.useLocalProxy = false;
-            console.log('🌐 Using remote CORS proxy:', this.corsProxyBase);
-        }
+        // Use our own proxy endpoints for both development and production
+        this.useLocalProxy = false;
+        this.corsProxyBase = ''; // Use relative paths for our own proxy
+
+        console.log('🔧 Using integrated proxy endpoints');
     }
 
     /**
@@ -172,27 +166,13 @@ class TokenDataFetcher {
         if (cached) return cached;
 
         try {
-            let response, data;
+            // Use our integrated proxy endpoint
+            const proxyUrl = `/api/tokens/${this.tokenAddress}/counters`;
+            console.log('🔗 Fetching holders from our proxy:', proxyUrl);
+            const response = await fetch(proxyUrl);
 
-            if (this.useLocalProxy) {
-                // Use local CORS proxy
-                const proxyUrl = `${this.corsProxyBase}/api/token/${this.tokenAddress}/counters`;
-                console.log('🔗 Fetching holders from local proxy:', proxyUrl);
-                response = await fetch(proxyUrl);
-
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                data = await response.json();
-            } else {
-                // Use AllOrigins CORS proxy
-                const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`;
-                const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
-                console.log('🔗 Fetching holders from AllOrigins proxy:', proxyUrl);
-                response = await fetch(proxyUrl);
-
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const result = await response.json();
-                data = result.contents ? JSON.parse(result.contents) : null;
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
 
             this.setCache(cacheKey, data);
             return data;
@@ -219,19 +199,19 @@ class TokenDataFetcher {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
             };
 
-            // Always use AllOrigins for Somnex APIs (local proxy doesn't support external APIs)
-            const allOriginsBase = 'https://api.allorigins.win/get?url=';
+            // Use our integrated proxy endpoints for Somnex APIs
+            const somnexBase = '/somnex';
 
             // Fetch all required data in parallel
             const [volumeResponse, tokenListResponse, somiPriceResponse] = await Promise.allSettled([
                 // 24h Volume API
-                fetch(`${allOriginsBase}${encodeURIComponent(`https://dapp.somnex.xyz/api/Launchpadv2/5031/launchpad/kline/${this.tokenAddress}/volume_24h`)}`, { headers }),
+                fetch(`${somnexBase}/api/Launchpadv2/5031/launchpad/kline/${this.tokenAddress}/volume_24h`, { headers }),
 
                 // Token Details API (Market Cap, Progress)
-                fetch(`${allOriginsBase}${encodeURIComponent(`https://dapp.somnex.xyz/api/Launchpadv2/5031/launchpad/list/${this.tokenAddress}`)}`, { headers }),
+                fetch(`${somnexBase}/api/Launchpadv2/5031/launchpad/list/${this.tokenAddress}`, { headers }),
 
                 // SOMI Price API (for USD conversion)
-                fetch(`${allOriginsBase}${encodeURIComponent('https://dapp.somnex.xyz/api/v1/5031/prices/assets/0x046EDe9564A72571df6F5e44d0405360c0f4dCab')}`, { headers })
+                fetch(`${somnexBase}/api/v1/5031/prices/assets/0x046EDe9564A72571df6F5e44d0405360c0f4dCab`, { headers })
             ]);
 
             // Process responses
@@ -239,17 +219,17 @@ class TokenDataFetcher {
 
             if (volumeResponse.status === 'fulfilled') {
                 const result = await volumeResponse.value.json();
-                volumeData = result.contents ? JSON.parse(result.contents) : null;
+                volumeData = result;
             }
 
             if (tokenListResponse.status === 'fulfilled') {
                 const result = await tokenListResponse.value.json();
-                tokenData = result.contents ? JSON.parse(result.contents) : null;
+                tokenData = result;
             }
 
             if (somiPriceResponse.status === 'fulfilled') {
                 const result = await somiPriceResponse.value.json();
-                somiPriceData = result.contents ? JSON.parse(result.contents) : null;
+                somiPriceData = result;
             }
 
             // Extract and format the data
