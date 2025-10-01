@@ -114,8 +114,8 @@ class TokenDataFetcher {
             return data;
         } catch (error) {
             console.error('Error fetching token info:', error);
-            // Return demo data when CORS blocks API calls
-            return this.getDemoTokenInfo();
+            // Return null when API calls fail - no fallbacks
+            return null;
         }
     }
 
@@ -136,8 +136,8 @@ class TokenDataFetcher {
             return data;
         } catch (error) {
             console.error('Error fetching holders count:', error);
-            // Return demo data when CORS blocks API calls
-            return { holders_count: this.getRandomHolders() };
+            // Return null when API calls fail - no fallbacks
+            return null;
         }
     }
 
@@ -167,8 +167,8 @@ class TokenDataFetcher {
             return data;
         } catch (error) {
             console.error('Error fetching Somnex data:', error);
-            // Return demo data when CORS blocks API calls in production
-            return this.getDemoData();
+            // Return null when API calls fail - no fallbacks
+            return null;
         }
     }
 
@@ -320,7 +320,7 @@ class TokenDataFetcher {
             if (element) {
                 element.classList.remove('loading-data');
                 element.classList.add('error-data');
-                element.textContent = 'Unavailable';
+                element.textContent = 'API Blocked';
             }
         });
     }
@@ -390,37 +390,8 @@ class TokenDataFetcher {
     }
 
     /**
-     * Get demo data when CORS blocks API calls
+     * API-Only: No fallbacks allowed
      */
-    getDemoData() {
-        return {
-            price: '$0.00000415',
-            priceChange: '+15.3%',
-            marketCap: '$4,150,000',
-            volume: '$125,000',
-            bondingProgress: '67%',
-            availableTokens: '330,000,000',
-            liquidity: 'High'
-        };
-    }
-
-    /**
-     * Get demo token info when CORS blocks API calls
-     */
-    getDemoTokenInfo() {
-        return {
-            total_supply: '1000000000000000000000000000', // 1 billion tokens
-            volume_24h: '125000000000000000000000', // 125k in wei
-            circulating_market_cap: '4150000000000000000000000' // 4.15M in wei
-        };
-    }
-
-    /**
-     * Get random holder count for demo data
-     */
-    getRandomHolders() {
-        return Math.floor(Math.random() * 200) + 150; // 150-350 holders
-    }
 
     /**
      * Cleanup
