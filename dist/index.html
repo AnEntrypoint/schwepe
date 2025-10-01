@@ -985,6 +985,85 @@
                 height: 300px;
             }
         }
+
+        /* Live Data Styles */
+        .stat-change {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .positive-change {
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .negative-change {
+            color: #ff4757;
+            text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+        }
+
+        .live-data {
+            position: relative;
+        }
+
+        .live-data::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 6px;
+            height: 6px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .live-price {
+            color: #00ff88 !important;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
+            font-weight: bold;
+        }
+
+        .loading-data {
+            color: #ffd700;
+            animation: blink 1.5s infinite;
+        }
+
+        .error-data {
+            color: #ff4757;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.5; }
+        }
+
+        /* Token Stats Grid Adjustment for 4 cards */
+        .token-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .token-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .token-stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1028,7 +1107,7 @@
         <div class="container">
         <header>
             <h1 class="title" onclick="secretEasterEgg()">🚀 Schwepe's Degen Universe 🚀</h1>
-            <p class="subtitle" data-phrase-group="subtitle" data-phrase-key="main" data-phrase-selected="Maximum Degen Energy with Zero Filter 💎">Maximum Degen Energy with Zero Filter 💎</p>
+            <p class="subtitle" data-phrase-group="subtitle" data-phrase-key="main" data-phrase-selected="Where 247420 Energy Meets Pure Meme Magic ✨">Where 247420 Energy Meets Pure Meme Magic ✨</p>
         </header>
 
         <!-- Navigation -->
@@ -1081,6 +1160,17 @@
                 <div class="token-stats-grid">
                     <div class="token-stat-card">
                         <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Price</div>
+                            <div class="stat-value" data-token-price>Loading...</div>
+                            <div class="stat-change" data-token-price-change></div>
+                        </div>
+                    </div>
+
+                    <div class="token-stat-card">
+                        <div class="stat-icon">
                             <i class="fas fa-coins"></i>
                         </div>
                         <div class="stat-info">
@@ -1095,7 +1185,7 @@
                         </div>
                         <div class="stat-info">
                             <div class="stat-label">Market Cap</div>
-                            <div class="stat-value">$TBA</div>
+                            <div class="stat-value" data-token-marketcap>$TBA</div>
                         </div>
                     </div>
 
@@ -1105,7 +1195,7 @@
                         </div>
                         <div class="stat-info">
                             <div class="stat-label">Holders</div>
-                            <div class="stat-value">Growing</div>
+                            <div class="stat-value" data-token-holders>Loading...</div>
                         </div>
                     </div>
                 </div>
@@ -1793,5 +1883,8 @@
             }
         });
     </script>
+
+    <!-- Real-time Token Data Script -->
+    <script type="module" src="static/token-data.js"></script>
 </body>
 </html>
