@@ -268,30 +268,39 @@ class TokenDataFetcher {
 
         // Update holders count - prioritize tokenData.holders, fallback to holdersData
         if (this.elements.holders) {
+            // Always remove loading state first
+            this.elements.holders.classList.remove('loading-data');
             if (tokenData && tokenData.holders) {
                 this.elements.holders.textContent = this.formatNumber(tokenData.holders);
                 this.elements.holders.classList.add('live-data');
+                this.elements.holders.classList.remove('error-data');
             } else if (holdersData && holdersData.token_holders_count) {
                 this.elements.holders.textContent = this.formatNumber(holdersData.token_holders_count);
                 this.elements.holders.classList.add('live-data');
+                this.elements.holders.classList.remove('error-data');
             } else {
                 this.elements.holders.textContent = 'No data';
                 this.elements.holders.classList.add('error-data');
+                this.elements.holders.classList.remove('live-data');
             }
         }
 
         // Update price - handle null values properly
         if (this.elements.price) {
+            // Always remove loading state first
+            this.elements.price.classList.remove('loading-data');
             if (somnexData && somnexData.price) {
                 this.elements.price.textContent = somnexData.price;
                 this.elements.price.classList.add('live-data', 'live-price');
+                this.elements.price.classList.remove('error-data');
             } else if (tokenData && tokenData.exchange_rate) {
                 this.elements.price.textContent = this.formatPrice(tokenData.exchange_rate);
                 this.elements.price.classList.add('live-data');
+                this.elements.price.classList.remove('error-data');
             } else {
                 this.elements.price.textContent = 'No data';
-                this.elements.price.classList.remove('loading-data');
                 this.elements.price.classList.add('error-data');
+                this.elements.price.classList.remove('live-data');
             }
         }
 
@@ -310,31 +319,39 @@ class TokenDataFetcher {
 
         // Update market cap - handle null values properly
         if (this.elements.marketCap) {
+            // Always remove loading state first
+            this.elements.marketCap.classList.remove('loading-data');
             if (somnexData && somnexData.marketCap) {
                 this.elements.marketCap.textContent = somnexData.marketCap;
                 this.elements.marketCap.classList.add('live-data');
+                this.elements.marketCap.classList.remove('error-data');
             } else if (tokenData && tokenData.circulating_market_cap && tokenData.circulating_market_cap !== null) {
                 this.elements.marketCap.textContent = this.formatMarketCap(tokenData.circulating_market_cap);
                 this.elements.marketCap.classList.add('live-data');
+                this.elements.marketCap.classList.remove('error-data');
             } else {
                 this.elements.marketCap.textContent = 'No data';
-                this.elements.marketCap.classList.remove('loading-data');
                 this.elements.marketCap.classList.add('error-data');
+                this.elements.marketCap.classList.remove('live-data');
             }
         }
 
         // Update volume - handle null values properly
         if (this.elements.volume) {
+            // Always remove loading state first
+            this.elements.volume.classList.remove('loading-data');
             if (somnexData && somnexData.volume) {
                 this.elements.volume.textContent = somnexData.volume;
                 this.elements.volume.classList.add('live-data');
+                this.elements.volume.classList.remove('error-data');
             } else if (tokenData && tokenData.volume_24h && tokenData.volume_24h !== null) {
                 this.elements.volume.textContent = this.formatVolume(tokenData.volume_24h);
                 this.elements.volume.classList.add('live-data');
+                this.elements.volume.classList.remove('error-data');
             } else {
                 this.elements.volume.textContent = 'No data';
-                this.elements.volume.classList.remove('loading-data');
                 this.elements.volume.classList.add('error-data');
+                this.elements.volume.classList.remove('live-data');
             }
         }
 
@@ -352,30 +369,37 @@ class TokenDataFetcher {
 
         // Update token supply (from token data)
         if (this.elements.tokenSupply) {
+            // Always remove loading state first
+            this.elements.tokenSupply.classList.remove('loading-data');
             if (tokenData && tokenData.total_supply) {
                 const supply = parseInt(tokenData.total_supply) / Math.pow(10, 18);
                 this.elements.tokenSupply.textContent = supply.toLocaleString();
                 this.elements.tokenSupply.classList.add('live-data');
+                this.elements.tokenSupply.classList.remove('error-data');
             } else {
                 this.elements.tokenSupply.textContent = 'No data';
-                this.elements.tokenSupply.classList.remove('loading-data');
                 this.elements.tokenSupply.classList.add('error-data');
+                this.elements.tokenSupply.classList.remove('live-data');
             }
         }
 
         // Update liquidity (from Somnex data)
         if (this.elements.liquidity) {
+            // Always remove loading state first
+            this.elements.liquidity.classList.remove('loading-data');
             if (somnexData && somnexData.liquidity) {
                 this.elements.liquidity.textContent = somnexData.liquidity;
                 this.elements.liquidity.classList.add('live-data');
+                this.elements.liquidity.classList.remove('error-data');
             } else if (somnexData && somnexData.availableTokens) {
                 // Fallback: try to extract from available tokens if liquidity not directly available
                 this.elements.liquidity.textContent = somnexData.availableTokens;
                 this.elements.liquidity.classList.add('live-data');
+                this.elements.liquidity.classList.remove('error-data');
             } else {
                 this.elements.liquidity.textContent = 'No data';
-                this.elements.liquidity.classList.remove('loading-data');
                 this.elements.liquidity.classList.add('error-data');
+                this.elements.liquidity.classList.remove('live-data');
             }
         }
     }
