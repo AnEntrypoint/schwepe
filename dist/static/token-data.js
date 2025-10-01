@@ -264,19 +264,35 @@ class TokenDataFetcher {
      * Update UI with fetched data
      */
     updateUI(tokenData, holdersData, somnexData) {
-        // Update holders count
-        if (this.elements.holders && tokenData && tokenData.holders_count) {
-            this.elements.holders.textContent = this.formatNumber(tokenData.holders_count);
-            this.elements.holders.classList.add('live-data');
+        console.log('🔍 Updating UI with data:', { tokenData, holdersData, somnexData });
+
+        // Update holders count - prioritize tokenData.holders, fallback to holdersData
+        if (this.elements.holders) {
+            if (tokenData && tokenData.holders) {
+                this.elements.holders.textContent = this.formatNumber(tokenData.holders);
+                this.elements.holders.classList.add('live-data');
+            } else if (holdersData && holdersData.token_holders_count) {
+                this.elements.holders.textContent = this.formatNumber(holdersData.token_holders_count);
+                this.elements.holders.classList.add('live-data');
+            } else {
+                this.elements.holders.textContent = 'No data';
+                this.elements.holders.classList.add('error-data');
+            }
         }
 
-        // Update price from Somnex (live data)
-        if (this.elements.price && somnexData && somnexData.price) {
-            this.elements.price.textContent = somnexData.price;
-            this.elements.price.classList.add('live-data', 'live-price');
-        } else if (this.elements.price) {
-            this.elements.price.textContent = 'Loading...';
-            this.elements.price.classList.add('loading-data');
+        // Update price - handle null values properly
+        if (this.elements.price) {
+            if (somnexData && somnexData.price) {
+                this.elements.price.textContent = somnexData.price;
+                this.elements.price.classList.add('live-data', 'live-price');
+            } else if (tokenData && tokenData.exchange_rate) {
+                this.elements.price.textContent = this.formatPrice(tokenData.exchange_rate);
+                this.elements.price.classList.add('live-data');
+            } else {
+                this.elements.price.textContent = 'No data';
+                this.elements.price.classList.remove('loading-data');
+                this.elements.price.classList.add('error-data');
+            }
         }
 
         // Update price change from Somnex
@@ -292,28 +308,34 @@ class TokenDataFetcher {
             }
         }
 
-        // Update market cap from Somnex
-        if (this.elements.marketCap && somnexData && somnexData.marketCap) {
-            this.elements.marketCap.textContent = somnexData.marketCap;
-            this.elements.marketCap.classList.add('live-data');
-        } else if (this.elements.marketCap && tokenData && tokenData.circulating_market_cap) {
-            this.elements.marketCap.textContent = this.formatMarketCap(tokenData.circulating_market_cap);
-            this.elements.marketCap.classList.add('live-data');
-        } else if (this.elements.marketCap) {
-            this.elements.marketCap.textContent = 'Loading...';
-            this.elements.marketCap.classList.add('loading-data');
+        // Update market cap - handle null values properly
+        if (this.elements.marketCap) {
+            if (somnexData && somnexData.marketCap) {
+                this.elements.marketCap.textContent = somnexData.marketCap;
+                this.elements.marketCap.classList.add('live-data');
+            } else if (tokenData && tokenData.circulating_market_cap && tokenData.circulating_market_cap !== null) {
+                this.elements.marketCap.textContent = this.formatMarketCap(tokenData.circulating_market_cap);
+                this.elements.marketCap.classList.add('live-data');
+            } else {
+                this.elements.marketCap.textContent = 'No data';
+                this.elements.marketCap.classList.remove('loading-data');
+                this.elements.marketCap.classList.add('error-data');
+            }
         }
 
-        // Update volume from Somnex
-        if (this.elements.volume && somnexData && somnexData.volume) {
-            this.elements.volume.textContent = somnexData.volume;
-            this.elements.volume.classList.add('live-data');
-        } else if (this.elements.volume && tokenData && tokenData.volume_24h) {
-            this.elements.volume.textContent = this.formatVolume(tokenData.volume_24h);
-            this.elements.volume.classList.add('live-data');
-        } else if (this.elements.volume) {
-            this.elements.volume.textContent = 'Loading...';
-            this.elements.volume.classList.add('loading-data');
+        // Update volume - handle null values properly
+        if (this.elements.volume) {
+            if (somnexData && somnexData.volume) {
+                this.elements.volume.textContent = somnexData.volume;
+                this.elements.volume.classList.add('live-data');
+            } else if (tokenData && tokenData.volume_24h && tokenData.volume_24h !== null) {
+                this.elements.volume.textContent = this.formatVolume(tokenData.volume_24h);
+                this.elements.volume.classList.add('live-data');
+            } else {
+                this.elements.volume.textContent = 'No data';
+                this.elements.volume.classList.remove('loading-data');
+                this.elements.volume.classList.add('error-data');
+            }
         }
 
         // Update bonding curve progress
@@ -329,26 +351,32 @@ class TokenDataFetcher {
         }
 
         // Update token supply (from token data)
-        if (this.elements.tokenSupply && tokenData && tokenData.total_supply) {
-            const supply = parseInt(tokenData.total_supply) / Math.pow(10, 18);
-            this.elements.tokenSupply.textContent = supply.toLocaleString();
-            this.elements.tokenSupply.classList.add('live-data');
-        } else if (this.elements.tokenSupply) {
-            this.elements.tokenSupply.textContent = 'Loading...';
-            this.elements.tokenSupply.classList.add('loading-data');
+        if (this.elements.tokenSupply) {
+            if (tokenData && tokenData.total_supply) {
+                const supply = parseInt(tokenData.total_supply) / Math.pow(10, 18);
+                this.elements.tokenSupply.textContent = supply.toLocaleString();
+                this.elements.tokenSupply.classList.add('live-data');
+            } else {
+                this.elements.tokenSupply.textContent = 'No data';
+                this.elements.tokenSupply.classList.remove('loading-data');
+                this.elements.tokenSupply.classList.add('error-data');
+            }
         }
 
         // Update liquidity (from Somnex data)
-        if (this.elements.liquidity && somnexData && somnexData.liquidity) {
-            this.elements.liquidity.textContent = somnexData.liquidity;
-            this.elements.liquidity.classList.add('live-data');
-        } else if (this.elements.liquidity && somnexData && somnexData.availableTokens) {
-            // Fallback: try to extract from available tokens if liquidity not directly available
-            this.elements.liquidity.textContent = somnexData.availableTokens;
-            this.elements.liquidity.classList.add('live-data');
-        } else if (this.elements.liquidity) {
-            this.elements.liquidity.textContent = 'Loading...';
-            this.elements.liquidity.classList.add('loading-data');
+        if (this.elements.liquidity) {
+            if (somnexData && somnexData.liquidity) {
+                this.elements.liquidity.textContent = somnexData.liquidity;
+                this.elements.liquidity.classList.add('live-data');
+            } else if (somnexData && somnexData.availableTokens) {
+                // Fallback: try to extract from available tokens if liquidity not directly available
+                this.elements.liquidity.textContent = somnexData.availableTokens;
+                this.elements.liquidity.classList.add('live-data');
+            } else {
+                this.elements.liquidity.textContent = 'No data';
+                this.elements.liquidity.classList.remove('loading-data');
+                this.elements.liquidity.classList.add('error-data');
+            }
         }
     }
 
