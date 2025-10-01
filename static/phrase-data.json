@@ -1,8 +1,8 @@
 {
   "selections": {
     "pageTitle": {
-      "selectedIndex": 3,
-      "selectedPhrase": "Schwepe's 247420 Realm",
+      "selectedIndex": 0,
+      "selectedPhrase": "Schwepe's Funky Universe",
       "totalPhrases": 5,
       "allPhrases": [
         "Schwepe's Funky Universe",
@@ -25,8 +25,8 @@
       ]
     },
     "mainSectionTitle": {
-      "selectedIndex": 4,
-      "selectedPhrase": "🌊 The Ocean of Endless Memetic Possibilities 🌊",
+      "selectedIndex": 1,
+      "selectedPhrase": "🔥 The Eternal Flame of Crypto Degeneracy 🔥",
       "totalPhrases": 5,
       "allPhrases": [
         "💎 The Degenerate Lifeblood of 247420 💎",
@@ -49,8 +49,8 @@
       ]
     },
     "ageVerification": {
-      "selectedIndex": 1,
-      "selectedPhrase": "🔞 Adult swim only - no paper hands allowed",
+      "selectedIndex": 4,
+      "selectedPhrase": "🎪 Enter at your own risk (we recommend it)",
       "totalPhrases": 5,
       "allPhrases": [
         "✅ Age-gated for maximum degen safety",
@@ -61,8 +61,8 @@
       ]
     },
     "interactiveLore": {
-      "selectedIndex": 2,
-      "selectedPhrase": "📖 Living documents that evolve with the community",
+      "selectedIndex": 3,
+      "selectedPhrase": "🎲 Never the same experience twice",
       "totalPhrases": 5,
       "allPhrases": [
         "📚 Dynamic lore system with multiple endings",
@@ -73,8 +73,8 @@
       ]
     },
     "responsiveDesign": {
-      "selectedIndex": 0,
-      "selectedPhrase": "📱 Works on your phone during bathroom trading",
+      "selectedIndex": 2,
+      "selectedPhrase": "📱🖥️ Responsive design for all your devices",
       "totalPhrases": 5,
       "allPhrases": [
         "📱 Works on your phone during bathroom trading",
@@ -97,8 +97,8 @@
       ]
     },
     "memeGeneratorSubtitle": {
-      "selectedIndex": 2,
-      "selectedPhrase": "Create copypastas that will haunt your portfolio",
+      "selectedIndex": 4,
+      "selectedPhrase": "Turn your trading trauma into viral content",
       "totalPhrases": 5,
       "allPhrases": [
         "Click the button to generate maximum degen copypasta",
@@ -109,8 +109,8 @@
       ]
     },
     "bullishVibes": {
-      "selectedIndex": 4,
-      "selectedPhrase": "WAGMI Spirit",
+      "selectedIndex": 3,
+      "selectedPhrase": "Lambo Dreams",
       "totalPhrases": 5,
       "allPhrases": [
         "Bullish Vibes",
@@ -121,8 +121,8 @@
       ]
     },
     "bearishCopium": {
-      "selectedIndex": 2,
-      "selectedPhrase": "Portfolio Trauma",
+      "selectedIndex": 0,
+      "selectedPhrase": "Bearish Copium",
       "totalPhrases": 5,
       "allPhrases": [
         "Bearish Copium",
@@ -157,8 +157,8 @@
       ]
     },
     "tokenInfoTitle": {
-      "selectedIndex": 4,
-      "selectedPhrase": "🌊 Diving Into the Token Ocean 🌊",
+      "selectedIndex": 1,
+      "selectedPhrase": "💎 The Tokenomics of Maximum Degeneracy 💎",
       "totalPhrases": 5,
       "allPhrases": [
         "🔥 Token Information & How to Join the Chaos 🔥",
@@ -169,8 +169,8 @@
       ]
     },
     "tokenAddressLabel": {
-      "selectedIndex": 4,
-      "selectedPhrase": "🌊 Your Gateway to Degeneracy",
+      "selectedIndex": 1,
+      "selectedPhrase": "💎 Contract Address",
       "totalPhrases": 5,
       "allPhrases": [
         "🎯 Token Address",
@@ -181,8 +181,8 @@
       ]
     },
     "howToBuyTitle": {
-      "selectedIndex": 0,
-      "selectedPhrase": "🎮 How to Join the 247420 Revolution 🎮",
+      "selectedIndex": 3,
+      "selectedPhrase": "🎪 Step-by-Step Financial Destruction 🎪",
       "totalPhrases": 5,
       "allPhrases": [
         "🎮 How to Join the 247420 Revolution 🎮",
@@ -193,8 +193,8 @@
       ]
     },
     "navHome": {
-      "selectedIndex": 0,
-      "selectedPhrase": "Home",
+      "selectedIndex": 4,
+      "selectedPhrase": "Command Center",
       "totalPhrases": 5,
       "allPhrases": [
         "Home",
@@ -205,8 +205,8 @@
       ]
     },
     "navLore": {
-      "selectedIndex": 4,
-      "selectedPhrase": "Legends",
+      "selectedIndex": 0,
+      "selectedPhrase": "Lore",
       "totalPhrases": 5,
       "allPhrases": [
         "Lore",
@@ -217,8 +217,8 @@
       ]
     },
     "navStats": {
-      "selectedIndex": 0,
-      "selectedPhrase": "Stats",
+      "selectedIndex": 4,
+      "selectedPhrase": "Intel",
       "totalPhrases": 5,
       "allPhrases": [
         "Stats",
@@ -229,8 +229,8 @@
       ]
     },
     "ageVerificationTitle": {
-      "selectedIndex": 0,
-      "selectedPhrase": "⚠️ Age Verification Required",
+      "selectedIndex": 4,
+      "selectedPhrase": "🎪 Age Gate of Chaos",
       "totalPhrases": 5,
       "allPhrases": [
         "⚠️ Age Verification Required",
@@ -253,8 +253,8 @@
       ]
     },
     "enterButton": {
-      "selectedIndex": 1,
-      "selectedPhrase": "I'm 18+ and 99% Ape",
+      "selectedIndex": 2,
+      "selectedPhrase": "I'm 18+ and Diamond Handed",
       "totalPhrases": 5,
       "allPhrases": [
         "I'm 18+ and Ready to Lose Money",
@@ -277,8 +277,8 @@
       ]
     },
     "statsHeader": {
-      "selectedIndex": 0,
-      "selectedPhrase": "🔥 Live Schwepe Intelligence Dashboard 🔥",
+      "selectedIndex": 1,
+      "selectedPhrase": "⚡ Real-time 247420 Analytics ⚡",
       "totalPhrases": 5,
       "allPhrases": [
         "🔥 Live Schwepe Intelligence Dashboard 🔥",
@@ -301,8 +301,8 @@
       ]
     },
     "lorePageTitle": {
-      "selectedIndex": 2,
-      "selectedPhrase": "247420 Story Collection",
+      "selectedIndex": 0,
+      "selectedPhrase": "Schwepe Lore - The Complete Saga",
       "totalPhrases": 5,
       "allPhrases": [
         "Schwepe Lore - The Complete Saga",
@@ -313,8 +313,8 @@
       ]
     },
     "loadingError": {
-      "selectedIndex": 0,
-      "selectedPhrase": "Error loading content",
+      "selectedIndex": 2,
+      "selectedPhrase": "Something went horribly wrong",
       "totalPhrases": 5,
       "allPhrases": [
         "Error loading content",
@@ -325,8 +325,8 @@
       ]
     },
     "encouragement": {
-      "selectedIndex": 4,
-      "selectedPhrase": "This is the way! ⚡",
+      "selectedIndex": 1,
+      "selectedPhrase": "WAGMI! 🚀",
       "totalPhrases": 10,
       "allPhrases": [
         "Keep hodling! 💪",
@@ -342,7 +342,7 @@
       ]
     }
   },
-  "generatedAt": "2025-10-01T17:36:24.878Z",
+  "generatedAt": "2025-10-01T17:41:02.209Z",
   "stats": {
     "totalPhrases": 4804,
     "totalGroups": 35,
