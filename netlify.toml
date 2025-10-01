@@ -1,0 +1,43 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# Netlify Functions configuration
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# API redirects for our proxy functions
+[[redirects]]
+  from = "/api/tokens/:address/counters"
+  to = "/.netlify/functions/api/tokens/:address/counters"
+  status = 200
+
+[[redirects]]
+  from = "/somnex/api/*"
+  to = "/.netlify/functions/somnex/api/:splat"
+  status = 200
+
+# Handle SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Add security headers
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+
+[[headers]]
+  for = "/somnex/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
