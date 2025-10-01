@@ -7,6 +7,15 @@ class TokenDataFetcher {
         this.tokenAddress = '0xDD10620866C4F586b1213d3818811Faf3718FCe3';
         this.somniaApiBase = 'https://explorer.somnia.network/api/v2';
         this.somnexUrl = 'https://somnex.xyz';
+
+        // Use local CORS proxy when available, fallback to allorigins.win
+        this.corsProxyUrl = window.location.origin;
+        this.localProxyPort = 3001;
+        this.useLocalProxy = false; // Will be detected
+
+        // Determine the best CORS proxy to use
+        this.detectCORSProxy();
+
         this.cache = new Map();
         this.cacheTimeout = 15000; // 15 seconds for live data
         this.refreshInterval = 30000; // 30 seconds
@@ -25,6 +34,23 @@ class TokenDataFetcher {
             tokenSupply: null,
             liquidity: null
         };
+    }
+
+    /**
+     * Detect which CORS proxy to use
+     */
+    detectCORSProxy() {
+        // For development (localhost) - try local proxy first
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            this.corsProxyBase = `http://localhost:${this.localProxyPort}`;
+            this.useLocalProxy = true;
+            console.log('🔧 Using local CORS proxy:', this.corsProxyBase);
+        } else {
+            // For production - use allorigins.win
+            this.corsProxyBase = 'https://api.allorigins.win/get?url=';
+            this.useLocalProxy = false;
+            console.log('🌐 Using remote CORS proxy:', this.corsProxyBase);
+        }
     }
 
     /**
@@ -106,10 +132,27 @@ class TokenDataFetcher {
         if (cached) return cached;
 
         try {
-            const response = await fetch(`${this.somniaApiBase}/tokens/${this.tokenAddress}`);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            let response, data;
 
-            const data = await response.json();
+            if (this.useLocalProxy) {
+                // Use local CORS proxy
+                const apiUrl = `${this.corsProxyBase}/api/token/${this.tokenAddress}`;
+                console.log('🔗 Fetching from local proxy:', apiUrl);
+                response = await fetch(apiUrl);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                data = await response.json();
+            } else {
+                // Use remote CORS proxy (allorigins.win)
+                const proxiedUrl = `${this.corsProxyBase}${encodeURIComponent(`${this.somniaApiBase}/tokens/${this.tokenAddress}`)}`;
+                console.log('🔗 Fetching from remote proxy:', proxiedUrl);
+                response = await fetch(proxiedUrl);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const proxyData = await response.json();
+                data = JSON.parse(proxyData.contents);
+            }
+
             this.setCache(cacheKey, data);
             return data;
         } catch (error) {
@@ -128,10 +171,27 @@ class TokenDataFetcher {
         if (cached) return cached;
 
         try {
-            const response = await fetch(`${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            let response, data;
 
-            const data = await response.json();
+            if (this.useLocalProxy) {
+                // Use local CORS proxy
+                const apiUrl = `${this.corsProxyBase}/api/token/${this.tokenAddress}/counters`;
+                console.log('🔗 Fetching holders from local proxy:', apiUrl);
+                response = await fetch(apiUrl);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                data = await response.json();
+            } else {
+                // Use remote CORS proxy (allorigins.win)
+                const proxiedUrl = `${this.corsProxyBase}${encodeURIComponent(`${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`)}`;
+                console.log('🔗 Fetching holders from remote proxy:', proxiedUrl);
+                response = await fetch(proxiedUrl);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const proxyData = await response.json();
+                data = JSON.parse(proxyData.contents);
+            }
+
             this.setCache(cacheKey, data);
             return data;
         } catch (error) {
@@ -151,17 +211,34 @@ class TokenDataFetcher {
 
         try {
             // Since Somnex doesn't have a public API, we'll scrape the data from their page
-            // In a production environment, you'd want to use their official API if available
-            const response = await fetch(`${this.somnexUrl}/#/token/${this.tokenAddress}`, {
-                headers: {
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-                }
-            });
+            // Use CORS proxy for all environments to fix CORS issues completely
+            const url = `${this.somnexUrl}/#/token/${this.tokenAddress}`;
+            const headers = {
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            };
 
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            let response, html;
 
-            const html = await response.text();
+            if (this.useLocalProxy) {
+                // Use local CORS proxy
+                const proxiedUrl = `${this.corsProxyBase}/proxy?url=${encodeURIComponent(url)}`;
+                console.log('🔗 Fetching Somnex data from local proxy:', proxiedUrl);
+                response = await fetch(proxiedUrl, { headers });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                html = await response.text();
+            } else {
+                // Use remote CORS proxy (allorigins.win)
+                const proxiedUrl = `${this.corsProxyBase}${encodeURIComponent(url)}`;
+                console.log('🔗 Fetching Somnex data from remote proxy:', proxiedUrl);
+                response = await fetch(proxiedUrl, { headers });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const proxyData = await response.json();
+                html = proxyData.contents;
+            }
+
             const data = this.parseSomnexData(html);
             this.setCache(cacheKey, data);
             return data;

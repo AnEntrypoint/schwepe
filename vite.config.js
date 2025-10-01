@@ -102,6 +102,39 @@ export default defineConfig({
     }
   ],
   server: {
-    port: 3000
+    port: 3000,
+    cors: true,
+    proxy: {
+      '/api': {
+        target: 'https://explorer.somnia.network',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api/v2'),
+        secure: true
+      },
+      '/somnex': {
+        target: 'https://somnex.xyz',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/somnex/, ''),
+        secure: true
+      }
+    }
+  },
+  preview: {
+    port: 4173,
+    cors: true,
+    proxy: {
+      '/api': {
+        target: 'https://explorer.somnia.network',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api/v2'),
+        secure: true
+      },
+      '/somnex': {
+        target: 'https://somnex.xyz',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/somnex/, ''),
+        secure: true
+      }
+    }
   }
 })
