@@ -12,8 +12,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         gallery: resolve(__dirname, 'gallery.html'),
-        lore: resolve(__dirname, 'lore.html'),
-        stats: resolve(__dirname, 'stats.html')
+        lore: resolve(__dirname, 'lore.html')
       }
     },
     // Hook to copy additional files after build
