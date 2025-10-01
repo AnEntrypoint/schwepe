@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 import { copyFileSync, mkdirSync, existsSync, readdirSync } from 'fs'
 import { dirname, join } from 'path'
+import { corsProxyPlugin } from './vite-cors-plugin.js'
 
 export default defineConfig({
   root: '.', // Use root as the base directory
@@ -20,6 +21,7 @@ export default defineConfig({
     assetsInlineLimit: 0
   },
   plugins: [
+    corsProxyPlugin(),
     {
       name: 'copy-static-files',
       closeBundle: {
