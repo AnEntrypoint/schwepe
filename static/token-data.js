@@ -27,8 +27,7 @@ class TokenDataFetcher {
             bondingProgress: null,
             availableTokens: null,
             lastUpdate: null,
-            tokenSupply: null,
-            liquidity: null
+            tokenSupply: null
         };
     }
 
@@ -456,26 +455,6 @@ class TokenDataFetcher {
                 this.elements.tokenSupply.textContent = 'No data';
                 this.elements.tokenSupply.classList.add('error-data');
                 this.elements.tokenSupply.classList.remove('live-data');
-            }
-        }
-
-        // Update liquidity (from Somnex data)
-        if (this.elements.liquidity) {
-            // Always remove loading state first
-            this.elements.liquidity.classList.remove('loading-data');
-            if (somnexData && somnexData.liquidity) {
-                this.elements.liquidity.textContent = somnexData.liquidity;
-                this.elements.liquidity.classList.add('live-data');
-                this.elements.liquidity.classList.remove('error-data');
-            } else if (somnexData && somnexData.availableTokens) {
-                // Fallback: try to extract from available tokens if liquidity not directly available
-                this.elements.liquidity.textContent = somnexData.availableTokens;
-                this.elements.liquidity.classList.add('live-data');
-                this.elements.liquidity.classList.remove('error-data');
-            } else {
-                this.elements.liquidity.textContent = 'No data';
-                this.elements.liquidity.classList.add('error-data');
-                this.elements.liquidity.classList.remove('live-data');
             }
         }
     }
