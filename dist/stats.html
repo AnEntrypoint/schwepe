@@ -406,30 +406,30 @@
         <!-- Token Stats Grid -->
         <div class="stats-grid" id="token-stats-grid">
             <div class="stat-card">
-                <div class="stat-number" id="token-supply">-</div>
+                <div class="stat-number" id="token-supply" data-token-supply>Loading...</div>
                 <div class="stat-label">Token Supply</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="token-price">$0.00</div>
+                <div class="stat-number" id="token-price" data-token-price>Loading...</div>
                 <div class="stat-label">Price (USD)</div>
-                <div class="stat-change" id="price-change">+0.00%</div>
+                <div class="stat-change" id="price-change" data-token-price-change></div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="volume-24h">$0</div>
+                <div class="stat-number" id="volume-24h" data-token-volume>Loading...</div>
                 <div class="stat-label">24h Volume</div>
                 <div class="stat-subtext" id="volume-somi">0 SOMI</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="market-cap">$0</div>
+                <div class="stat-number" id="market-cap" data-token-marketcap>Loading...</div>
                 <div class="stat-label">Market Cap</div>
                 <div class="stat-subtext" id="market-cap-somi">0 SOMI</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="token-holders">-</div>
+                <div class="stat-number" id="token-holders" data-token-holders>Loading...</div>
                 <div class="stat-label">Holders</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="liquidity">$0</div>
+                <div class="stat-number" id="liquidity" data-token-liquidity>Loading...</div>
                 <div class="stat-label">Virtual Liquidity</div>
                 <div class="stat-subtext" id="liquidity-somi">0 SOMI</div>
             </div>
@@ -1143,5 +1143,8 @@
             }, 30000);
         });
     </script>
+
+    <!-- Real-time Token Data Script -->
+    <script type="module" src="static/token-data.js"></script>
 </body>
 </html>
