@@ -476,6 +476,27 @@
     </div>
 
     <script>
+        // Global age verification function
+        function enterSite() {
+            document.getElementById('age-verification').style.display = 'none';
+            document.getElementById('main-content').classList.remove('content-blurred');
+            // Use localStorage for age verification
+            localStorage.setItem('age_verified', 'true');
+            // Dispatch custom event to signal age verification is complete
+            window.dispatchEvent(new CustomEvent('ageVerified'));
+        }
+
+        // Check if user has already verified age
+        function checkAgeVerification() {
+            const ageVerified = localStorage.getItem('age_verified');
+            if (ageVerified === 'true') {
+                document.getElementById('age-verification').style.display = 'none';
+                document.getElementById('main-content').classList.remove('content-blurred');
+                // Dispatch custom event to signal age verification is complete
+                window.dispatchEvent(new CustomEvent('ageVerified'));
+            }
+        }
+
         // Load shared navbar
         async function loadNavbar() {
             try {
@@ -498,9 +519,12 @@
             }
         }
 
-  
+
         // Initialize page when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            // Check age verification first
+            checkAgeVerification();
+
             // Load shared navbar
             loadNavbar();
         });
