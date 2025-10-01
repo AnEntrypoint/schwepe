@@ -7,12 +7,10 @@ class TokenDataFetcher {
         this.tokenAddress = '0xDD10620866C4F586b1213d3818811Faf3718FCe3';
         this.somniaApiBase = 'https://explorer.somnia.network/api/v2';
         this.somnexUrl = 'https://somnex.xyz';
+        this.localProxyPort = 3001;
 
-        // Use AllOrigins CORS proxy for production reliability
-        this.corsProxyBase = 'https://api.allorigins.win/get?url=';
-        this.useLocalProxy = false;
-
-        console.log('🔗 Using AllOrigins CORS proxy:', this.corsProxyBase);
+        // Detect which CORS proxy to use
+        this.detectCORSProxy();
 
         this.cache = new Map();
         this.cacheTimeout = 15000; // 15 seconds for live data
@@ -137,15 +135,25 @@ class TokenDataFetcher {
         try {
             let response, data;
 
-            // Use AllOrigins CORS proxy
-            const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}`;
-            const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
-            console.log('🔗 Fetching from AllOrigins proxy:', proxyUrl);
-            response = await fetch(proxyUrl);
+            if (this.useLocalProxy) {
+                // Use local CORS proxy
+                const proxyUrl = `${this.corsProxyBase}/api/token/${this.tokenAddress}`;
+                console.log('🔗 Fetching from local proxy:', proxyUrl);
+                response = await fetch(proxyUrl);
 
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const result = await response.json();
-            data = result.contents ? JSON.parse(result.contents) : null;
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                data = await response.json();
+            } else {
+                // Use AllOrigins CORS proxy
+                const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}`;
+                const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
+                console.log('🔗 Fetching from AllOrigins proxy:', proxyUrl);
+                response = await fetch(proxyUrl);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const result = await response.json();
+                data = result.contents ? JSON.parse(result.contents) : null;
+            }
 
             this.setCache(cacheKey, data);
             return data;
@@ -167,15 +175,25 @@ class TokenDataFetcher {
         try {
             let response, data;
 
-            // Use AllOrigins CORS proxy
-            const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`;
-            const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
-            console.log('🔗 Fetching holders from AllOrigins proxy:', proxyUrl);
-            response = await fetch(proxyUrl);
+            if (this.useLocalProxy) {
+                // Use local CORS proxy
+                const proxyUrl = `${this.corsProxyBase}/api/token/${this.tokenAddress}/counters`;
+                console.log('🔗 Fetching holders from local proxy:', proxyUrl);
+                response = await fetch(proxyUrl);
 
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const result = await response.json();
-            data = result.contents ? JSON.parse(result.contents) : null;
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                data = await response.json();
+            } else {
+                // Use AllOrigins CORS proxy
+                const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`;
+                const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
+                console.log('🔗 Fetching holders from AllOrigins proxy:', proxyUrl);
+                response = await fetch(proxyUrl);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const result = await response.json();
+                data = result.contents ? JSON.parse(result.contents) : null;
+            }
 
             this.setCache(cacheKey, data);
             return data;
@@ -187,7 +205,7 @@ class TokenDataFetcher {
     }
 
     /**
-     * Fetch live pricing data from Somnex DEX
+     * Fetch live pricing data from Somnex DEX APIs
      */
     async fetchSomnexData() {
         const cacheKey = 'somnex-data';
@@ -195,28 +213,76 @@ class TokenDataFetcher {
         if (cached) return cached;
 
         try {
-            // Since Somnex doesn't have a public API, we'll scrape the data from their page
-            // Use AllOrigins CORS proxy for all environments to fix CORS issues completely
-            const url = `${this.somnexUrl}/#/token/${this.tokenAddress}`;
+            console.log('🔗 Fetching Somnex DEX data from APIs');
+
             const headers = {
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept': 'application/json',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
             };
 
-            // Use AllOrigins CORS proxy
-            const proxiedUrl = `${this.corsProxyBase}${encodeURIComponent(url)}`;
-            console.log('🔗 Fetching Somnex data from AllOrigins proxy:', proxiedUrl);
-            const response = await fetch(proxiedUrl, { headers });
+            // Always use AllOrigins for Somnex APIs (local proxy doesn't support external APIs)
+            const allOriginsBase = 'https://api.allorigins.win/get?url=';
 
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const result = await response.json();
-            const html = result.contents || '';
+            // Fetch all required data in parallel
+            const [volumeResponse, tokenListResponse, somiPriceResponse] = await Promise.allSettled([
+                // 24h Volume API
+                fetch(`${allOriginsBase}${encodeURIComponent(`https://dapp.somnex.xyz/api/Launchpadv2/5031/launchpad/kline/${this.tokenAddress}/volume_24h`)}`, { headers }),
 
-            const data = this.parseSomnexData(html);
-            this.setCache(cacheKey, data);
-            return data;
+                // Token Details API (Market Cap, Progress)
+                fetch(`${allOriginsBase}${encodeURIComponent(`https://dapp.somnex.xyz/api/Launchpadv2/5031/launchpad/list/${this.tokenAddress}`)}`, { headers }),
+
+                // SOMI Price API (for USD conversion)
+                fetch(`${allOriginsBase}${encodeURIComponent('https://dapp.somnex.xyz/api/v1/5031/prices/assets/0x046EDe9564A72571df6F5e44d0405360c0f4dCab')}`, { headers })
+            ]);
+
+            // Process responses
+            let volumeData = null, tokenData = null, somiPriceData = null;
+
+            if (volumeResponse.status === 'fulfilled') {
+                const result = await volumeResponse.value.json();
+                volumeData = result.contents ? JSON.parse(result.contents) : null;
+            }
+
+            if (tokenListResponse.status === 'fulfilled') {
+                const result = await tokenListResponse.value.json();
+                tokenData = result.contents ? JSON.parse(result.contents) : null;
+            }
+
+            if (somiPriceResponse.status === 'fulfilled') {
+                const result = await somiPriceResponse.value.json();
+                somiPriceData = result.contents ? JSON.parse(result.contents) : null;
+            }
+
+            // Extract and format the data
+            const somnexData = {
+                // Extract from volume data
+                volume24hSOMI: volumeData?.data?.volumeToken1 || null,
+                volume24hTokens: volumeData?.data?.volumeToken0 || null,
+
+                // Extract from token data - use the actual API response structure
+                marketCap: tokenData?.data?.marketCapUSD || tokenData?.data?.marketCap || null,
+                bondingProgress: tokenData?.data?.progress || null,
+                currentPriceSOMI: null, // Price not directly available from this API
+
+                // SOMI price for USD conversion
+                somiPriceUSD: somiPriceData?.data?.price || null,
+
+                // Calculate USD price if we have market cap and supply (approximate)
+                priceUSD: tokenData?.data?.marketCapUSD && somiPriceData?.data?.price
+                    ? (parseFloat(tokenData.data.marketCapUSD) / 1000000000).toFixed(8) // Assuming 1B supply
+                    : null,
+
+                // Calculate 24h volume in USD if we have SOMI price and volume
+                volume24hUSD: volumeData?.data?.volumeToken1 && somiPriceData?.data?.price
+                    ? (parseFloat(volumeData.data.volumeToken1) * parseFloat(somiPriceData.data.price)).toFixed(2)
+                    : null
+            };
+
+            console.log('📊 Somnex DEX data fetched:', somnexData);
+            this.setCache(cacheKey, somnexData);
+            return somnexData;
         } catch (error) {
-            console.error('Error fetching Somnex data:', error);
+            console.error('Error fetching Somnex DEX data:', error);
             // Return null when API calls fail - no fallbacks
             return null;
         }
@@ -289,9 +355,14 @@ class TokenDataFetcher {
         if (this.elements.price) {
             // Always remove loading state first
             this.elements.price.classList.remove('loading-data');
-            if (somnexData && somnexData.price) {
-                this.elements.price.textContent = somnexData.price;
+            if (somnexData && somnexData.priceUSD) {
+                this.elements.price.textContent = this.formatPrice(somnexData.priceUSD);
                 this.elements.price.classList.add('live-data', 'live-price');
+                this.elements.price.classList.remove('error-data');
+            } else if (somnexData && somnexData.currentPriceSOMI) {
+                // Show price in SOMI if USD not available
+                this.elements.price.textContent = `${parseFloat(somnexData.currentPriceSOMI).toFixed(8)} SOMI`;
+                this.elements.price.classList.add('live-data');
                 this.elements.price.classList.remove('error-data');
             } else if (tokenData && tokenData.exchange_rate) {
                 this.elements.price.textContent = this.formatPrice(tokenData.exchange_rate);
@@ -322,7 +393,7 @@ class TokenDataFetcher {
             // Always remove loading state first
             this.elements.marketCap.classList.remove('loading-data');
             if (somnexData && somnexData.marketCap) {
-                this.elements.marketCap.textContent = somnexData.marketCap;
+                this.elements.marketCap.textContent = this.formatMarketCap(somnexData.marketCap);
                 this.elements.marketCap.classList.add('live-data');
                 this.elements.marketCap.classList.remove('error-data');
             } else if (tokenData && tokenData.circulating_market_cap && tokenData.circulating_market_cap !== null) {
@@ -340,8 +411,13 @@ class TokenDataFetcher {
         if (this.elements.volume) {
             // Always remove loading state first
             this.elements.volume.classList.remove('loading-data');
-            if (somnexData && somnexData.volume) {
-                this.elements.volume.textContent = somnexData.volume;
+            if (somnexData && somnexData.volume24hUSD) {
+                this.elements.volume.textContent = this.formatVolume(somnexData.volume24hUSD);
+                this.elements.volume.classList.add('live-data');
+                this.elements.volume.classList.remove('error-data');
+            } else if (somnexData && somnexData.volume24hSOMI) {
+                // Show volume in SOMI if USD not available
+                this.elements.volume.textContent = `${parseFloat(somnexData.volume24hSOMI).toLocaleString()} SOMI`;
                 this.elements.volume.classList.add('live-data');
                 this.elements.volume.classList.remove('error-data');
             } else if (tokenData && tokenData.volume_24h && tokenData.volume_24h !== null) {
@@ -357,7 +433,7 @@ class TokenDataFetcher {
 
         // Update bonding curve progress
         if (this.elements.bondingProgress && somnexData && somnexData.bondingProgress) {
-            this.elements.bondingProgress.textContent = somnexData.bondingProgress;
+            this.elements.bondingProgress.textContent = `${somnexData.bondingProgress}%`;
             this.elements.bondingProgress.classList.add('live-data');
         }
 
