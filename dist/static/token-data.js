@@ -35,11 +35,11 @@ class TokenDataFetcher {
      * Detect which CORS proxy to use
      */
     detectCORSProxy() {
-        // Use AllOrigins proxy for reliable CORS bypass
+        // Direct API access - no CORS proxy needed for dapp.somnex.xyz
         this.useLocalProxy = false;
-        this.corsProxyBase = 'https://api.allorigins.win/raw?url=';
+        this.corsProxyBase = ''; // No proxy needed - APIs allow direct access
 
-        console.log('🔧 Using AllOrigins CORS proxy for reliable API access');
+        console.log('🔧 Using direct API access - no CORS proxy required');
     }
 
     /**
@@ -136,8 +136,8 @@ class TokenDataFetcher {
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 data = await response.json();
-            } else {
-                // Use AllOrigins CORS proxy
+            } else if (this.corsProxyBase) {
+                // Use AllOrigins CORS proxy if configured
                 const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}`;
                 const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
                 console.log('🔗 Fetching from AllOrigins proxy:', proxyUrl);
@@ -146,6 +146,14 @@ class TokenDataFetcher {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const result = await response.json();
                 data = result.contents ? JSON.parse(result.contents) : null;
+            } else {
+                // Direct access - no proxy needed
+                const directUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}`;
+                console.log('🔗 Fetching directly:', directUrl);
+                response = await fetch(directUrl);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                data = await response.json();
             }
 
             this.setCache(cacheKey, data);
@@ -166,15 +174,27 @@ class TokenDataFetcher {
         if (cached) return cached;
 
         try {
-            // Use AllOrigins CORS proxy
-            const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`;
-            const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
-            console.log('🔗 Fetching holders from AllOrigins proxy:', proxyUrl);
-            const response = await fetch(proxyUrl);
+            let response, data;
 
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const result = await response.json();
-            const data = result.contents ? JSON.parse(result.contents) : null;
+            if (this.corsProxyBase) {
+                // Use AllOrigins CORS proxy if configured
+                const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`;
+                const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
+                console.log('🔗 Fetching holders from AllOrigins proxy:', proxyUrl);
+                response = await fetch(proxyUrl);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const result = await response.json();
+                data = result.contents ? JSON.parse(result.contents) : null;
+            } else {
+                // Direct access - no proxy needed
+                const directUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`;
+                console.log('🔗 Fetching holders directly:', directUrl);
+                response = await fetch(directUrl);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                data = await response.json();
+            }
 
             this.setCache(cacheKey, data);
             return data;
@@ -201,19 +221,19 @@ class TokenDataFetcher {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
             };
 
-            // Use AllOrigins proxy for Somnex APIs
-            const somnexBase = 'https://api.somniex.com';
+            // Use direct API access - no proxy needed
+            const somnexBase = 'https://dapp.somnex.xyz';
 
             // Fetch all required data in parallel
             const [volumeResponse, tokenListResponse, somiPriceResponse] = await Promise.allSettled([
                 // 24h Volume API
-                fetch(`${this.corsProxyBase}${encodeURIComponent(`${somnexBase}/api/Launchpadv2/5031/launchpad/kline/${this.tokenAddress}/volume_24h`)}`, { headers }),
+                fetch(`${somnexBase}/api/Launchpadv2/5031/launchpad/kline/${this.tokenAddress}/volume_24h`, { headers }),
 
                 // Token Details API (Market Cap, Progress)
-                fetch(`${this.corsProxyBase}${encodeURIComponent(`${somnexBase}/api/Launchpadv2/5031/launchpad/list/${this.tokenAddress}`)}`, { headers }),
+                fetch(`${somnexBase}/api/Launchpadv2/5031/launchpad/list/${this.tokenAddress}`, { headers }),
 
                 // SOMI Price API (for USD conversion)
-                fetch(`${this.corsProxyBase}${encodeURIComponent(`${somnexBase}/api/v1/5031/prices/assets/0x046EDe9564A72571df6F5e44d0405360c0f4dCab`)}`, { headers })
+                fetch(`${somnexBase}/api/v1/5031/prices/assets/0x046EDe9564A72571df6F5e44d0405360c0f4dCab`, { headers })
             ]);
 
             // Process responses
@@ -221,18 +241,27 @@ class TokenDataFetcher {
 
             if (volumeResponse.status === 'fulfilled') {
                 const result = await volumeResponse.value.json();
-                volumeData = result.contents ? JSON.parse(result.contents) : result;
+                volumeData = result;
             }
 
             if (tokenListResponse.status === 'fulfilled') {
                 const result = await tokenListResponse.value.json();
-                tokenData = result.contents ? JSON.parse(result.contents) : result;
+                tokenData = result;
             }
 
             if (somiPriceResponse.status === 'fulfilled') {
                 const result = await somiPriceResponse.value.json();
-                somiPriceData = result.contents ? JSON.parse(result.contents) : result;
+                somiPriceData = result;
             }
+
+            // Calculate derived values
+            const totalSupply = 1000000000; // 1 billion tokens
+            const marketCapUSD = tokenData?.data?.marketCapUSD ? parseFloat(tokenData.data.marketCapUSD) : 0;
+            const tokenPriceUSD = marketCapUSD / totalSupply;
+
+            const volume24hSOMI = volumeData?.data?.volumeToken1 ? parseFloat(volumeData.data.volumeToken1) : 0;
+            const somiPriceUSD = somiPriceData?.data?.price || 0;
+            const volume24hUSD = volume24hSOMI * somiPriceUSD;
 
             // Extract and format the data
             const somnexData = {
@@ -241,22 +270,19 @@ class TokenDataFetcher {
                 volume24hTokens: volumeData?.data?.volumeToken0 || null,
 
                 // Extract from token data - use the actual API response structure
-                marketCap: tokenData?.data?.marketCapUSD || tokenData?.data?.marketCap || null,
+                marketCap: tokenData?.data?.marketCapUSD || null,
+                marketCapSOMI: tokenData?.data?.marketCap || null,
                 bondingProgress: tokenData?.data?.progress || null,
+
+                // Calculate token price based on market cap and supply
                 currentPriceSOMI: null, // Price not directly available from this API
+                priceUSD: tokenPriceUSD > 0 ? tokenPriceUSD : null,
 
                 // SOMI price for USD conversion
                 somiPriceUSD: somiPriceData?.data?.price || null,
 
-                // Calculate USD price if we have market cap and supply (approximate)
-                priceUSD: tokenData?.data?.marketCapUSD && somiPriceData?.data?.price
-                    ? (parseFloat(tokenData.data.marketCapUSD) / 1000000000).toFixed(8) // Assuming 1B supply
-                    : null,
-
                 // Calculate 24h volume in USD if we have SOMI price and volume
-                volume24hUSD: volumeData?.data?.volumeToken1 && somiPriceData?.data?.price
-                    ? (parseFloat(volumeData.data.volumeToken1) * parseFloat(somiPriceData.data.price)).toFixed(2)
-                    : null
+                volume24hUSD: volume24hUSD > 0 ? volume24hUSD : null
             };
 
             console.log('📊 Somnex DEX data fetched:', somnexData);
@@ -336,7 +362,7 @@ class TokenDataFetcher {
         if (this.elements.price) {
             // Always remove loading state first
             this.elements.price.classList.remove('loading-data');
-            if (somnexData && somnexData.priceUSD) {
+            if (somnexData && somnexData.priceUSD && somnexData.priceUSD > 0) {
                 this.elements.price.textContent = this.formatPrice(somnexData.priceUSD);
                 this.elements.price.classList.add('live-data', 'live-price');
                 this.elements.price.classList.remove('error-data');
