@@ -76,7 +76,7 @@ exports.handler = async function(event, context) {
         reject(error);
       });
 
-      req.setTimeout(10000, () => {
+      req.setTimeout(6900, () => {
         req.destroy();
         reject(new Error('Request timeout'));
       });

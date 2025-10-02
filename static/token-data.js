@@ -13,7 +13,7 @@ class TokenDataFetcher {
         this.detectCORSProxy();
 
         this.cache = new Map();
-        this.cacheTimeout = 15000; // 15 seconds for live data
+        this.cacheTimeout = 14200; // 15 seconds for live data
         this.refreshInterval = 30000; // 30 seconds
         this.intervalId = null;
 
@@ -253,7 +253,7 @@ class TokenDataFetcher {
             }
 
             // Calculate derived values
-            const totalSupply = 1000000000; // 1 billion tokens
+            const totalSupply = 690000000; // 1 billion tokens
             const marketCapUSD = tokenData?.data?.marketCapUSD ? parseFloat(tokenData.data.marketCapUSD) : 0;
             const tokenPriceUSD = marketCapUSD / totalSupply;
 
