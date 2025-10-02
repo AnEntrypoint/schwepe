@@ -43,10 +43,10 @@ class TokenDataFetcher {
             this.corsProxyBase = '';
             console.log('🔧 Using local Vite proxy for development');
         } else {
-            // Production - use our own CORS proxy for Somnia Explorer APIs
+            // Production - use AllOrigins CORS proxy for Somnia Explorer APIs
             this.useLocalProxy = false;
-            this.corsProxyBase = ''; // Use relative paths for our proxy
-            console.log('🔧 Using our own CORS proxy for Somnia Explorer APIs');
+            this.corsProxyBase = 'https://api.allorigins.win/raw?url=';
+            console.log('🔧 Using AllOrigins CORS proxy for Somnia Explorer APIs');
         }
     }
 
@@ -145,13 +145,15 @@ class TokenDataFetcher {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 data = await response.json();
             } else {
-                // Production - use our CORS proxy
-                const proxyUrl = `/api/tokens/${this.tokenAddress}`;
-                console.log('🔗 Fetching from our proxy:', proxyUrl);
+                // Production - use AllOrigins CORS proxy
+                const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}`;
+                const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
+                console.log('🔗 Fetching from AllOrigins proxy:', proxyUrl);
                 response = await fetch(proxyUrl);
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                data = await response.json();
+                const result = await response.json();
+                data = result ? JSON.parse(result) : null;
             }
 
             this.setCache(cacheKey, data);
@@ -183,13 +185,15 @@ class TokenDataFetcher {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 data = await response.json();
             } else {
-                // Production - use our CORS proxy
-                const proxyUrl = `/api/tokens/${this.tokenAddress}/counters`;
-                console.log('🔗 Fetching holders from our proxy:', proxyUrl);
+                // Production - use AllOrigins CORS proxy
+                const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`;
+                const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
+                console.log('🔗 Fetching holders from AllOrigins proxy:', proxyUrl);
                 response = await fetch(proxyUrl);
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                data = await response.json();
+                const result = await response.json();
+                data = result ? JSON.parse(result) : null;
             }
 
             this.setCache(cacheKey, data);
