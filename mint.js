@@ -1,7 +1,9 @@
-// Wallet + Contract = thirdweb only
-import { createThirdwebClient, getContract, prepareContractCall, sendTransaction } from 'thirdweb'
-import { defineChain } from 'thirdweb/chains'
-import { createWallet } from 'thirdweb/wallets'
+// Wallet + Contract using Reown AppKit and Wagmi
+import { createAppKit } from '@reown/appkit'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
+import { mainnet } from '@reown/appkit/networks'
+import { createConfig, reconnect, getAccount, watchAccount, writeContract, waitForTransactionReceipt } from '@wagmi/core'
+import { http } from 'viem'
 
 // DOM elements - must be declared before use
 const statusEl = document.getElementById('status')
@@ -16,25 +18,30 @@ function setStatus(msg) {
   if (panelStatus) panelStatus.textContent = msg || ''
 }
 
-// Support both naming styles
-const THIRDWEB_CLIENT_ID = import.meta.env.VITE_THIRDWEB_CLIENT_ID
-if (!THIRDWEB_CLIENT_ID) {
-  console.error('Missing VITE_THIRDWEB_CLIENT_ID environment variable')
+// Reown AppKit project ID
+const REOWN_PROJECT_ID = import.meta.env.VITE_REOWN_PROJECT_ID || import.meta.env.VITE_WC_PROJECT_ID
+if (!REOWN_PROJECT_ID) {
+  console.error('Missing VITE_REOWN_PROJECT_ID or VITE_WC_PROJECT_ID environment variable')
   setStatus('Error: Missing wallet configuration. Please check environment setup.')
 }
 const CONTRACT_ADDRESS = (document.getElementById('contractAddress')?.textContent || '0x442CA6391F9a8201737cFC186ebC00b7ace0DB03').trim()
 
-// Somnia testnet chain via thirdweb helper
-const SOMNIA_TESTNET = defineChain(50312)
-
-// Somnia Mainnet (custom viem chain)
-// const SOMNIA_MAINNET = defineChain({
-//   id: 5031,
-//   name: 'Somnia Mainnet',
-//   nativeCurrency: { name: 'Somnia', symbol: 'SOMI', decimals: 18 },
-//   rpcUrls: { default: { http: ['https://somnia-json-rpc.stakely.io'] } },
-//   blockExplorers: { default: { name: 'Somnia Explorer', url: 'https://mainnet.somnia.w3us.site/' } }
-// })
+// Define Somnia Testnet chain
+const somniaTestnet = {
+  id: 50312,
+  name: 'Somnia Testnet',
+  nativeCurrency: {
+    name: 'Somnia',
+    symbol: 'SOMI',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: { http: ['https://dream-rpc.somnia.network'] },
+  },
+  blockExplorers: {
+    default: { name: 'Somnia Explorer', url: 'https://explorer.somnia.network' },
+  },
+}
 
 async function copyAddr() {
   const addr = CONTRACT_ADDRESS
@@ -45,46 +52,81 @@ window.copyAddr = copyAddr
 const copyBtn = document.getElementById('copyContractBtn')
 if (copyBtn) copyBtn.addEventListener('click', copyAddr)
 
-// thirdweb client + chain + contract
-const client = THIRDWEB_CLIENT_ID ? createThirdwebClient({ clientId: THIRDWEB_CLIENT_ID }) : null
-const wallets = [
-  createWallet("sh.frame"),
-  createWallet("io.zerion.wallet"),
-  createWallet("io.rabby"),
-  createWallet("me.rainbow"),
-  createWallet("com.coinbase.wallet"),
-  createWallet("io.metamask"),
-];
-let contract = null
-if (client) {
-  contract = getContract({ client, chain: SOMNIA_TESTNET, address: CONTRACT_ADDRESS })
+// Setup Wagmi config with Reown AppKit
+const wagmiAdapter = new WagmiAdapter({
+  networks: [somniaTestnet, mainnet],
+  projectId: REOWN_PROJECT_ID || 'demo-project-id',
+  ssr: false
+})
+
+const config = wagmiAdapter.wagmiConfig || createConfig({
+  chains: [somniaTestnet, mainnet],
+  transports: {
+    [somniaTestnet.id]: http(),
+    [mainnet.id]: http(),
+  },
+})
+
+// Create AppKit modal
+let modal = null
+if (REOWN_PROJECT_ID) {
+  modal = createAppKit({
+    adapters: [wagmiAdapter],
+    networks: [somniaTestnet, mainnet],
+    projectId: REOWN_PROJECT_ID,
+    features: {
+      analytics: true
+    },
+    defaultNetwork: somniaTestnet
+  })
 }
-const defaultWallet = createWallet('io.metamask')
-let account = null
+
+// Track connection state
+let isConnected = false
+let currentAddress = null
+
+function updateConnectionUI() {
+  const account = getAccount(config)
+  isConnected = account.isConnected
+  currentAddress = account.address
+  
+  if (isConnected && currentAddress) {
+    connectBtn.style.display = 'none'
+    disconnectBtn.style.display = 'inline-flex'
+    setStatus('Connected: ' + currentAddress)
+    if (buyBtn) buyBtn.innerHTML = '<i class="fas fa-fire"></i> MINT SCHW8BIT'
+  } else {
+    connectBtn.style.display = 'inline-flex'
+    disconnectBtn.style.display = 'none'
+    if (buyBtn) buyBtn.innerHTML = '<i class="fas fa-fire"></i> Buy NFT'
+    setStatus('')
+  }
+}
+
+// Watch for account changes
+watchAccount(config, {
+  onChange: (account) => {
+    updateConnectionUI()
+  }
+})
+
+// Reconnect on page load
+reconnect(config)
 
 async function ensureConnected() {
-  if (account?.address) return account
-  if (!client) {
-    setStatus('Error: Wallet client not initialized. Please check VITE_THIRDWEB_CLIENT_ID.')
-    throw new Error('Client not initialized')
-  }
-  try {
-    const hasInjected = typeof window !== 'undefined' && window.ethereum
-    if (hasInjected) {
-      account = await defaultWallet.connect({ client })
-      connectBtn.style.display = 'none'
-      disconnectBtn.style.display = 'inline-flex'
-    }  else {
-      setStatus('No injected wallet found. Install MetaMask or set VITE_WC_PROJECT_ID')
-      throw new Error('No wallet available')
-    }
-    setStatus('Connected: ' + account.address)
-    if (buyBtn) buyBtn.innerHTML = '<i class="fas fa-fire"></i> MINT SCHW8BIT'
+  const account = getAccount(config)
+  if (account.isConnected && account.address) {
     return account
-  } catch (e) {
-    setStatus('Connect failed: ' + (e?.message || e))
-    throw e
   }
+  
+  if (!modal) {
+    setStatus('Error: Wallet modal not initialized. Please check VITE_REOWN_PROJECT_ID.')
+    throw new Error('Modal not initialized')
+  }
+  
+  // Open the AppKit modal to connect
+  modal.open()
+  throw new Error('Please connect your wallet')
 }
 
 function getDesiredQty() {
@@ -98,82 +140,74 @@ buyBtn?.addEventListener('click', async () => {
   try {
     await ensureConnected()
     await performMint()
-  } catch {}
+  } catch (e) {
+    // If user needs to connect, the modal will open
+    if (e.message !== 'Please connect your wallet') {
+      console.error('Buy button error:', e)
+    }
+  }
 })
 
 disconnectBtn?.addEventListener('click', async () => {
-  account = null
-  connectBtn.style.display = 'inline-flex'
-  disconnectBtn.style.display = 'none'
-  buyBtn.innerHTML = '<i class="fas fa-fire"></i> Buy NFT'
-  setStatus('Wallet disconnected')
+  if (modal) {
+    modal.open()
+  }
 })
 
 connectBtn?.addEventListener('click', async () => {
-  // Toggle wallet menu for selection
-  if (walletMenu.style.display === 'none' || walletMenu.style.display === '') {
-    walletMenu.innerHTML = ''
-    const items = [
-      { id: 'io.metamask', label: 'MetaMask' },
-      { id: 'com.coinbase.wallet', label: 'Coinbase Wallet' },
-      { id: 'me.rainbow', label: 'Rainbow' },
-      { id: 'io.rabby', label: 'Rabby' },
-      { id: 'io.zerion.wallet', label: 'Zerion' },
-      { id: 'sh.frame', label: 'Frame' }
-    ]
-    items.forEach(({ id, label }) => {
-      const btn = document.createElement('button')
-      btn.textContent = label
-      btn.style.cssText = 'width:100%;text-align:left;padding:10px 12px;margin:4px 0;border-radius:8px;background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.15);cursor:pointer'
-      btn.onclick = async () => {
-        try {
-          const w = createWallet(id)
-          account = await w.connect({ client })
-          connectBtn.style.display = 'none'
-          disconnectBtn.style.display = 'inline-flex'
-          setStatus('Connected: ' + account.address)
-          buyBtn.innerHTML = '<i class="fas fa-fire"></i> MINT SCHW8BIT'
-          walletMenu.style.display = 'none'
-        } catch (e) {
-          setStatus('Connect failed: ' + (e?.message || e))
-        }
-      }
-      walletMenu.appendChild(btn)
-    })
-    walletMenu.style.display = 'block'
-    document.addEventListener('click', onOutsideMenu, { once: true })
+  if (modal) {
+    modal.open()
   } else {
-    walletMenu.style.display = 'none'
+    setStatus('Error: Wallet modal not initialized')
   }
 })
 
-function onOutsideMenu(e) {
-  if (!walletMenu.contains(e.target) && e.target !== connectBtn) {
-    walletMenu.style.display = 'none'
-  }
-}
-
 async function performMint() {
-  if (!client || !contract) {
-    setStatus('Error: Contract not initialized. Please check your configuration.')
-    return
-  }
-  if (!account?.address) {
+  const account = getAccount(config)
+  
+  if (!account.isConnected || !account.address) {
     setStatus('Please connect your wallet first')
+    if (modal) modal.open()
     return
   }
+  
   try {
     const qty = getDesiredQty()
-    const tx = prepareContractCall({
-      contract,
-      method: 'function claimTo(address to, uint256 quantity)',
-      params: [account.address, BigInt(qty)]
+    
+    setStatus('Preparing transaction...')
+    
+    // Write to contract using Wagmi
+    const hash = await writeContract(config, {
+      address: CONTRACT_ADDRESS,
+      abi: [
+        {
+          name: 'claimTo',
+          type: 'function',
+          stateMutability: 'nonpayable',
+          inputs: [
+            { name: 'to', type: 'address' },
+            { name: 'quantity', type: 'uint256' }
+          ],
+          outputs: []
+        }
+      ],
+      functionName: 'claimTo',
+      args: [account.address, BigInt(qty)],
+      chainId: somniaTestnet.id
     })
-    setStatus('Sending transaction...')
-    const { transactionHash } = await sendTransaction({ transaction: tx, account })
-    setStatus('Minted! Tx: ' + transactionHash)
+    
+    setStatus('Transaction sent! Waiting for confirmation...')
+    
+    // Wait for transaction receipt
+    const receipt = await waitForTransactionReceipt(config, {
+      hash,
+      chainId: somniaTestnet.id
+    })
+    
+    setStatus('Minted! Tx: ' + receipt.transactionHash)
     celebrate()
   } catch (e) {
+    console.error('Mint error:', e)
     setStatus('Mint failed: ' + (e?.message || e))
   }
 }
@@ -267,6 +301,7 @@ function showRandomCornerMan() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  updateConnectionUI()
   await loadCornerManImages()
   setInterval(() => showRandomCornerMan(), Math.random() * 7000 + 8000)
   setTimeout(() => showRandomCornerMan(), 3000)
