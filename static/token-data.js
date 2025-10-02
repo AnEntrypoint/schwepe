@@ -35,11 +35,19 @@ class TokenDataFetcher {
      * Detect which CORS proxy to use
      */
     detectCORSProxy() {
-        // Direct API access - no CORS proxy needed for dapp.somnex.xyz
-        this.useLocalProxy = false;
-        this.corsProxyBase = ''; // No proxy needed - APIs allow direct access
+        const hostname = window.location.hostname;
 
-        console.log('🔧 Using direct API access - no CORS proxy required');
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            // Local development - use local proxy
+            this.useLocalProxy = true;
+            this.corsProxyBase = '';
+            console.log('🔧 Using local Vite proxy for development');
+        } else {
+            // Production - use our own CORS proxy for Somnia Explorer APIs
+            this.useLocalProxy = false;
+            this.corsProxyBase = ''; // Use relative paths for our proxy
+            console.log('🔧 Using our own CORS proxy for Somnia Explorer APIs');
+        }
     }
 
     /**
@@ -129,28 +137,18 @@ class TokenDataFetcher {
             let response, data;
 
             if (this.useLocalProxy) {
-                // Use local CORS proxy
-                const proxyUrl = `${this.corsProxyBase}/api/token/${this.tokenAddress}`;
+                // Local development - use Vite proxy
+                const proxyUrl = `/api/tokens/${this.tokenAddress}`;
                 console.log('🔗 Fetching from local proxy:', proxyUrl);
                 response = await fetch(proxyUrl);
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 data = await response.json();
-            } else if (this.corsProxyBase) {
-                // Use AllOrigins CORS proxy if configured
-                const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}`;
-                const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
-                console.log('🔗 Fetching from AllOrigins proxy:', proxyUrl);
-                response = await fetch(proxyUrl);
-
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const result = await response.json();
-                data = result.contents ? JSON.parse(result.contents) : null;
             } else {
-                // Direct access - no proxy needed
-                const directUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}`;
-                console.log('🔗 Fetching directly:', directUrl);
-                response = await fetch(directUrl);
+                // Production - use our CORS proxy
+                const proxyUrl = `/api/tokens/${this.tokenAddress}`;
+                console.log('🔗 Fetching from our proxy:', proxyUrl);
+                response = await fetch(proxyUrl);
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 data = await response.json();
@@ -176,21 +174,19 @@ class TokenDataFetcher {
         try {
             let response, data;
 
-            if (this.corsProxyBase) {
-                // Use AllOrigins CORS proxy if configured
-                const originalUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`;
-                const proxyUrl = `${this.corsProxyBase}${encodeURIComponent(originalUrl)}`;
-                console.log('🔗 Fetching holders from AllOrigins proxy:', proxyUrl);
+            if (this.useLocalProxy) {
+                // Local development - use Vite proxy
+                const proxyUrl = `/api/tokens/${this.tokenAddress}/counters`;
+                console.log('🔗 Fetching holders from local proxy:', proxyUrl);
                 response = await fetch(proxyUrl);
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const result = await response.json();
-                data = result.contents ? JSON.parse(result.contents) : null;
+                data = await response.json();
             } else {
-                // Direct access - no proxy needed
-                const directUrl = `${this.somniaApiBase}/tokens/${this.tokenAddress}/counters`;
-                console.log('🔗 Fetching holders directly:', directUrl);
-                response = await fetch(directUrl);
+                // Production - use our CORS proxy
+                const proxyUrl = `/api/tokens/${this.tokenAddress}/counters`;
+                console.log('🔗 Fetching holders from our proxy:', proxyUrl);
+                response = await fetch(proxyUrl);
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 data = await response.json();
