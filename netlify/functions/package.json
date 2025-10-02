@@ -1,0 +1,10 @@
+{
+  "name": "schwepe-netlify-functions",
+  "version": "1.0.0",
+  "description": "Netlify functions for Schwepe token CORS proxy",
+  "main": "api/tokens/[address]/counters.js",
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
