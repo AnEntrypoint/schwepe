@@ -233,8 +233,8 @@ async function loadImagesFromFolder(folderPath, maxImages) {
 }
 
 async function loadCornerManImages() {
-  leftCornerManImages = await loadImagesFromFolder('public/cornermen/left/', 100)
-  rightCornerManImages = await loadImagesFromFolder('public/cornermen/right/', 100)
+  leftCornerManImages = await loadImagesFromFolder('cornermen/left/', 100)
+  rightCornerManImages = await loadImagesFromFolder('cornermen/right/', 100)
 }
 
 function slideInCornerMan(fromLeft = true) {
