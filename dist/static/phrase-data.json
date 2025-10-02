@@ -1,8 +1,8 @@
 {
   "selections": {
     "pageTitle": {
-      "selectedIndex": 4,
-      "selectedPhrase": "Schwepe's Crypto Circus",
+      "selectedIndex": 2,
+      "selectedPhrase": "Schwepe's Meme Dimension",
       "totalPhrases": 5,
       "allPhrases": [
         "Schwepe's Funky Universe",
@@ -13,8 +13,8 @@
       ]
     },
     "subtitle": {
-      "selectedIndex": 0,
-      "selectedPhrase": "Where 247420 Energy Meets Pure Meme Magic ✨",
+      "selectedIndex": 1,
+      "selectedPhrase": "Maximum Degen Energy with Zero Filter 💎",
       "totalPhrases": 5,
       "allPhrases": [
         "Where 247420 Energy Meets Pure Meme Magic ✨",
@@ -25,8 +25,8 @@
       ]
     },
     "mainSectionTitle": {
-      "selectedIndex": 2,
-      "selectedPhrase": "⚡ Where 247420 Energy Flows Through Your Veins ⚡",
+      "selectedIndex": 1,
+      "selectedPhrase": "🔥 The Eternal Flame of Crypto Degeneracy 🔥",
       "totalPhrases": 5,
       "allPhrases": [
         "💎 The Degenerate Lifeblood of 247420 💎",
@@ -49,8 +49,8 @@
       ]
     },
     "ageVerification": {
-      "selectedIndex": 3,
-      "selectedPhrase": "⚠️ Warning: May contain financial trauma",
+      "selectedIndex": 1,
+      "selectedPhrase": "🔞 Adult swim only - no paper hands allowed",
       "totalPhrases": 5,
       "allPhrases": [
         "✅ Age-gated for maximum degen safety",
@@ -61,8 +61,8 @@
       ]
     },
     "interactiveLore": {
-      "selectedIndex": 3,
-      "selectedPhrase": "🎲 Never the same experience twice",
+      "selectedIndex": 2,
+      "selectedPhrase": "📖 Living documents that evolve with the community",
       "totalPhrases": 5,
       "allPhrases": [
         "📚 Dynamic lore system with multiple endings",
@@ -85,8 +85,8 @@
       ]
     },
     "memeGeneratorTitle": {
-      "selectedIndex": 1,
-      "selectedPhrase": "🎰 Degen Copypasta Factory 🎰",
+      "selectedIndex": 4,
+      "selectedPhrase": "🎯 Precision Meme Engineering 🎯",
       "totalPhrases": 5,
       "allPhrases": [
         "🎲 247420 Meme Generator 🎲",
@@ -97,8 +97,8 @@
       ]
     },
     "memeGeneratorSubtitle": {
-      "selectedIndex": 1,
-      "selectedPhrase": "Generate memes that perfectly capture your financial pain",
+      "selectedIndex": 0,
+      "selectedPhrase": "Click the button to generate maximum degen copypasta",
       "totalPhrases": 5,
       "allPhrases": [
         "Click the button to generate maximum degen copypasta",
@@ -109,8 +109,8 @@
       ]
     },
     "bullishVibes": {
-      "selectedIndex": 1,
-      "selectedPhrase": "Green Candle Energy",
+      "selectedIndex": 2,
+      "selectedPhrase": "Moonshot Mentality",
       "totalPhrases": 5,
       "allPhrases": [
         "Bullish Vibes",
@@ -121,8 +121,8 @@
       ]
     },
     "bearishCopium": {
-      "selectedIndex": 2,
-      "selectedPhrase": "Portfolio Trauma",
+      "selectedIndex": 1,
+      "selectedPhrase": "Red Candle Therapy",
       "totalPhrases": 5,
       "allPhrases": [
         "Bearish Copium",
@@ -133,8 +133,8 @@
       ]
     },
     "gamblingAddiction": {
-      "selectedIndex": 3,
-      "selectedPhrase": "YOLO Energy",
+      "selectedIndex": 2,
+      "selectedPhrase": "Risk Appetite",
       "totalPhrases": 5,
       "allPhrases": [
         "Gambling Addiction",
@@ -145,8 +145,8 @@
       ]
     },
     "diamondHands": {
-      "selectedIndex": 3,
-      "selectedPhrase": "Long Term Vision",
+      "selectedIndex": 2,
+      "selectedPhrase": "Never Selling",
       "totalPhrases": 5,
       "allPhrases": [
         "Diamond Hands",
@@ -157,8 +157,8 @@
       ]
     },
     "tokenInfoTitle": {
-      "selectedIndex": 3,
-      "selectedPhrase": "🎪 Your Guide to Financial Madness 🎪",
+      "selectedIndex": 1,
+      "selectedPhrase": "💎 The Tokenomics of Maximum Degeneracy 💎",
       "totalPhrases": 5,
       "allPhrases": [
         "🔥 Token Information & How to Join the Chaos 🔥",
@@ -169,8 +169,8 @@
       ]
     },
     "tokenAddressLabel": {
-      "selectedIndex": 2,
-      "selectedPhrase": "🚀 Token Contract",
+      "selectedIndex": 4,
+      "selectedPhrase": "🌊 Your Gateway to Degeneracy",
       "totalPhrases": 5,
       "allPhrases": [
         "🎯 Token Address",
@@ -181,8 +181,8 @@
       ]
     },
     "howToBuyTitle": {
-      "selectedIndex": 1,
-      "selectedPhrase": "💎 Your Path to Maximum Degen Status 💎",
+      "selectedIndex": 4,
+      "selectedPhrase": "🌊 How to Dive Into the Meme Pool 🌊",
       "totalPhrases": 5,
       "allPhrases": [
         "🎮 How to Join the 247420 Revolution 🎮",
@@ -193,8 +193,8 @@
       ]
     },
     "navHome": {
-      "selectedIndex": 4,
-      "selectedPhrase": "Command Center",
+      "selectedIndex": 0,
+      "selectedPhrase": "Home",
       "totalPhrases": 5,
       "allPhrases": [
         "Home",
@@ -217,8 +217,8 @@
       ]
     },
     "navStats": {
-      "selectedIndex": 3,
-      "selectedPhrase": "Metrics",
+      "selectedIndex": 2,
+      "selectedPhrase": "Analytics",
       "totalPhrases": 5,
       "allPhrases": [
         "Stats",
@@ -241,8 +241,8 @@
       ]
     },
     "ageVerificationText": {
-      "selectedIndex": 4,
-      "selectedPhrase": "Alert: You're entering a dimension where memes have monetary value, losses are worn as badges of honor, and sanity is optional. Age verification required.",
+      "selectedIndex": 3,
+      "selectedPhrase": "Caution: Beyond this point lies content that celebrates financial irresponsibility, crypto gambling, and the beautiful tragedy of degen life. 18+ only.",
       "totalPhrases": 5,
       "allPhrases": [
         "This content contains mature themes, strong language, and existential dread that may not be suitable for all audiences. By proceeding, you confirm that you are 18+ years of age and mentally prepared for the financial trauma ahead.",
@@ -277,8 +277,8 @@
       ]
     },
     "statsHeader": {
-      "selectedIndex": 3,
-      "selectedPhrase": "📊 Live Market Intelligence 📊",
+      "selectedIndex": 4,
+      "selectedPhrase": "🚀 Schwepe Command Center 🚀",
       "totalPhrases": 5,
       "allPhrases": [
         "🔥 Live Schwepe Intelligence Dashboard 🔥",
@@ -289,8 +289,8 @@
       ]
     },
     "statsSubtitle": {
-      "selectedIndex": 4,
-      "selectedPhrase": "Continuous market surveillance for degens",
+      "selectedIndex": 0,
+      "selectedPhrase": "Real-time market data, degen scoring, and meme analytics",
       "totalPhrases": 5,
       "allPhrases": [
         "Real-time market data, degen scoring, and meme analytics",
@@ -301,8 +301,8 @@
       ]
     },
     "lorePageTitle": {
-      "selectedIndex": 4,
-      "selectedPhrase": "Schwepe Universe History",
+      "selectedIndex": 0,
+      "selectedPhrase": "Schwepe Lore - The Complete Saga",
       "totalPhrases": 5,
       "allPhrases": [
         "Schwepe Lore - The Complete Saga",
@@ -325,8 +325,8 @@
       ]
     },
     "encouragement": {
-      "selectedIndex": 0,
-      "selectedPhrase": "Keep hodling! 💪",
+      "selectedIndex": 8,
+      "selectedPhrase": "We're all gonna make it! 💪",
       "totalPhrases": 10,
       "allPhrases": [
         "Keep hodling! 💪",
@@ -342,7 +342,7 @@
       ]
     }
   },
-  "generatedAt": "2025-10-02T04:56:14.837Z",
+  "generatedAt": "2025-10-02T05:05:00.850Z",
   "stats": {
     "totalPhrases": 4804,
     "totalGroups": 35,

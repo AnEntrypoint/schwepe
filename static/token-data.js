@@ -152,8 +152,7 @@ class TokenDataFetcher {
                 response = await fetch(proxyUrl);
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const result = await response.json();
-                data = result ? JSON.parse(result) : null;
+                data = await response.json();
             }
 
             this.setCache(cacheKey, data);
@@ -192,8 +191,7 @@ class TokenDataFetcher {
                 response = await fetch(proxyUrl);
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const result = await response.json();
-                data = result ? JSON.parse(result) : null;
+                data = await response.json();
             }
 
             this.setCache(cacheKey, data);
