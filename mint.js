@@ -3,6 +3,19 @@ import { createThirdwebClient, getContract, prepareContractCall, sendTransaction
 import { defineChain } from 'thirdweb/chains'
 import { createWallet } from 'thirdweb/wallets'
 
+// DOM elements - must be declared before use
+const statusEl = document.getElementById('status')
+const buyBtn = document.getElementById('buyBtn')
+const connectBtn = document.getElementById('connectBtn')
+const disconnectBtn = document.getElementById('disconnectBtn')
+const walletMenu = document.getElementById('walletMenu')
+const panelStatus = document.getElementById('panelStatus')
+
+function setStatus(msg) {
+  if (statusEl) statusEl.textContent = msg || ''
+  if (panelStatus) panelStatus.textContent = msg || ''
+}
+
 // Support both naming styles
 const THIRDWEB_CLIENT_ID = import.meta.env.VITE_THIRDWEB_CLIENT_ID
 if (!THIRDWEB_CLIENT_ID) {
@@ -22,18 +35,6 @@ const SOMNIA_TESTNET = defineChain(50312)
 //   rpcUrls: { default: { http: ['https://somnia-json-rpc.stakely.io'] } },
 //   blockExplorers: { default: { name: 'Somnia Explorer', url: 'https://mainnet.somnia.w3us.site/' } }
 // })
-
-const statusEl = document.getElementById('status')
-const buyBtn = document.getElementById('buyBtn')
-const connectBtn = document.getElementById('connectBtn')
-const disconnectBtn = document.getElementById('disconnectBtn')
-const walletMenu = document.getElementById('walletMenu')
-const panelStatus = document.getElementById('panelStatus')
-
-function setStatus(msg) {
-  if (statusEl) statusEl.textContent = msg || ''
-  if (panelStatus) panelStatus.textContent = msg || ''
-}
 
 async function copyAddr() {
   const addr = CONTRACT_ADDRESS
@@ -232,8 +233,8 @@ async function loadImagesFromFolder(folderPath, maxImages) {
 }
 
 async function loadCornerManImages() {
-  leftCornerManImages = await loadImagesFromFolder('cornermen/left/', 100)
-  rightCornerManImages = await loadImagesFromFolder('cornermen/right/', 100)
+  leftCornerManImages = await loadImagesFromFolder('public/cornermen/left/', 100)
+  rightCornerManImages = await loadImagesFromFolder('public/cornermen/right/', 100)
 }
 
 function slideInCornerMan(fromLeft = true) {
