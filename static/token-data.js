@@ -253,7 +253,7 @@ class TokenDataFetcher {
             }
 
             // Calculate derived values
-            const totalSupply = 690000000; // 1 billion tokens
+            const totalSupply = 1000000000; // 1 billion tokens
             const marketCapUSD = tokenData?.data?.marketCapUSD ? parseFloat(tokenData.data.marketCapUSD) : 0;
             const tokenPriceUSD = marketCapUSD / totalSupply;
 
