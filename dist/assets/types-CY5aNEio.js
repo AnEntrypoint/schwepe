@@ -1,1 +1,0 @@
-const t=["google","apple","facebook","discord","line","x","tiktok","coinbase","farcaster","telegram","github","twitch","steam"],a=[...t,"guest","backend","email","phone","passkey","wallet"];export{a,t as s};

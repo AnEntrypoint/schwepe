@@ -1,1 +1,0 @@
-import{k as n,aI as r}from"./mint-BlMYv25V.js";async function u(t,o){const e=await t({method:"eth_getTransactionCount",params:[o.address,o.blockNumber?n(o.blockNumber):o.blockTag||"pending"]});return r(e)}export{u as eth_getTransactionCount};
