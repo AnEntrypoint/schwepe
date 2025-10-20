@@ -1,0 +1,60 @@
+    1→# Crypto-free SSR build for Nixpacks deployment
+    2→FROM node:20-alpine AS builder
+    3→
+    4→# Install build dependencies
+    5→RUN apk add --no-cache python3 make g++
+    6→
+    7→# Set working directory
+    8→WORKDIR /app
+    9→
+   10→# Copy package files first for better caching
+   11→COPY package*.json ./
+   12→
+   13→# Install dependencies
+   14→RUN npm ci
+   15→
+   16→# Copy source code
+   17→COPY . .
+   18→
+   19→# Build the crypto-free SSR application
+   20→RUN npm run build:ssr:production
+   21→
+   22→# Production stage
+   23→FROM node:20-alpine AS production
+   24→
+   25→# Install production dependencies only
+   26→WORKDIR /app
+   27→COPY package*.json ./
+   28→RUN npm ci --only=production && npm cache clean --force
+   29→
+   30→# Copy built SSR application from builder stage
+   31→COPY --from=builder /app/dist ./dist
+   32→COPY --from=builder /app/server.js ./
+   33→COPY --from=builder /app/static ./static
+   34→
+   35→# Create directories for media
+   36→RUN mkdir -p /app/saved_videos /app/saved_images /app/schwepe /app/
+   37→
+   38→# Copy media directories if they exist
+   39→COPY --from=builder /app/saved_videos ./saved_videos 2>/dev/null || true
+   40→COPY --from=builder /app/saved_images ./saved_images 2>/dev/null || true
+   41→COPY --from=builder /app/schwepe ./schwepe 2>/dev/null || true
+   42→COPY --from=builder /app/
+   43→COPY --from=builder /app/public ./public 2>/dev/null || true
+   44→
+   45→# Set permissions
+   46→RUN chown -R node:node /app && \
+   47→    chmod -R 755 /app
+   48→
+   49→# Switch to non-root user
+   50→USER node
+   51→
+   52→# Expose port
+   53→EXPOSE 3000
+   54→
+   55→# Health check
+   56→HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+   57→    CMD node -e "require('http').get('http://localhost:3000', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+   58→
+   59→# Start the SSR server
+   60→CMD ["npm", "start"]

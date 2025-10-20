@@ -1,0 +1,598 @@
+    1→    1→<!DOCTYPE html>
+    2→    2→<html lang="en">
+    3→    3→<head>
+    4→    4→    <meta charset="UTF-8">
+    <meta name="site-id" content="{{ id }}">
+    5→    5→    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    6→    6→    <title data-phrase-group="pages" data-phrase-key="lorePageTitle">Schwepe Lore - The Complete Saga</title>
+    7→    7→    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    8→    8→
+    9→    9→    <!-- SEO Meta Tags -->
+   10→   10→    <meta name="description" content="Discover the complete Schwepe universe lore - Interactive stories, degen chronicles, and the epic saga of 247420 culture.">
+   11→   11→    <meta name="keywords" content="schwepe lore, degen stories, crypto chronicles, 247420 saga, interactive lore, meme culture">
+   12→   12→    <meta name="robots" content="index, follow">
+   13→   13→    <link rel="canonical" href="https://schwepe.247420.xyz/lore.html">
+   14→   14→
+   15→   15→    <!-- Open Graph Meta Tags -->
+   16→   16→    <meta property="og:type" content="website">
+   17→   17→    <meta property="og:url" content="https://schwepe.247420.xyz/lore.html">
+   18→   18→    <meta property="og:title" content="Schwepe Lore - The Complete Degen Saga">
+   19→   19→    <meta property="og:description" content="Discover the complete Schwepe universe lore - Interactive stories and the epic saga of 247420 culture.">
+   20→   20→    <meta property="og:image" content="https://schwepe.247420.xyz/site-assets/media/images/schwepe.gif">
+   21→   21→    <meta property="og:site_name" content="Schwepe's Meme Dimension">
+   22→   22→
+   23→   23→    <!-- Twitter Card Meta Tags -->
+   24→   24→    <meta name="twitter:card" content="summary_large_image">
+   25→   25→    <meta name="twitter:title" content="Schwepe Lore - The Complete Degen Saga">
+   26→   26→    <meta name="twitter:description" content="Discover the complete Schwepe universe lore - Interactive stories and the epic saga of 247420 culture.">
+   27→   27→    <meta name="twitter:image" content="https://schwepe.247420.xyz/site-assets/media/images/schwepe.gif">
+   28→   28→    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+   29→   29→    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+   30→   30→    <link rel="stylesheet" href="/site-assets/styles/navbar.css">
+   31→   31→    <link rel="stylesheet" href="/lore.css">
+   32→   32→    <script src="/static/lore-engine.js" type="module"></script>
+   33→   33→    <style>
+   34→   34→        * {
+   35→   35→            margin: 0;
+   36→   36→            padding: 0;
+   37→   37→            box-sizing: border-box;
+   38→   38→        }
+   39→   39→
+   40→   40→        body {
+   41→   41→            font-family: 'Fredoka', sans-serif;
+   42→   42→            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+   43→   43→            min-height: 100vh;
+   44→   44→            overflow-x: hidden;
+   45→   45→            position: relative;
+   46→   46→            color: #ffffff;
+   47→   47→        }
+   48→   48→
+   49→   49→        .animated-bg {
+   50→   50→            position: fixed;
+   51→   51→            top: 0;
+   52→   52→            left: 0;
+   53→   53→            width: 100%;
+   54→   54→            height: 100%;
+   55→   55→            z-index: -1;
+   56→   56→            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+   57→   57→            animation: bgShift 15s ease-in-out infinite;
+   58→   58→        }
+   59→   59→
+   60→   60→        @keyframes bgShift {
+   61→   61→            0%, 100% { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); }
+   62→   62→            25% { background: linear-gradient(135deg, #16a085 0%, #27ae60 100%); }
+   63→   63→            50% { background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); }
+   64→   64→            75% { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); }
+   65→   65→        }
+   66→   66→
+   67→   67→        .container {
+   68→   68→            max-width: 1000px;
+   69→   69→            margin: 0 auto;
+   70→   70→            padding: 0 20px;
+   71→   71→        }
+   72→   72→
+   73→   73→  
+   74→   74→        .header {
+   75→   75→            text-align: center;
+   76→   76→            padding: 120px 0 60px;
+   77→   77→        }
+   78→   78→
+   79→   79→        .lore-title {
+   80→   80→            font-size: 4rem;
+   81→   81→            color: #fff;
+   82→   82→            margin-bottom: 20px;
+   83→   83→            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+   84→   84→            line-height: 1.1;
+   85→   85→        }
+   86→   86→
+   87→   87→        .lore-subtitle {
+   88→   88→            font-size: 1.8rem;
+   89→   89→            color: rgba(255, 255, 255, 0.9);
+   90→   90→            margin-bottom: 40px;
+   91→   91→            font-weight: 400;
+   92→   92→        }
+   93→   93→
+   94→   94→        .lore-grid {
+   95→   95→            display: grid;
+   96→   96→            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+   97→   97→            gap: 30px;
+   98→   98→            margin-bottom: 60px;
+   99→   99→        }
+  100→  100→
+  101→  101→        .lore-card {
+  102→  102→            background: rgba(255, 255, 255, 0.1);
+  103→  103→            backdrop-filter: blur(15px);
+  104→  104→            border-radius: 25px;
+  105→  105→            padding: 40px 30px;
+  106→  106→            border: 1px solid rgba(255, 255, 255, 0.2);
+  107→  107→            text-decoration: none;
+  108→  108→            color: #fff;
+  109→  109→            transition: all 0.3s ease;
+  110→  110→            position: relative !important;
+  111→  111→            display: block !important;
+  112→  112→            overflow: hidden !important;
+  113→  113→        }
+  114→  114→
+  115→  115→        .lore-card::before {
+  116→  116→            content: '';
+  117→  117→            position: absolute;
+  118→  118→            top: 0;
+  119→  119→            left: -100%;
+  120→  120→            width: 100%;
+  121→  121→            height: 100%;
+  122→  122→            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  123→  123→            transition: left 0.5s ease;
+  124→  124→        }
+  125→  125→
+  126→  126→        .lore-card:hover::before {
+  127→  127→            left: 100%;
+  128→  128→        }
+  129→  129→
+  130→  130→        .lore-card:hover {
+  131→  131→            transform: translateY(-10px);
+  132→  132→            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  133→  133→            border-color: rgba(240, 147, 251, 0.5);
+  134→  134→        }
+  135→  135→
+  136→  136→        .lore-card-icon {
+  137→  137→            font-size: 3rem;
+  138→  138→            margin-bottom: 20px;
+  139→  139→            display: block;
+  140→  140→            text-align: center;
+  141→  141→        }
+  142→  142→
+  143→  143→        .lore-card h3 {
+  144→  144→            font-size: 1.8rem;
+  145→  145→            margin-bottom: 15px;
+  146→  146→            color: #f093fb;
+  147→  147→            text-align: center;
+  148→  148→        }
+  149→  149→
+  150→  150→        .lore-card p {
+  151→  151→            font-size: 1.1rem;
+  152→  152→            line-height: 1.6;
+  153→  153→            color: rgba(255, 255, 255, 0.9);
+  154→  154→            text-align: center;
+  155→  155→            margin-bottom: 20px;
+  156→  156→        }
+  157→  157→
+  158→  158→        .lore-card-topics {
+  159→  159→            list-style: none;
+  160→  160→            text-align: center;
+  161→  161→        }
+  162→  162→
+  163→  163→        .lore-card-topics li {
+  164→  164→            background: rgba(255, 255, 255, 0.1);
+  165→  165→            padding: 8px 15px;
+  166→  166→            margin: 5px 0;
+  167→  167→            border-radius: 20px;
+  168→  168→            font-size: 0.9rem;
+  169→  169→            display: inline-block;
+  170→  170→            margin-right: 8px;
+  171→  171→            margin-bottom: 8px;
+  172→  172→        }
+  173→  173→
+  174→  174→        .start-here {
+  175→  175→            text-align: center;
+  176→  176→            margin: 60px 0;
+  177→  177→        }
+  178→  178→
+  179→  179→        .cta-button {
+  180→  180→            display: inline-block;
+  181→  181→            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  182→  182→            color: #fff;
+  183→  183→            padding: 20px 40px;
+  184→  184→            border-radius: 30px;
+  185→  185→            text-decoration: none;
+  186→  186→            font-weight: 600;
+  187→  187→            font-size: 1.2rem;
+  188→  188→            transition: all 0.3s ease;
+  189→  189→            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+  190→  190→        }
+  191→  191→
+  192→  192→        .cta-button:hover {
+  193→  193→            transform: translateY(-5px);
+  194→  194→            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
+  195→  195→        }
+  196→  196→
+  197→  197→        .progress-indicator {
+  198→  198→            text-align: center;
+  199→  199→            margin: 40px 0;
+  200→  200→            font-size: 1.1rem;
+  201→  201→            color: rgba(255, 255, 255, 0.8);
+  202→  202→        }
+  203→  203→
+  204→  204→        .progress-dots {
+  205→  205→            display: flex;
+  206→  206→            justify-content: center;
+  207→  207→            gap: 15px;
+  208→  208→            margin-top: 20px;
+  209→  209→        }
+  210→  210→
+  211→  211→        .progress-dot {
+  212→  212→            width: 15px;
+  213→  213→            height: 15px;
+  214→  214→            border-radius: 50%;
+  215→  215→            background: rgba(255, 255, 255, 0.3);
+  216→  216→            transition: all 0.3s ease;
+  217→  217→        }
+  218→  218→
+  219→  219→        .progress-dot:hover {
+  220→  220→            background: rgba(240, 147, 251, 0.8);
+  221→  221→            transform: scale(1.2);
+  222→  222→        }
+  223→  223→
+  224→  224→        @keyframes glow {
+  225→  225→            0%, 100% { text-shadow: 0 0 10px rgba(240, 147, 251, 0.5); }
+  226→  226→            50% { text-shadow: 0 0 20px rgba(240, 147, 251, 0.8); }
+  227→  227→        }
+  228→  228→
+  229→  229→        /* Adult Content Warning Styles */
+  230→  230→        .age-verification-overlay {
+  231→  231→            position: fixed;
+  232→  232→            top: 0;
+  233→  233→            left: 0;
+  234→  234→            width: 100%;
+  235→  235→            height: 100%;
+  236→  236→            background: rgba(0, 0, 0, 0.95);
+  237→  237→            backdrop-filter: blur(20px);
+  238→  238→            z-index: 9000;
+  239→  239→            display: flex;
+  240→  240→            justify-content: center;
+  241→  241→            align-items: center;
+  242→  242→        }
+  243→  243→
+  244→  244→        .age-verification-modal {
+  245→  245→            background: rgba(0, 0, 0, 0.9);
+  246→  246→            border: 2px solid rgba(240, 147, 251, 0.5);
+  247→  247→            border-radius: 20px;
+  248→  248→            padding: 40px;
+  249→  249→            max-width: 500px;
+  250→  250→            width: 90%;
+  251→  251→            text-align: center;
+  252→  252→            color: white;
+  253→  253→            box-shadow: 0 0 50px rgba(240, 147, 251, 0.3);
+  254→  254→        }
+  255→  255→
+  256→  256→        .age-verification-modal h2 {
+  257→  257→            color: #f093fb;
+  258→  258→            font-size: 2rem;
+  259→  259→            margin-bottom: 20px;
+  260→  260→            text-shadow: 0 0 20px rgba(240, 147, 251, 0.5);
+  261→  261→        }
+  262→  262→
+  263→  263→        .age-verification-modal p {
+  264→  264→            font-size: 1.1rem;
+  265→  265→            line-height: 1.6;
+  266→  266→            margin-bottom: 30px;
+  267→  267→            color: rgba(255, 255, 255, 0.9);
+  268→  268→        }
+  269→  269→
+  270→  270→        .age-verification-buttons {
+  271→  271→            display: flex;
+  272→  272→            gap: 20px;
+  273→  273→            justify-content: center;
+  274→  274→            flex-wrap: wrap;
+  275→  275→        }
+  276→  276→
+  277→  277→        .enter-button {
+  278→  278→            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  279→  279→            color: white;
+  280→  280→            border: none;
+  281→  281→            padding: 15px 30px;
+  282→  282→            border-radius: 15px;
+  283→  283→            font-size: 1.2rem;
+  284→  284→            font-weight: 600;
+  285→  285→            cursor: pointer;
+  286→  286→            transition: all 0.3s ease;
+  287→  287→            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+  288→  288→        }
+  289→  289→
+  290→  290→        .enter-button:hover {
+  291→  291→            transform: translateY(-3px);
+  292→  292→            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
+  293→  293→        }
+  294→  294→
+  295→  295→        .leave-button {
+  296→  296→            background: rgba(255, 255, 255, 0.1);
+  297→  297→            color: white;
+  298→  298→            border: 1px solid rgba(255, 255, 255, 0.3);
+  299→  299→            padding: 15px 30px;
+  300→  300→            border-radius: 15px;
+  301→  301→            font-size: 1.2rem;
+  302→  302→            font-weight: 600;
+  303→  303→            cursor: pointer;
+  304→  304→            transition: all 0.3s ease;
+  305→  305→            text-decoration: none;
+  306→  306→        }
+  307→  307→
+  308→  308→        .leave-button:hover {
+  309→  309→            background: rgba(255, 255, 255, 0.2);
+  310→  310→            transform: translateY(-3px);
+  311→  311→        }
+  312→  312→
+  313→  313→        .content-blurred {
+  314→  314→            filter: blur(10px);
+  315→  315→            pointer-events: none;
+  316→  316→            user-select: none;
+  317→  317→        }
+  318→  318→
+  319→  319→        .glow-text {
+  320→  320→            animation: glow 2s ease-in-out infinite;
+  321→  321→        }
+  322→  322→
+  323→  323→        .lore-card-mood {
+  324→  324→            position: absolute !important;
+  325→  325→            top: 15px !important;
+  326→  326→            right: 15px !important;
+  327→  327→            background: rgba(0, 0, 0, 0.8) !important;
+  328→  328→            padding: 4px 10px !important;
+  329→  329→            border-radius: 12px !important;
+  330→  330→            font-size: 0.7rem !important;
+  331→  331→            text-transform: uppercase !important;
+  332→  332→            letter-spacing: 0.5px !important;
+  333→  333→            backdrop-filter: blur(8px) !important;
+  334→  334→            color: #f093fb !important;
+  335→  335→            border: 1px solid rgba(240, 147, 251, 0.4) !important;
+  336→  336→            z-index: 15 !important;
+  337→  337→            pointer-events: none !important;
+  338→  338→            font-weight: 600 !important;
+  339→  339→            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  340→  340→        }
+  341→  341→
+  342→  342→        @media (max-width: 768px) {
+  343→  343→
+  344→  344→            .lore-title {
+  345→  345→                font-size: 2.5rem;
+  346→  346→            }
+  347→  347→
+  348→  348→            .lore-subtitle {
+  349→  349→                font-size: 1.3rem;
+  350→  350→            }
+  351→  351→
+  352→  352→            .header {
+  353→  353→                padding: 100px 0 40px;
+  354→  354→            }
+  355→  355→
+  356→  356→            .lore-grid {
+  357→  357→                grid-template-columns: 1fr;
+  358→  358→                gap: 20px;
+  359→  359→            }
+  360→  360→
+  361→  361→            .lore-card {
+  362→  362→                padding: 30px 20px;
+  363→  363→            }
+  364→  364→
+  365→  365→            .cta-button {
+  366→  366→                padding: 15px 30px;
+  367→  367→                font-size: 1rem;
+  368→  368→            }
+  369→  369→        }
+  370→  370→    </style>
+  371→  371→</head>
+  372→  372→<body>
+  373→  373→    <!-- Age Verification Overlay -->
+  374→  374→    <div id="age-verification" class="age-verification-overlay">
+  375→  375→        <div class="age-verification-modal">
+  376→  376→            <h2 data-phrase-group="ageVerification" data-phrase-key="ageVerificationTitle">⚠️ Age Verification Required</h2>
+  377→  377→            <p>This content contains mature themes, strong language, and existential dread that may not be suitable for all audiences. By proceeding, you confirm that you are 18+ years of age and mentally prepared for the financial trauma ahead.</p>
+  378→  378→            <div class="age-verification-buttons">
+  379→  379→                <button onclick="enterSite()" class="enter-button">I'm 18+ and 99% Ape</button>
+  380→  380→                <a href="https://google.com" class="leave-button">Take Me to Safety</a>
+  381→  381→            </div>
+  382→  382→        </div>
+  383→  383→    </div>
+  384→  384→
+  385→  385→    <div id="main-content" class="content-blurred">
+  386→  386→        <div class="animated-bg"></div>
+  387→  387→
+  388→  388→        <!-- Navigation -->
+  389→  389→        <div id="navbar-container"></div>
+  390→  390→
+  391→  391→        <div class="container">
+  392→  392→        <div class="header">
+  393→  393→            <h1 class="lore-title glow-text" id="main-title">🚀🐸 Schwepe Lore Library 🐸🚀</h1>
+  394→  394→            <p class="lore-subtitle" id="main-subtitle">Choose Your Chapter in the Saga of 247420</p>
+  395→  395→        </div>
+  396→  396→
+  397→  397→        <div id="dynamic-lore-nav"></div>
+  398→  398→
+  399→  399→        <div id="lore-chapters-container">
+  400→  400→        </div>
+  401→  401→
+  402→  402→        <div class="start-here">
+  403→  403→            <p style="font-size: 1.3rem; margin-bottom: 30px; color: rgba(255, 255, 255, 0.9);">
+  404→  404→                New to the Schwepe universe? <span id="random-lore-snippet">Click to discover your destiny...</span>
+  405→  405→            </p>
+  406→  406→            <a href="#intro" class="cta-button" id="start-journey">
+  407→  407→                <i class="fas fa-play"></i> Begin Your Journey
+  408→  408→            </a>
+  409→  409→        </div>
+  410→  410→    </div>
+  411→  411→    </div>
+  412→  412→
+  413→  413→    <script>
+  414→  414→        // enterSite function is now defined globally above
+  415→  415→
+  416→  416→        // Check if user is already verified
+  417→  417→        function checkAgeVerification() {
+  418→  418→            const isVerified = localStorage.getItem('age_verified') === 'true';
+  419→  419→
+  420→  420→            if (isVerified) {
+  421→  421→                document.getElementById('age-verification').style.display = 'none';
+  422→  422→                document.getElementById('main-content').classList.remove('content-blurred');
+  423→  423→            }
+  424→  424→        }
+  425→  425→
+  426→  426→        // Global enterSite function to ensure consistency
+  427→  427→        function enterSite() {
+  428→  428→            document.getElementById('age-verification').style.display = 'none';
+  429→  429→            document.getElementById('main-content').classList.remove('content-blurred');
+  430→  430→            // Use localStorage instead of cookies for file:// protocol compatibility
+  431→  431→            localStorage.setItem('age_verified', 'true');
+  432→  432→        }
+  433→  433→        // Stats function
+  434→  434→        function showStats() {
+  435→  435→            const statsContent = `
+  436→  436→                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+  437→  437→                    <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; text-align: center; color: white; border: 1px solid rgba(255,255,255,0.2);">
+  438→  438→                        <h2 style="margin-bottom: 20px; color: #f093fb;">🚀 Schwepe Stats 🚀</h2>
+  439→  439→                        <div style="font-size: 1.2rem; line-height: 1.8;">
+  440→  440→                            <p>🐸 Total Schwepes: 28 Unique Frogs</p>
+  441→  441→                            <p>💎 Diamond Hands: Infinite</p>
+  442→  442→                            <p>🎯 Memes Created: Countless</p>
+  443→  443→                            <p>🌙 Moonshots: Many</p>
+  444→  444→                            <p>💀 Bags Held: All of them</p>
+  445→  445→                            <p>⚡ Degeneracy Level: Maximum</p>
+  446→  446→                        </div>
+  447→  447→                        <button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; padding: 10px 20px; background: #f093fb; border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer;">Close Stats</button>
+  448→  448→                    </div>
+  449→  449→                </div>
+  450→  450→            `;
+  451→  451→            document.body.insertAdjacentHTML('beforeend', statsContent);
+  452→  452→        }
+  453→  453→
+  454→  454→        // Load shared navbar
+  455→  455→        async function loadNavbar() {
+  456→  456→            try {
+  457→  457→                const response = await fetch('navbar.html');
+  458→  458→                const navbarHTML = await response.text();
+  459→  459→                document.getElementById('navbar-container').innerHTML = navbarHTML;
+  460→  460→
+  461→  461→                // Load navbar JavaScript
+  462→  462→                const script = document.createElement('script');
+  463→  463→                script.src = 'navbar.js';
+  464→  464→                document.body.appendChild(script);
+  465→  465→
+  466→  466→                // Set active state for current page
+  467→  467→                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  468→  468→                const navLinks = document.querySelectorAll('#navbar-container a');
+  469→  469→                navLinks.forEach(link => {
+  470→  470→                    if (link.getAttribute('href') === currentPage) {
+  471→  471→                        link.classList.add('active');
+  472→  472→                    }
+  473→  473→                });
+  474→  474→
+  475→  475→                console.log('✅ Navbar loaded successfully');
+  476→  476→            } catch (error) {
+  477→  477→                console.error('❌ Error loading navbar:', error);
+  478→  478→            }
+  479→  479→        }
+  480→  480→
+  481→  481→        // Initialize dynamic lore system
+  482→  482→        async function initializeLoreSystem() {
+  483→  483→            try {
+  484→  484→                // Wait for lore engine to initialize
+  485→  485→                if (window.loreEngine && window.loreEngine.loreData) {
+  486→  486→                    renderDynamicLore();
+  487→  487→                } else {
+  488→  488→                    // Wait a bit and try again
+  489→  489→                    setTimeout(initializeLoreSystem, 100);
+  490→  490→                }
+  491→  491→            } catch (error) {
+  492→  492→                console.error('❌ Error initializing lore system:', error);
+  493→  493→            }
+  494→  494→        }
+  495→  495→
+  496→  496→        function renderDynamicLore() {
+  497→  497→            const chapters = window.loreEngine.getAllChapters();
+  498→  498→            const container = document.getElementById('lore-chapters-container');
+  499→  499→            const navContainer = document.getElementById('dynamic-lore-nav');
+  500→  500→
+  501→  501→            if (!container || !navContainer) return;
+  502→  502→
+  503→  503→            // Render navigation
+  504→  504→            navContainer.innerHTML = `
+  505→  505→                <div class="progress-indicator">
+  506→  506→                    <p>📚 Complete Schwepe Saga (${chapters.length} Chapters)</p>
+  507→  507→                    <div class="progress-dots">
+  508→  508→                        ${chapters.map((chapter, index) =>
+  509→  509→                            `<div class="progress-dot" title="${chapter.title}" data-chapter="${chapter.id}" onclick="scrollToChapter('${chapter.id}')"></div>`
+  510→  510→                        ).join('')}
+  511→  511→                    </div>
+  512→  512→                </div>
+  513→  513→            `;
+  514→  514→
+  515→  515→            // Render chapter cards
+  516→  516→            container.innerHTML = chapters.map(chapter => {
+  517→  517→                const theme = window.loreEngine.getThemeConfig(chapter.theme);
+  518→  518→                return `
+  519→  519→                    <a href="#${chapter.id}" class="lore-card" data-chapter="${chapter.id}" onclick="scrollToChapter('${chapter.id}')">
+  520→  520→                        <span class="lore-card-icon">${chapter.icon}</span>
+  521→  521→                        <h3>${chapter.title}</h3>
+  522→  522→                        <p>${chapter.subtitle}</p>
+  523→  523→                        <div class="lore-card-mood">${chapter.mood}</div>
+  524→  524→                    </a>
+  525→  525→                `;
+  526→  526→            }).join('');
+  527→  527→
+  528→  528→            // Update random lore snippet
+  529→  529→            updateRandomLoreSnippet();
+  530→  530→        }
+  531→  531→
+  532→  532→        function scrollToChapter(chapterId) {
+  533→  533→            const chapter = window.loreEngine.getChapter(chapterId);
+  534→  534→            if (chapter) {
+  535→  535→                // Store chapter data and navigate to chapter page
+  536→  536→                localStorage.setItem('currentChapter', JSON.stringify(chapter));
+  537→  537→                window.location.href = `#${chapterId}`;
+  538→  538→                renderChapterInline(chapterId);
+  539→  539→            }
+  540→  540→        }
+  541→  541→
+  542→  542→        function renderChapterInline(chapterId) {
+  543→  543→            const chapter = window.loreEngine.getChapter(chapterId);
+  544→  544→            if (!chapter) return;
+  545→  545→
+  546→  546→            const container = document.getElementById('lore-chapters-container');
+  547→  547→            if (!container) return;
+  548→  548→
+  549→  549→            // Replace the chapter cards with full chapter content
+  550→  550→            container.innerHTML = window.loreEngine.generateLoreHTML(chapterId);
+  551→  551→
+  552→  552→            // Add back button
+  553→  553→            const backButton = document.createElement('div');
+  554→  554→            backButton.className = 'back-button-container';
+  555→  555→            backButton.innerHTML = `
+  556→  556→                <button onclick="showAllChapters()" class="back-button">
+  557→  557→                    <i class="fas fa-arrow-left"></i> Back to All Chapters
+  558→  558→                </button>
+  559→  559→            `;
+  560→  560→            container.insertBefore(backButton, container.firstChild);
+  561→  561→        }
+  562→  562→
+  563→  563→        function showAllChapters() {
+  564→  564→            // Remove hash and re-render all chapters
+  565→  565→            history.pushState("", document.title, window.location.pathname + window.location.search);
+  566→  566→            renderDynamicLore();
+  567→  567→        }
+  568→  568→
+  569→  569→        
+  570→  570→        function updateRandomLoreSnippet() {
+  571→  571→            const snippet = window.loreEngine.getRandomLoreSnippet();
+  572→  572→            const snippetElement = document.getElementById('random-lore-snippet');
+  573→  573→            if (snippetElement && snippet) {
+  574→  574→                snippetElement.textContent = snippet;
+  575→  575→            }
+  576→  576→        }
+  577→  577→
+  578→  578→        // Set active navigation and load navbar
+  579→  579→        document.addEventListener('DOMContentLoaded', function() {
+  580→  580→            // Check age verification first
+  581→  581→            checkAgeVerification();
+  582→  582→
+  583→  583→            // Load shared navbar
+  584→  584→            loadNavbar();
+  585→  585→
+  586→  586→            // Initialize lore system
+  587→  587→            setTimeout(initializeLoreSystem, 500);
+  588→  588→
+  589→  589→            // Update random lore snippet every 10 seconds
+  590→  590→            setInterval(updateRandomLoreSnippet, 10000);
+  591→  591→
+  592→  592→            // Random lore snippet click handler
+  593→  593→            document.getElementById('random-lore-snippet')?.addEventListener('click', updateRandomLoreSnippet);
+  594→  594→        });
+  595→  595→    </script>
+  596→  596→</body>
+  597→  597→</html>

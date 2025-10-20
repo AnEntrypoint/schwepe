@@ -1,0 +1,75 @@
+{
+  "functions": {
+    "source": "firebase-functions",
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint"
+    ],
+    "runtime": "nodejs18"
+  },
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/tokens/{address}/counters",
+        "function": "tokenCounters"
+      },
+      {
+        "source": "/somnex/api/Launchpadv2/5031/launchpad/kline/{tokenAddress}/volume_24h",
+        "function": "somnexVolume"
+      },
+      {
+        "source": "/somnex/api/Launchpadv2/5031/launchpad/list/{tokenAddress}",
+        "function": "somnexTokenList"
+      },
+      {
+        "source": "/somnex/api/v1/5031/prices/assets/{somiAddress}",
+        "function": "somniPrice"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "/api/**",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          },
+          {
+            "key": "Access-Control-Allow-Methods",
+            "value": "GET, POST, PUT, DELETE, OPTIONS"
+          },
+          {
+            "key": "Access-Control-Allow-Headers",
+            "value": "Content-Type, Authorization"
+          }
+        ]
+      },
+      {
+        "source": "/somnex/api/**",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          },
+          {
+            "key": "Access-Control-Allow-Methods",
+            "value": "GET, POST, PUT, DELETE, OPTIONS"
+          },
+          {
+            "key": "Access-Control-Allow-Headers",
+            "value": "Content-Type, Authorization"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "selections": {
+    "subtitle": {
+      "main": {
+        "selectedIndex": 0,
+        "selectedPhrase": "Where 247247420 Energy Meets Pure Meme Magic ✨",
+        "totalPhrases": 3
+      }
+    },
+    "sections": {
+      "mainSectionTitle": {
+        "selectedIndex": 2,
+        "selectedPhrase": "⚡ Maximum Energy Zone ⚡",
+        "totalPhrases": 3
+      }
+    },
+    "pageTitle": {
+      "main": {
+        "selectedIndex": 2,
+        "selectedPhrase": "Degeneration Station",
+        "totalPhrases": 3
+      }
+    }
+  },
+  "generatedAt": "2025-10-19T17:18:04.291Z",
+  "stats": {
+    "totalPhrases": 119,
+    "totalGroups": 10,
+    "totalKeys": 25,
+    "averagePhrasesPerKey": 4.76
+  }
+}

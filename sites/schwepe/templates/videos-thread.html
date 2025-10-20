@@ -1,0 +1,651 @@
+    1→    1→<!DOCTYPE html>
+    2→    2→<html lang="en">
+    3→    3→<head>
+    4→    4→    <meta charset="UTF-8">
+    <meta name="site-id" content="{{ id }}">
+    5→    5→    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    6→    6→    <title>Schwelevision - 247420 Broadcasting Network</title>
+    7→    7→
+    8→    8→    <!-- Discord SSO / Open Graph Meta Tags -->
+    9→    9→    <meta name="description" content="📺 Schwelevision - 24/7 retro TV broadcasting endless degen content. Atmospheric audio with authentic static noise between videos. 🐸 247420">
+   10→   10→    <meta name="theme-color" content="#00f5ff">
+   11→   11→
+   12→   12→    <!-- Open Graph Meta Tags for Discord -->
+   13→   13→    <meta property="og:type" content="website">
+   14→   14→    <meta property="og:title" content="📺 Schwelevision - 247420 Broadcasting Network">
+   15→   15→    <meta property="og:description" content="📺 Retro TV broadcasting endless degen content 24/7. Authentic static noise, atmospheric audio, and the finest Schwepe programming. 🐸">
+   16→   16→    <meta property="og:image" content="https://schwepe.247420.xyz/site-assets/media/images/schwepe.gif">
+   17→   17→    <meta property="og:image:width" content="400">
+   18→   18→    <meta property="og:image:height" content="400">
+   19→   19→    <meta property="og:image:type" content="image/gif">
+   20→   20→    <meta property="og:url" content="https://schwepe.247420.xyz/videos-thread.html">
+   21→   21→    <meta property="og:site_name" content="Schwelevision">
+   22→   22→    <meta property="og:locale" content="en_US">
+   23→   23→
+   24→   24→    <!-- Twitter Card Meta Tags -->
+   25→   25→    <meta name="twitter:card" content="summary_large_image">
+   26→   26→    <meta name="twitter:title" content="📺 Schwelevision - 247420 Broadcasting Network">
+   27→   27→    <meta name="twitter:description" content="📺 Retro TV broadcasting endless degen content 24/7. Authentic static noise, atmospheric audio, and the finest Schwepe programming. 🐸">
+   28→   28→    <meta name="twitter:image" content="https://schwepe.247420.xyz/site-assets/media/images/schwepe.gif">
+   29→   29→    <meta name="twitter:image:alt" content="Schwepe Logo - Pink Frog Meme">
+   30→   30→    <meta name="twitter:domain" content="schwepe.247420.xyz">
+   31→   31→    <meta name="twitter:url" content="https://schwepe.247420.xyz/videos-thread.html">
+   32→   32→
+   33→   33→    <!-- Discord-specific meta tags -->
+   34→   34→    <meta name="discord:embed:title" content="📺 Schwelevision - 247420 Broadcasting Network">
+   35→   35→    <meta name="discord:embed:description" content="📺 Retro TV broadcasting endless degen content 24/7 with atmospheric audio and authentic static noise. 🐸">
+   36→   36→    <meta name="discord:embed:image" content="https://schwepe.247420.xyz/site-assets/media/images/schwepe.gif">
+   37→   37→    <meta name="discord:embed:color" content="#00f5ff">
+   38→   38→
+   39→   39→    <!-- Cache busting for development -->
+   40→   40→    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+   41→   41→    <meta http-equiv="Pragma" content="no-cache">
+   42→   42→    <meta http-equiv="Expires" content="0">
+   43→   43→
+   44→   44→    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   45→   45→    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=VT323&display=swap" rel="stylesheet">
+   46→   46→    <link rel="stylesheet" href="/site-assets/styles/navbar.css">
+   47→   47→    <style>
+   48→   48→        :root {
+   49→   49→            --primary: #00f5ff;
+   50→   50→            --secondary: #ff006e;
+   51→   51→            --accent: #ffbe0b;
+   52→   52→            --bg-dark: #0a0a0a;
+   53→   53→            --tv-bezel: #2a2a2a;
+   54→   54→            --tv-screen: #1a1a1a;
+   55→   55→            --text: #ffffff;
+   56→   56→        }
+   57→   57→
+   58→   58→        * {
+   59→   59→            margin: 0;
+   60→   60→            padding: 0;
+   61→   61→            box-sizing: border-box;
+   62→   62→        }
+   63→   63→
+   64→   64→        body {
+   65→   65→            font-family: 'Fredoka', sans-serif;
+   66→   66→            background: var(--bg-dark);
+   67→   67→            color: var(--text);
+   68→   68→            overflow-x: hidden;
+   69→   69→            min-height: 100vh;
+   70→   70→            padding: 0;
+   71→   71→            margin: 0;
+   72→   72→        }
+   73→   73→
+   74→   74→        .hero-section {
+   75→   75→            width: 1200px;
+   76→   76→            padding: 120px 20px 40px;
+   77→   77→            text-align: center;
+   78→   78→        }
+   79→   79→
+   80→   80→        .tv-wrapper {
+   81→   81→            width: 100%;
+   82→   82→            overflow: hidden;
+   83→   83→            display: flex;
+   84→   84→            justify-content: center;
+   85→   85→        }
+   86→   86→
+   87→   87→        .tv-scale-container {
+   88→   88→            width: 1200px;
+   89→   89→        }
+   90→   90→
+   91→   91→        .hero-title {
+   92→   92→            font-size: 4rem;
+   93→   93→            font-weight: 700;
+   94→   94→            margin-bottom: 10px;
+   95→   95→            background: linear-gradient(45deg, var(--secondary), var(--accent), var(--primary));
+   96→   96→            -webkit-background-clip: text;
+   97→   97→            -webkit-text-fill-color: transparent;
+   98→   98→            background-clip: text;
+   99→   99→        }
+  100→  100→
+  101→  101→  
+  102→  102→        .hero-subtitle {
+  103→  103→            font-family: 'VT323', monospace;
+  104→  104→            font-size: 1.5rem;
+  105→  105→            color: var(--primary);
+  106→  106→            letter-spacing: 2px;
+  107→  107→            margin-bottom: 20px;
+  108→  108→        }
+  109→  109→
+  110→  110→        #navbar-container {
+  111→  111→            margin-bottom: 20px;
+  112→  112→        }
+  113→  113→
+  114→  114→        .tv-container {
+  115→  115→            position: relative;
+  116→  116→            max-width: none;
+  117→  117→            width: 1200px;
+  118→  118→            margin: -200px auto;
+  119→  119→            padding: 268px 154px 170px 153px;
+  120→  120→            background: transparent;
+  121→  121→            border-radius: 30px;
+  122→  122→        }
+  123→  123→
+  124→  124→        .tv-skin-overlay {
+  125→  125→            position: absolute;
+  126→  126→            top: -100px;
+  127→  127→            left: 0;
+  128→  128→            width: 100%;
+  129→  129→            height: 128%;
+  130→  130→            background: url('/public/0fd03c8c22139e5f07019038989514d5.png') center/contain no-repeat;
+  131→  131→            pointer-events: none;
+  132→  132→            z-index: 100;
+  133→  133→        }
+  134→  134→
+  135→  135→        .tv-screen-wrapper {
+  136→  136→            position: relative;
+  137→  137→            width: 100%;
+  138→  138→            padding-top: 90.75%; /* 22% taller than 4:3 (10% more compression) for very tall videos */
+  139→  139→            background: var(--tv-screen);
+  140→  140→            border-radius: 15px;
+  141→  141→            overflow: hidden; /* Ensures no content spills outside */
+  142→  142→            max-width: 100%; /* Prevent container overflow */
+  143→  143→        }
+  144→  144→
+  145→  145→        .tv-screen {
+  146→  146→            position: absolute;
+  147→  147→            top: 0px;
+  148→  148→            left: 0;
+  149→  149→            width: 100%;
+  150→  150→            height: 86%;
+  151→  151→            overflow: hidden; /* Double protection against video overflow */
+  152→  152→        }
+  153→  153→
+  154→  154→        .video-player {
+  155→  155→            width: 100%;
+  156→  156→            height: 100%;
+  157→  157→            max-width: 100%; /* Prevent video from exceeding container width */
+  158→  158→            max-height: 100%; /* Prevent video from exceeding container height */
+  159→  159→            object-fit: cover; /* Fill screen without side borders */
+  160→  160→            object-position: 50% 30%; /* Focus lower for 9:16 videos, avoid cutting important content */
+  161→  161→            background: #000;
+  162→  162→            filter: blur(1px) saturate(1.6); /* Enhanced blur and oversaturation for TV effect */
+  163→  163→        }
+  164→  164→
+  165→  165→        .scan-lines {
+  166→  166→            position: absolute;
+  167→  167→            top: -5px;
+  168→  168→            left: -5px;
+  169→  169→            width: calc(100% + 10px);
+  170→  170→            height: calc(100% + 10px);
+  171→  171→            background: repeating-linear-gradient(
+  172→  172→                0deg,
+  173→  173→                rgba(0, 0, 0, 0.2),
+  174→  174→                rgba(0, 0, 0, 0.2) 2px,
+  175→  175→                transparent 2px,
+  176→  176→                transparent 4px
+  177→  177→            );
+  178→  178→            pointer-events: none;
+  179→  179→            z-index: 9; /* Below static but above content */
+  180→  180→            animation: scanlineMove 0.1s linear infinite;
+  181→  181→        }
+  182→  182→
+  183→  183→        @keyframes scanlineMove {
+  184→  184→            0% { transform: translateY(0); }
+  185→  185→            100% { transform: translateY(6px); }
+  186→  186→        }
+  187→  187→
+  188→  188→        .tv-static {
+  189→  189→            position: absolute;
+  190→  190→            top: 0;
+  191→  191→            left: 0;
+  192→  192→            width: 100%;
+  193→  193→            height: 100%;
+  194→  194→            pointer-events: none;
+  195→  195→            opacity: 0; /* Hidden by default, only shown for transitions */
+  196→  196→            z-index: 10; /* Above all content including NOW PLAYING */
+  197→  197→            overflow: hidden;
+  198→  198→            filter: blur(5px); /* Even more blur for smoother static */
+  199→  199→            image-rendering: auto; /* Enable smooth image rendering */
+  200→  200→            image-rendering: smooth; /* Fallback for older browsers */
+  201→  201→        }
+  202→  202→
+  203→  203→        .tv-static.active {
+  204→  204→            opacity: 1;
+  205→  205→        }
+  206→  206→
+  207→  207→        @keyframes rapidStaticFlash {
+  208→  208→            0% {
+  209→  209→                opacity: 1;
+  210→  210→                transform: scale(1.02);
+  211→  211→                filter: brightness(1.5) contrast(2);
+  212→  212→            }
+  213→  213→            25% {
+  214→  214→                opacity: 1;
+  215→  215→                transform: scale(1.01);
+  216→  216→                filter: brightness(1.2) contrast(1.5);
+  217→  217→            }
+  218→  218→            50% {
+  219→  219→                opacity: 1;
+  220→  220→                transform: scale(1.015);
+  221→  221→                filter: brightness(1.4) contrast(1.8);
+  222→  222→            }
+  223→  223→            75% {
+  224→  224→                opacity: 1;
+  225→  225→                transform: scale(1.005);
+  226→  226→                filter: brightness(1.1) contrast(1.3);
+  227→  227→            }
+  228→  228→            100% {
+  229→  229→                opacity: 1;
+  230→  230→                transform: scale(1);
+  231→  231→                filter: brightness(1) contrast(1);
+  232→  232→            }
+  233→  233→        }
+  234→  234→
+  235→  235→        /* Rapid temporal refresh for continuous static effect */
+  236→  236→        .tv-static.temporal-refresh {
+  237→  237→            opacity: 1;
+  238→  238→        }
+  239→  239→
+  240→  240→        #noiseCanvas {
+  241→  241→            width: 100%;
+  242→  242→            height: 100%;
+  243→  243→            image-rendering: auto;
+  244→  244→            image-rendering: smooth;
+  245→  245→            -webkit-optimize-contrast: auto;
+  246→  246→        }
+  247→  247→
+  248→  248→        .loading-text {
+  249→  249→            position: absolute;
+  250→  250→            top: 50%;
+  251→  251→            left: 50%;
+  252→  252→            transform: translate(-50%, -50%);
+  253→  253→            font-family: 'VT323', monospace;
+  254→  254→            font-size: 2rem;
+  255→  255→            color: var(--primary);
+  256→  256→            text-shadow: 0 0 20px var(--primary);
+  257→  257→            z-index: 4;
+  258→  258→        }
+  259→  259→
+  260→  260→        .now-playing {
+  261→  261→            position: absolute;
+  262→  262→            top: 20px;
+  263→  263→            left: 20px;
+  264→  264→            background: none; /* Remove background */
+  265→  265→            padding: 5px;
+  266→  266→            border-radius: 0;
+  267→  267→            font-family: 'VT323', monospace;
+  268→  268→            font-size: 2.1rem;
+  269→  269→            color: #ffffff;
+  270→  270→            z-index: 1; /* Below static and scanlines */
+  271→  271→            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Add shadow for readability */
+  272→  272→            transition: opacity 0.5s ease;
+  273→  273→            filter: blur(1px); /* Add blur to match TV aesthetic */
+  274→  274→        }
+  275→  275→
+  276→  276→        .logo-overlay {
+  277→  277→            position: absolute;
+  278→  278→            bottom: 20px;
+  279→  279→            right: 5px;
+  280→  280→            padding: 25px;
+  281→  281→            z-index: 1; /* Below static and scanlines */
+  282→  282→            pointer-events: none; /* Don't interfere with mouse events */
+  283→  283→        }
+  284→  284→
+  285→  285→        .logo-image {
+  286→  286→            max-width: 145px;
+  287→  287→            max-height: 145px;
+  288→  288→            width: auto;
+  289→  289→            height: auto;
+  290→  290→            filter: blur(1.5px); /* Apply blur effect */
+  291→  291→            opacity: 1.0; /* Fully opaque */
+  292→  292→        }
+  293→  293→        .qr-code {
+  294→  294→            margin-bottom: 8px;
+  295→  295→            display: flex;
+  296→  296→            justify-content: flex-end;
+  297→  297→        }
+  298→  298→        .qr-image {
+  299→  299→            width: 145px;
+  300→  300→            height: 145px;
+  301→  301→            background: white;
+  302→  302→            padding: 4px;
+  303→  303→            border-radius: 8px;
+  304→  304→            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  305→  305→            filter: blur(1.5px); /* Apply blur effect to match logo */
+  306→  306→        }
+  307→  307→        .url-display {
+  308→  308→            position: absolute;
+  309→  309→            bottom: 20px;
+  310→  310→            left: 20px;
+  311→  311→            margin-left: 34px;
+  312→  312→            font-family: 'VT323', monospace;
+  313→  313→            font-size: 3rem;
+  314→  314→            color: rgba(255, 255, 255, 0.8);
+  315→  315→            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  316→  316→            z-index: 1; /* Below static and scanlines */
+  317→  317→            pointer-events: none; /* Don't interfere with mouse events */
+  318→  318→            filter: blur(1px); /* Apply blur effect to match TV aesthetic */
+  319→  319→        }
+  320→  320→
+  321→  321→        /* Fullscreen styles - maintain 4:3 aspect ratio, hide controls, maximize size */
+  322→  322→        .tv-container:fullscreen {
+  323→  323→            background: #000;
+  324→  324→            display: flex;
+  325→  325→            align-items: center;
+  326→  326→            justify-content: center;
+  327→  327→            padding: 0;
+  328→  328→        }
+  329→  329→
+  330→  330→        .tv-container:fullscreen .tv-skin-overlay {
+  331→  331→            background-size: cover;
+  332→  332→        }
+  333→  333→
+  334→  334→        .tv-container:fullscreen .tv-screen-wrapper {
+  335→  335→            /* Fit to height with TV frame visible */
+  336→  336→            width: auto;
+  337→  337→            height: 100vh;
+  338→  338→            max-width: 133.33vh; /* 4:3 ratio */
+  339→  339→            max-height: 100vh;
+  340→  340→            padding-top: 0;
+  341→  341→            background: var(--tv-screen);
+  342→  342→            border-radius: 0;
+  343→  343→        }
+  344→  344→
+  345→  345→        .tv-container:fullscreen .tv-controls {
+  346→  346→            display: none; /* Hide controls completely in fullscreen */
+  347→  347→        }
+  348→  348→
+  349→  349→        /* Webkit fullscreen support */
+  350→  350→        .tv-container:-webkit-full-screen {
+  351→  351→            background: #000;
+  352→  352→            display: flex;
+  353→  353→            align-items: center;
+  354→  354→            justify-content: center;
+  355→  355→            padding: 0;
+  356→  356→        }
+  357→  357→
+  358→  358→        .tv-container:-webkit-full-screen .tv-skin-overlay {
+  359→  359→            background-size: cover;
+  360→  360→        }
+  361→  361→
+  362→  362→        .tv-container:-webkit-full-screen .tv-screen-wrapper {
+  363→  363→            /* Fit to height with TV frame visible */
+  364→  364→            width: auto;
+  365→  365→            height: 100vh;
+  366→  366→            max-width: 133.33vh; /* 4:3 ratio */
+  367→  367→            max-height: 100vh;
+  368→  368→            padding-top: 0;
+  369→  369→            background: var(--tv-screen);
+  370→  370→            border-radius: 0;
+  371→  371→        }
+  372→  372→
+  373→  373→        .tv-container:-webkit-full-screen .tv-controls {
+  374→  374→            display: none; /* Hide controls completely in fullscreen */
+  375→  375→        }
+  376→  376→
+  377→  377→        /* Mozilla fullscreen support */
+  378→  378→        .tv-container:-moz-full-screen {
+  379→  379→            background: #000;
+  380→  380→            display: flex;
+  381→  381→            align-items: center;
+  382→  382→            justify-content: center;
+  383→  383→            padding: 0;
+  384→  384→        }
+  385→  385→
+  386→  386→        .tv-container:-moz-full-screen .tv-skin-overlay {
+  387→  387→            background-size: cover;
+  388→  388→        }
+  389→  389→
+  390→  390→        .tv-container:-moz-full-screen .tv-screen-wrapper {
+  391→  391→            /* Fit to height with TV frame visible */
+  392→  392→            width: auto;
+  393→  393→            height: 100vh;
+  394→  394→            max-width: 133.33vh; /* 4:3 ratio */
+  395→  395→            max-height: 100vh;
+  396→  396→            padding-top: 0;
+  397→  397→            background: var(--tv-screen);
+  398→  398→            border-radius: 0;
+  399→  399→        }
+  400→  400→
+  401→  401→        .tv-container:-moz-full-screen .tv-controls {
+  402→  402→            display: none; /* Hide controls completely in fullscreen */
+  403→  403→        }
+  404→  404→
+  405→  405→        /* Fullscreen exit hint */
+  406→  406→        .tv-container:fullscreen .fullscreen-hint,
+  407→  407→        .tv-container:-webkit-full-screen .fullscreen-hint,
+  408→  408→        .tv-container:-moz-full-screen .fullscreen-hint {
+  409→  409→            position: absolute;
+  410→  410→            top: 20px;
+  411→  411→            left: 50%;
+  412→  412→            transform: translateX(-50%);
+  413→  413→            color: rgba(255, 255, 255, 0.7);
+  414→  414→            font-family: 'VT323', monospace;
+  415→  415→            font-size: 1.5rem;
+  416→  416→            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  417→  417→            z-index: 101;
+  418→  418→            opacity: 1;
+  419→  419→            animation: fadeOut 3s ease-in-out forwards;
+  420→  420→            pointer-events: none;
+  421→  421→        }
+  422→  422→
+  423→  423→        /* Iframe embed mode - auto fullscreen 4:3 */
+  424→  424→        body.iframe-mode {
+  425→  425→            padding: 0;
+  426→  426→            margin: 0;
+  427→  427→            background: #000;
+  428→  428→        }
+  429→  429→
+  430→  430→        body.iframe-mode .hero-section {
+  431→  431→            display: none; /* Hide everything except TV */
+  432→  432→        }
+  433→  433→
+  434→  434→        body.iframe-mode .tv-container {
+  435→  435→            width: 100vw;
+  436→  436→            height: 100vh;
+  437→  437→            max-width: none;
+  438→  438→            padding: 0;
+  439→  439→            background: #000;
+  440→  440→            display: flex;
+  441→  441→            align-items: center;
+  442→  442→            justify-content: center;
+  443→  443→        }
+  444→  444→
+  445→  445→        body.iframe-mode .tv-screen-wrapper {
+  446→  446→            width: min(100vw, 133.33vh); /* 4:3 ratio: width = height * 4/3 */
+  447→  447→            height: min(100vh, 75vw); /* 4:3 ratio: height = width * 3/4 */
+  448→  448→            max-width: 100vw;
+  449→  449→            max-height: 100vh;
+  450→  450→            padding-top: 0;
+  451→  451→            background: var(--tv-screen);
+  452→  452→            border-radius: 0;
+  453→  453→        }
+  454→  454→
+  455→  455→        body.iframe-mode .tv-controls {
+  456→  456→            display: none; /* Hide controls in iframe embed */
+  457→  457→        }
+  458→  458→
+  459→  459→        body.iframe-mode .tv-skin-overlay {
+  460→  460→            display: none; /* Hide TV skin in iframe, show just the video */
+  461→  461→        }
+  462→  462→
+  463→  463→        body.iframe-mode .tv-screen-wrapper {
+  464→  464→            padding: 0 !important; /* Remove all padding in iframe */
+  465→  465→            margin: 0 !important;
+  466→  466→        }
+  467→  467→
+  468→  468→        body.iframe-mode .video-player {
+  469→  469→            object-position: 50% 50% !important; /* Center video perfectly in iframe */
+  470→  470→        }
+  471→  471→
+  472→  472→        @keyframes fadeOut {
+  473→  473→            0% { opacity: 1; }
+  474→  474→            70% { opacity: 1; }
+  475→  475→            100% { opacity: 0; }
+  476→  476→        }
+  477→  477→
+  478→  478→        .tv-controls {
+  479→  479→            display: none;
+  480→  480→            justify-content: center;
+  481→  481→            gap: 20px;
+  482→  482→            margin-top: 30px;
+  483→  483→            flex-wrap: wrap;
+  484→  484→        }
+  485→  485→
+  486→  486→        .tv-button {
+  487→  487→            background: linear-gradient(145deg, #404040, #2a2a2a);
+  488→  488→            border: 2px solid var(--secondary);
+  489→  489→            color: var(--text);
+  490→  490→            padding: 15px 30px;
+  491→  491→            border-radius: 15px;
+  492→  492→            cursor: pointer;
+  493→  493→            font-family: 'Fredoka', sans-serif;
+  494→  494→            font-weight: 600;
+  495→  495→            font-size: 1rem;
+  496→  496→            transition: all 0.3s ease;
+  497→  497→            display: flex;
+  498→  498→            align-items: center;
+  499→  499→            gap: 10px;
+  500→  500→        }
+  501→  501→
+  502→  502→        .tv-button:hover {
+  503→  503→            background: linear-gradient(145deg, var(--secondary), var(--accent));
+  504→  504→            transform: translateY(-3px);
+  505→  505→        }
+  506→  506→
+  507→  507→        .tv-button:active {
+  508→  508→            transform: translateY(-1px);
+  509→  509→        }
+  510→  510→
+  511→  511→        .tv-button i {
+  512→  512→            font-size: 1.2rem;
+  513→  513→        }
+  514→  514→
+  515→  515→        .volume-control {
+  516→  516→            position: relative;
+  517→  517→            display: none;
+  518→  518→            align-items: center;
+  519→  519→            gap: 15px;
+  520→  520→        }
+  521→  521→
+  522→  522→        @keyframes tvShake {
+  523→  523→            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  524→  524→            10% { transform: translate(-5px, -3px) rotate(-1deg); }
+  525→  525→            20% { transform: translate(5px, 2px) rotate(1deg); }
+  526→  526→            30% { transform: translate(-3px, 4px) rotate(-0.5deg); }
+  527→  527→            40% { transform: translate(4px, -2px) rotate(0.5deg); }
+  528→  528→            50% { transform: translate(-2px, 3px) rotate(-0.3deg); }
+  529→  529→            60% { transform: translate(3px, -4px) rotate(0.3deg); }
+  530→  530→            70% { transform: translate(-4px, 2px) rotate(-0.2deg); }
+  531→  531→            80% { transform: translate(2px, -3px) rotate(0.2deg); }
+  532→  532→            90% { transform: translate(-1px, 1px) rotate(-0.1deg); }
+  533→  533→        }
+  534→  534→
+  535→  535→        .tv-shake {
+  536→  536→            animation: tvShake 0.5s ease-in-out;
+  537→  537→        }
+  538→  538→
+  539→  539→        .volume-knob {
+  540→  540→            width: 60px;
+  541→  541→            height: 60px;
+  542→  542→            border-radius: 50%;
+  543→  543→            background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+  544→  544→            border: 3px solid var(--secondary);
+  545→  545→            cursor: pointer;
+  546→  546→            position: relative;
+  547→  547→            transition: all 0.3s ease;
+  548→  548→        }
+  549→  549→
+  550→  550→        .volume-knob:hover {
+  551→  551→            transform: scale(1.05);
+  552→  552→        }
+  553→  553→
+  554→  554→        .volume-indicator {
+  555→  555→            position: absolute;
+  556→  556→            top: 50%;
+  557→  557→            left: 50%;
+  558→  558→            transform: translate(-50%, -50%);
+  559→  559→            width: 4px;
+  560→  560→            height: 20px;
+  561→  561→            background: var(--primary);
+  562→  562→            border-radius: 2px;
+  563→  563→            transform-origin: center bottom;
+  564→  564→            transition: transform 0.3s ease;
+  565→  565→        }
+  566→  566→
+  567→  567→        .volume-level {
+  568→  568→            font-family: 'VT323', monospace;
+  569→  569→            font-size: 1.2rem;
+  570→  570→            color: var(--accent);
+  571→  571→            min-width: 40px;
+  572→  572→            text-align: center;
+  573→  573→        }
+  574→  574→
+  575→  575→    
+  576→  576→        .vignette {
+  577→  577→            position: absolute;
+  578→  578→            top: 0;
+  579→  579→            left: 0;
+  580→  580→            width: 100%;
+  581→  581→            height: 100%;
+  582→  582→            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.7) 100%);
+  583→  583→            pointer-events: none;
+  584→  584→            z-index: 1;
+  585→  585→        }
+  586→  586→
+  587→  587→        .slap-counter {
+  588→  588→            position: absolute;
+  589→  589→            top: 20px;
+  590→  590→            left: 50%;
+  591→  591→            transform: translateX(-50%);
+  592→  592→            background: rgba(0, 0, 0, 0.8);
+  593→  593→            color: #00ff00;
+  594→  594→            padding: 8px 16px;
+  595→  595→            border-radius: 4px;
+  596→  596→            font-family: 'VT323', monospace;
+  597→  597→            font-size: 1.2rem;
+  598→  598→            z-index: 100;
+  599→  599→            pointer-events: none;
+  600→  600→            text-shadow: 0 0 10px #00ff00;
+  601→  601→            animation: pulse 0.5s ease-in-out;
+  602→  602→        }
+  603→  603→
+  604→  604→        @keyframes pulse {
+  605→  605→            0% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+  606→  606→            50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+  607→  607→            100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+  608→  608→        }
+  609→  609→
+  610→  610→    </style>
+  611→  611→</head>
+  612→  612→<body>
+  613→  613→    <div class="tv-wrapper">
+  614→  614→        <div class="tv-scale-container">
+  615→  615→            <div class="hero-section">
+  616→  616→                <div id="navbar-container"></div>
+  617→  617→                <p class="hero-subtitle">[ 247420 BROADCASTING NETWORK ]</p>
+  618→  618→            </div>
+  619→  619→
+  620→  620→            <div class="tv-container">
+  621→  621→        <div class="tv-skin-overlay"></div>
+  622→  622→        <div class="fullscreen-hint" id="fullscreenHint" style="display: none;">PRESS ESC TO EXIT FULLSCREEN</div>
+  623→  623→        <div class="tv-screen-wrapper">
+  624→  624→            <div class="tv-screen">
+  625→  625→                <video id="currentVideo" class="video-player" autoplay muted></video>
+  626→  626→                <video id="nextVideo" class="video-player" style="display: none;" preload="auto"></video>
+  627→  627→                <video id="thirdVideo" class="video-player" style="display: none;" preload="auto"></video>
+  628→  628→                <div class="scan-lines"></div>
+  629→  629→                <div class="tv-static" id="static">
+  630→  630→                    <canvas id="noiseCanvas"></canvas>
+  631→  631→                </div>
+  632→  632→                <div class="vignette"></div>
+  633→  633→                <div class="loading-text" id="loadingText" style="display: none;">LOADING CHANNEL...</div>
+  634→  634→                <div class="now-playing" id="nowPlaying" style="display: none;">
+  635→  635→                    <i class="fas fa-broadcast-tower"></i> NOW PLAYING: schwepevision
+  636→  636→                </div>
+  637→  637→                <div class="slap-counter" id="slapCounter" style="display: none;">
+  638→  638→                    🖐️ TV slap #1
+  639→  639→                </div>
+  640→  640→                <div class="url-display">
+  641→  641→                    schwepe.247420.xyz
+  642→  642→                </div>
+  643→  643→                <div class="logo-overlay">
+  644→  644→                    <div class="qr-code">
+  645→  645→                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://schwpe.247420.xyz" alt="QR Code" class="qr-image">
+  646→  646→                    </div>
+  647→  647→                    <img src="/logo.gif" alt="Logo" class="logo-image">
+  648→  648→                </div>
+  649→  649→            </div>
+  650→  650→            <!-- Audio 

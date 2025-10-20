@@ -1,0 +1,708 @@
+    1→<!DOCTYPE html>
+    2→<html lang="en">
+    3→<head>
+    4→    <meta charset="UTF-8">
+    5→    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    6→    <title>247420 - Digital Dive Bar Gallery 🍻 | Wall of Fame</title>
+    7→    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    8→
+    9→    <!-- SEO Meta Tags -->
+   10→    <meta name="description" content="247420 Digital Dive Bar Gallery - Wall of Fame featuring drunk hackers, meme culturists, and chaotic moments captured in dive bar glory.">
+   11→    <meta name="keywords" content="247420 digital dive bar, gallery wall of fame, drunk hackers, meme culturists, chaotic moments, dive bar collection">
+   12→    <meta name="robots" content="index, follow">
+   13→    <link rel="canonical" href="https://247420.xyz/gallery.html">
+   14→
+   15→    <!-- Open Graph Meta Tags -->
+   16→    <meta property="og:type" content="website">
+   17→    <meta property="og:url" content="https://247420.xyz/gallery.html">
+   18→    <meta property="og:title" content="247420 | Digital Dive Bar Gallery 🍻">
+   19→    <meta property="og:description" content="Wall of Fame featuring drunk hackers, meme culturists, and chaotic moments captured in dive bar glory.">
+   20→    <meta property="og:image" content="https://247420.xyz/247420/logo.gif">
+   21→    <meta property="og:site_name" content="247420 Digital Dive Bar">
+   22→
+   23→    <!-- Twitter Card Meta Tags -->
+   24→    <meta name="twitter:card" content="summary_large_image">
+   25→    <meta name="twitter:title" content="247420 | Digital Dive Bar Gallery 🍻">
+   26→    <meta name="twitter:description" content="Wall of Fame featuring drunk hackers, meme culturists, and chaotic moments.">
+   27→    <meta name="twitter:image" content="https://247420.xyz/247420/logo.gif">
+   28→    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+   29→    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+   30→    <link rel="stylesheet" href="navbar.css">
+   31→    <!-- 420kit Shared Library -->
+   32→    <!-- Note: phrase-system now loaded from @420kit/shared npm package -->
+   33→    <style>
+   34→        /* Import Dive Bar Fonts */
+   35→        @import url('https://fonts.googleapis.com/css2?family=VT323:wght@400;700&family=Share+Tech+Mono&family=Press+Start+2P&display=swap');
+   36→
+   37→        /* Digital Dive Bar Theme Variables */
+   38→        :root {
+   39→            --dive-bar-bg: #1a1a1a;
+   40→            --dive-bar-dark: #0d0d0d;
+   41→            --beer-foam: #f5e6d3;
+   42→            --dirty-wall: #2d2d2d;
+   43→            --neon-sign: #ff6b35;
+   44→            --neon-blue: #00d4ff;
+   45→            --spilled-beer: #8b6914;
+   46→            --graffiti-red: #ff1744;
+   47→            --terminal-green: #00ff41;
+   48→            --urine-stain: #c4b000;
+   49→            --rust-metal: #8b4513;
+   50→            --bar-stool: #4a3c28;
+   51→            --vomit-green: #7a8c3a;
+   52→            --dark-wood: #3e2723;
+   53→            --smoke-haze: rgba(255, 255, 255, 0.05);
+   54→            --beer-glass: rgba(255, 250, 240, 0.1);
+   55→        }
+   56→
+   57→        * {
+   58→            margin: 0;
+   59→            padding: 0;
+   60→            box-sizing: border-box;
+   61→        }
+   62→
+   63→        body {
+   64→            font-family: 'VT323', 'Share Tech Mono', 'Press Start 2P', monospace;
+   65→            background:
+   66→                radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+   67→                radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+   68→                radial-gradient(circle at 40% 40%, rgba(139, 105, 20, 0.08) 0%, transparent 50%),
+   69→                linear-gradient(135deg, var(--dive-bar-bg) 0%, var(--dive-bar-dark) 100%);
+   70→            min-height: 100vh;
+   71→            overflow-x: hidden;
+   72→            position: relative;
+   73→            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+   74→        }
+   75→
+   76→        /* Beer Stain Overlay */
+   77→        body::before {
+   78→            content: '';
+   79→            position: fixed;
+   80→            top: 0;
+   81→            left: 0;
+   82→            width: 100%;
+   83→            height: 100%;
+   84→            background:
+   85→                radial-gradient(ellipse at 10% 20%, rgba(139, 105, 20, 0.12) 0%, transparent 40%),
+   86→                radial-gradient(ellipse at 90% 80%, rgba(196, 0, 0, 0.08) 0%, transparent 30%),
+   87→                radial-gradient(ellipse at 50% 50%, rgba(255, 107, 53, 0.05) 0%, transparent 60%);
+   88→            pointer-events: none;
+   89→            z-index: 1;
+   90→        }
+   91→
+   92→        .animated-bg {
+   93→            position: fixed;
+   94→            top: 0;
+   95→            left: 0;
+   96→            width: 100%;
+   97→            height: 100%;
+   98→            z-index: -1;
+   99→            background: linear-gradient(135deg, var(--dive-bar-bg) 0%, var(--dive-bar-dark) 100%);
+  100→            animation: barShift 15s ease-in-out infinite;
+  101→        }
+  102→
+  103→        @keyframes barShift {
+  104→            0%, 100% { background: linear-gradient(135deg, var(--dive-bar-bg) 0%, var(--dive-bar-dark) 100%); }
+  105→            25% { background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, var(--dive-bar-dark) 100%); }
+  106→            50% { background: linear-gradient(135deg, var(--dive-bar-bg) 0%, rgba(0, 212, 255, 0.1) 100%); }
+  107→            75% { background: linear-gradient(135deg, rgba(139, 105, 20, 0.1) 0%, var(--dive-bar-dark) 100%); }
+  108→        }
+  109→
+  110→        /* Terminal Scanlines */
+  111→        .terminal-scanlines {
+  112→            position: fixed;
+  113→            top: 0;
+  114→            left: 0;
+  115→            width: 100%;
+  116→            height: 100%;
+  117→            z-index: -1;
+  118→            background: repeating-linear-gradient(
+  119→                0deg,
+  120→                rgba(255, 107, 53, 0.03),
+  121→                rgba(255, 107, 53, 0.03) 1px,
+  122→                transparent 1px,
+  123→                transparent 2px
+  124→            );
+  125→            pointer-events: none;
+  126→        }
+  127→
+  128→        .terminal-flicker {
+  129→            position: fixed;
+  130→            top: 0;
+  131→            left: 0;
+  132→            width: 100%;
+  133→            height: 100%;
+  134→            z-index: -1;
+  135→            background: var(--dive-bar-bg);
+  136→            animation: diveBarFlicker 0.2s infinite;
+  137→            pointer-events: none;
+  138→        }
+  139→
+  140→        @keyframes diveBarFlicker {
+  141→            0% { opacity: 0.96; }
+  142→            25% { opacity: 1; }
+  143→            50% { opacity: 0.98; }
+  144→            75% { opacity: 0.97; }
+  145→            100% { opacity: 0.99; }
+  146→        }
+  147→
+  148→        /* Beer Spill Drip Animation */
+  149→        @keyframes beerDrip {
+  150→            0% { transform: translateY(-10px); opacity: 0; }
+  151→            10% { opacity: 1; }
+  152→            90% { opacity: 1; }
+  153→            100% { transform: translateY(100vh); opacity: 0; }
+  154→        }
+  155→
+  156→        .beer-drip {
+  157→            position: fixed;
+  158→            top: -10px;
+  159→            width: 3px;
+  160→            height: 20px;
+  161→            background: linear-gradient(to bottom, var(--beer-foam), var(--spilled-beer));
+  162→            border-radius: 50%;
+  163→            animation: beerDrip 8s infinite;
+  164→            pointer-events: none;
+  165→            z-index: 1000;
+  166→        }
+  167→
+  168→        .beer-drip:nth-child(1) { left: 10%; animation-delay: 0s; }
+  169→        .beer-drip:nth-child(2) { left: 30%; animation-delay: 2s; }
+  170→        .beer-drip:nth-child(3) { left: 50%; animation-delay: 4s; }
+  171→        .beer-drip:nth-child(4) { left: 70%; animation-delay: 6s; }
+  172→        .beer-drip:nth-child(5) { left: 90%; animation-delay: 1s; }
+  173→
+  174→        .container {
+  175→            max-width: 1200px;
+  176→            margin: 0 auto;
+  177→            padding: 0 20px;
+  178→        }
+  179→
+  180→        .header {
+  181→            text-align: center;
+  182→            padding: 140px 0 60px;
+  183→            position: relative;
+  184→        }
+  185→
+  186→        /* Dive Bar Navigation Styles */
+  187→        .navbar {
+  188→            background: linear-gradient(135deg, var(--dive-bar-dark), var(--dirty-wall));
+  189→            border: 2px solid var(--neon-sign);
+  190→            border-radius: 15px;
+  191→            padding: 15px 25px;
+  192→            margin: 20px auto;
+  193→            max-width: 900px;
+  194→            display: flex;
+  195→            justify-content: center;
+  196→            gap: 15px;
+  197→            flex-wrap: wrap;
+  198→            box-shadow:
+  199→                0 8px 32px rgba(255, 107, 53, 0.3),
+  200→                0 0 20px rgba(0, 212, 255, 0.2),
+  201→                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  202→            backdrop-filter: blur(10px);
+  203→            animation: navGlow 3s ease-in-out infinite;
+  204→        }
+  205→
+  206→        @keyframes navGlow {
+  207→            0%, 100% { box-shadow: 0 8px 32px rgba(255, 107, 53, 0.3), 0 0 20px rgba(0, 212, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+  208→            50% { box-shadow: 0 12px 40px rgba(255, 107, 53, 0.5), 0 0 30px rgba(0, 212, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+  209→        }
+  210→
+  211→        .navbar a {
+  212→            color: var(--beer-foam);
+  213→            text-decoration: none;
+  214→            font-weight: 600;
+  215→            padding: 10px 18px;
+  216→            border-radius: 10px;
+  217→            transition: all 0.4s ease;
+  218→            display: flex;
+  219→            align-items: center;
+  220→            gap: 10px;
+  221→            font-size: 1rem;
+  222→            border: 1px solid var(--rust-metal);
+  223→            background: rgba(139, 69, 19, 0.2);
+  224→            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  225→            animation: navBounce 3s ease-in-out infinite;
+  226→        }
+  227→
+  228→        @keyframes navBounce {
+  229→            0%, 80%, 100% { transform: translateY(0); }
+  230→            85% { transform: translateY(-2px); }
+  231→            90% { transform: translateY(-1px); }
+  232→            95% { transform: translateY(-1.5px); }
+  233→        }
+  234→
+  235→        .navbar a:nth-child(odd) { animation-delay: 0.1s; }
+  236→        .navbar a:nth-child(even) { animation-delay: 0.2s; }
+  237→
+  238→        .navbar a:hover {
+  239→            background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(0, 212, 255, 0.2));
+  240→            color: var(--neon-sign);
+  241→            border: 2px solid var(--neon-blue);
+  242→            box-shadow:
+  243→                0 0 15px rgba(255, 107, 53, 0.6),
+  244→                0 0 25px rgba(0, 212, 255, 0.4),
+  245→                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  246→            transform: translateY(-2px) scale(1.05);
+  247→            animation: none;
+  248→        }
+  249→
+  250→        .navbar a.active {
+  251→            background: linear-gradient(135deg, rgba(255, 107, 53, 0.4), rgba(0, 212, 255, 0.3));
+  252→            color: var(--neon-sign);
+  253→            border: 2px solid var(--neon-blue);
+  254→            box-shadow:
+  255→                0 0 20px rgba(255, 107, 53, 0.8),
+  256→                0 0 30px rgba(0, 212, 255, 0.6),
+  257→                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  258→            animation: none;
+  259→        }
+  260→
+  261→        .navbar i {
+  262→            font-size: 16px;
+  263→            color: var(--neon-sign);
+  264→            animation: iconGlow 2s ease-in-out infinite;
+  265→        }
+  266→
+  267→        @keyframes iconGlow {
+  268→            0%, 100% { text-shadow: 0 0 5px var(--neon-sign); }
+  269→            50% { text-shadow: 0 0 15px var(--neon-sign), 0 0 25px var(--neon-blue); }
+  270→        }
+  271→
+  272→        .back-button {
+  273→            position: fixed;
+  274→            top: 30px;
+  275→            left: 30px;
+  276→            background: linear-gradient(135deg, var(--dive-bar-dark), var(--dirty-wall));
+  277→            border: 2px solid var(--neon-sign);
+  278→            color: var(--beer-foam);
+  279→            padding: 15px 20px;
+  280→            border-radius: 12px;
+  281→            text-decoration: none;
+  282→            font-weight: 700;
+  283→            transition: all 0.4s ease;
+  284→            display: inline-flex;
+  285→            align-items: center;
+  286→            gap: 12px;
+  287→            font-family: 'VT323', monospace;
+  288→            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  289→            box-shadow:
+  290→                0 8px 25px rgba(255, 107, 53, 0.3),
+  291→                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  292→            z-index: 1000;
+  293→        }
+  294→
+  295→        .back-button:hover {
+  296→            background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), var(--dive-bar-dark));
+  297→            border: 2px solid var(--neon-blue);
+  298→            color: var(--neon-sign);
+  299→            transform: translateY(-3px) scale(1.05);
+  300→            box-shadow:
+  301→                0 15px 40px rgba(255, 107, 53, 0.5),
+  302→                0 0 30px rgba(0, 212, 255, 0.4),
+  303→                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  304→        }
+  305→
+  306→        .gallery-title {
+  307→            font-size: 4rem;
+  308→            color: var(--neon-sign);
+  309→            margin-bottom: 25px;
+  310→            text-shadow:
+  311→                0 0 15px var(--neon-sign),
+  312→                2px 2px 4px rgba(0, 0, 0, 0.8),
+  313→                0 0 30px rgba(255, 107, 53, 0.5);
+  314→            line-height: 1.1;
+  315→            font-weight: 700;
+  316→            font-family: 'Press Start 2P', 'VT323', monospace;
+  317→            animation: titleGlitch 4s ease-in-out infinite;
+  318→        }
+  319→
+  320→        @keyframes titleGlitch {
+  321→            0%, 90%, 100% {
+  322→                transform: translate(0);
+  323→                filter: hue-rotate(0deg) brightness(1);
+  324→                text-shadow: 0 0 15px var(--neon-sign), 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 107, 53, 0.5);
+  325→            }
+  326→            91% {
+  327→                transform: translate(-2px, 2px);
+  328→                filter: hue-rotate(90deg) brightness(1.2);
+  329→                text-shadow: 2px 2px 0 var(--graffiti-red), -2px -2px 0 var(--neon-blue);
+  330→            }
+  331→            92% {
+  332→                transform: translate(2px, -2px);
+  333→                filter: hue-rotate(180deg) brightness(0.8);
+  334→                text-shadow: -2px 2px 0 var(--terminal-green), 2px -2px 0 var(--urine-stain);
+  335→            }
+  336→            93% {
+  337→                transform: translate(-1px, 1px);
+  338→                filter: hue-rotate(270deg) brightness(1.1);
+  339→                text-shadow: 1px -1px 0 var(--neon-blue), -1px 1px 0 var(--spilled-beer);
+  340→            }
+  341→        }
+  342→
+  343→        .gallery-subtitle {
+  344→            font-size: 1.5rem;
+  345→            color: var(--beer-foam);
+  346→            margin-bottom: 50px;
+  347→            font-weight: 400;
+  348→            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  349→            animation: subtitleFlicker 3s ease-in-out infinite;
+  350→        }
+  351→
+  352→        @keyframes subtitleFlicker {
+  353→            0%, 100% { opacity: 0.9; }
+  354→            50% { opacity: 1; }
+  355→            75% { opacity: 0.95; }
+  356→        }
+  357→
+  358→        .complete-gallery {
+  359→            display: grid;
+  360→            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  361→            gap: 30px;
+  362→            padding: 50px 0;
+  363→        }
+  364→
+  365→        .247420-card {
+  366→            background: linear-gradient(135deg, var(--dirty-wall), var(--dive-bar-dark));
+  367→            border: 2px solid var(--rust-metal);
+  368→            border-radius: 15px;
+  369→            padding: 35px;
+  370→            text-align: center;
+  371→            transition: all 0.4s ease;
+  372→            cursor: pointer;
+  373→            position: relative;
+  374→            overflow: hidden;
+  375→            box-shadow:
+  376→                0 8px 32px rgba(255, 107, 53, 0.2),
+  377→                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  378→            backdrop-filter: blur(5px);
+  379→        }
+  380→
+  381→        .247420-card::before {
+  382→            content: '';
+  383→            position: absolute;
+  384→            top: 0;
+  385→            left: -100%;
+  386→            width: 100%;
+  387→            height: 3px;
+  388→            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+  389→            animation: cardScan 5s infinite;
+  390→        }
+  391→
+  392→        @keyframes cardScan {
+  393→            0% { left: -100%; }
+  394→            100% { left: 100%; }
+  395→        }
+  396→
+  397→        .247420-card:hover {
+  398→            border: 2px solid var(--neon-sign);
+  399→            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), var(--dive-bar-dark));
+  400→            box-shadow:
+  401→                0 15px 45px rgba(255, 107, 53, 0.4),
+  402→                0 0 30px rgba(0, 212, 255, 0.3),
+  403→                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  404→            transform: translateY(-8px) rotate(0.5deg);
+  405→        }
+  406→
+  407→        .247420-image {
+  408→            width: 100%;
+  409→            height: 220px;
+  410→            object-fit: cover;
+  411→            border-radius: 12px;
+  412→            margin-bottom: 25px;
+  413→            transition: all 0.4s ease;
+  414→            border: 2px solid var(--rust-metal);
+  415→            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  416→        }
+  417→
+  418→        .247420-card:hover .247420-image {
+  419→            transform: scale(1.05) rotate(0.5deg);
+  420→            border-color: var(--neon-sign);
+  421→            box-shadow:
+  422→                0 8px 25px rgba(255, 107, 53, 0.4),
+  423→                0 0 20px rgba(0, 212, 255, 0.3);
+  424→        }
+  425→
+  426→        .247420-title {
+  427→            font-size: 1.8rem;
+  428→            color: var(--neon-sign);
+  429→            margin-bottom: 15px;
+  430→            font-weight: 700;
+  431→            font-family: 'VT323', monospace;
+  432→            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  433→            animation: titlePulse 4s ease-in-out infinite;
+  434→        }
+  435→
+  436→        @keyframes titlePulse {
+  437→            0%, 100% { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); }
+  438→            50% { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px var(--neon-sign); }
+  439→        }
+  440→
+  441→        .247420-description {
+  442→            color: var(--beer-foam);
+  443→            font-size: 1.1rem;
+  444→            line-height: 1.6;
+  445→            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  446→        }
+  447→
+  448→        .special-card {
+  449→            border: 2px solid var(--neon-sign) !important;
+  450→            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), var(--dive-bar-dark)) !important;
+  451→            box-shadow:
+  452→                0 12px 40px rgba(255, 107, 53, 0.4),
+  453→                0 0 30px rgba(0, 212, 255, 0.3),
+  454→                inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  455→        }
+  456→
+  457→        .special-card::before {
+  458→            content: '⭐ SPECIAL ⭐';
+  459→            position: absolute;
+  460→            top: 10px;
+  461→            right: 10px;
+  462→            background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(0, 212, 255, 0.2));
+  463→            padding: 4px 8px;
+  464→            border-radius: 6px;
+  465→            font-size: 0.8rem;
+  466→            color: var(--neon-sign);
+  467→            border: 1px solid var(--rust-metal);
+  468→            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  469→            animation: specialPulse 2s ease-in-out infinite;
+  470→        }
+  471→
+  472→        @keyframes specialPulse {
+  473→            0%, 100% { transform: scale(1); }
+  474→            50% { transform: scale(1.05); }
+  475→        }
+  476→
+  477→        /* Corner Man Styles - Dive Bar Edition */
+  478→        .corner-man {
+  479→            position: fixed;
+  480→            bottom: 20px;
+  481→            left: 20px;
+  482→            width: 140px;
+  483→            height: 140px;
+  484→            z-index: 247420;
+  485→            cursor: pointer;
+  486→            transition: all 0.4s ease;
+  487→            opacity: 0;
+  488→            transform: scale(0) rotate(-15deg);
+  489→            border-radius: 15px;
+  490→            overflow: hidden;
+  491→            box-shadow:
+  492→                0 12px 35px rgba(255, 107, 53, 0.4),
+  493→                0 0 25px rgba(0, 212, 255, 0.3);
+  494→            border: 2px solid var(--neon-sign);
+  495→            background: linear-gradient(135deg, var(--dirty-wall), var(--dive-bar-dark));
+  496→        }
+  497→
+  498→        .corner-man.show {
+  499→            opacity: 1;
+  500→            transform: scale(1) rotate(0deg);
+  501→            animation: cornerManBounce 3s ease-in-out infinite;
+  502→        }
+  503→
+  504→        @keyframes cornerManBounce {
+  505→            0%, 80%, 100% { transform: scale(1) rotate(0deg); }
+  506→            85% { transform: scale(1.05) rotate(-3deg); }
+  507→            90% { transform: scale(0.95) rotate(3deg); }
+  508→            95% { transform: scale(1.02) rotate(-1deg); }
+  509→        }
+  510→
+  511→        .corner-man:hover {
+  512→            transform: scale(1.1) rotate(5deg);
+  513→            box-shadow:
+  514→                0 18px 45px rgba(255, 107, 53, 0.6),
+  515→                0 0 35px rgba(0, 212, 255, 0.5);
+  516→            border-color: var(--neon-blue);
+  517→        }
+  518→
+  519→        .corner-man img {
+  520→            width: 100%;
+  521→            height: 100%;
+  522→            object-fit: cover;
+  523→            background: transparent;
+  524→            filter: contrast(1.1) saturate(1.2);
+  525→        }
+  526→
+  527→        /* Responsive Design - Dive Bar Edition */
+  528→        @media (max-width: 768px) {
+  529→            .complete-gallery {
+  530→                grid-template-columns: 1fr;
+  531→                gap: 25px;
+  532→            }
+  533→
+  534→            .gallery-title {
+  535→                font-size: 2.8rem;
+  536→            }
+  537→
+  538→            .gallery-subtitle {
+  539→                font-size: 1.2rem;
+  540→            }
+  541→
+  542→            .back-button {
+  543→                position: relative;
+  544→                top: 0;
+  545→                left: 0;
+  546→                margin: 20px auto;
+  547→                display: flex;
+  548→                width: fit-content;
+  549→                font-size: 0.9rem;
+  550→                padding: 12px 18px;
+  551→            }
+  552→
+  553→            .header {
+  554→                padding: 100px 0 40px;
+  555→            }
+  556→
+  557→            .navbar {
+  558→                max-width: 100%;
+  559→                margin: 15px auto;
+  560→                padding: 12px 20px;
+  561→                gap: 10px;
+  562→            }
+  563→
+  564→            .navbar a {
+  565→                padding: 8px 14px;
+  566→                font-size: 0.9rem;
+  567→                gap: 8px;
+  568→            }
+  569→
+  570→            .corner-man {
+  571→                width: 100px;
+  572→                height: 100px;
+  573→                bottom: 15px;
+  574→                left: 15px;
+  575→            }
+  576→        }
+  577→    </style>
+  578→</head>
+  579→<body>
+  580→    <div class="animated-bg"></div>
+  581→    <div class="terminal-scanlines"></div>
+  582→    <div class="terminal-flicker"></div>
+  583→
+  584→    <!-- Beer Drip Animations -->
+  585→    <div class="beer-drip"></div>
+  586→    <div class="beer-drip"></div>
+  587→    <div class="beer-drip"></div>
+  588→    <div class="beer-drip"></div>
+  589→    <div class="beer-drip"></div>
+  590→
+  591→    <div id="corner-man" class="corner-man">
+  592→        <img src="cornermen/left/schwepe-corner-001.png" alt="Corner Man">
+  593→    </div>
+  594→
+  595→    <a href="index.html" class="back-button">
+  596→        <i class="fas fa-arrow-left"></i> 🍺 Back to Bar
+  597→    </a>
+  598→
+  599→    <div class="container">
+  600→        <div class="header">
+  601→            <h1 class="gallery-title">🍻 Dive Bar Wall of Fame 🍻</h1>
+  602→            <p class="gallery-subtitle">Every drunk hacker, every chaotic moment, every bar regular captured in dive bar glory 🐸</p>
+  603→        </div>
+  604→
+  605→        <!-- Navigation -->
+  606→        <nav class="navbar">
+  607→            <a href="index.html">
+  608→                <i class="fas fa-beer"></i>
+  609→                🍺 Bar
+  610→            </a>
+  611→            <a href="lore.html">
+  612→                <i class="fas fa-scroll"></i>
+  613→                📜 Stories
+  614→            </a>
+  615→            <a href="images-thread.html">
+  616→                <i class="fas fa-images"></i>
+  617→                🖼️ Memes
+  618→            </a>
+  619→            <a href="videos-thread.html">
+  620→                <i class="fas fa-tv"></i>
+  621→                📺 TV
+  622→            </a>
+  623→            <a href="https://420360.xyz/" target="_blank">
+  624→                <i class="fas fa-wifi"></i>
+  625→                🌐 World
+  626→            </a>
+  627→                </nav>
+  628→
+  629→        <div class="complete-gallery" id="247420-gallery">
+  630→            <!-- Gallery content will be loaded dynamically from 247420-descriptions.json -->
+  631→        </div>
+  632→    </div>
+  633→
+  634→    <script>
+  635→
+  636→        // Load gallery content from JSON
+  637→        async function loadGalleryFromJSON() {
+  638→            try {
+  639→                const response = await fetch('247420-descriptions.json');
+  640→                const descriptions = await response.json();
+  641→
+  642→                const galleryContainer = document.getElementById('247420-gallery');
+  643→                galleryContainer.innerHTML = '';
+  644→
+  645→                // Add featured official 247420 first
+  646→                const featuredCard = document.createElement('div');
+  647→                featuredCard.className = '247420-card special-card';
+  648→                featuredCard.innerHTML = `
+  649→                    <img src="logo.gif" alt="Official 247420 Logo" class="247420-image">
+  650→                    <h3 class="247420-title">Official $247420 Community</h3>
+  651→                    <p class="247420-description">The official branding and identity of our beloved branding</p>
+  652→                `;
+  653→                galleryContainer.appendChild(featuredCard);
+  654→
+  655→                // Add all other 247420s
+  656→                Object.entries(descriptions).forEach(([filename, data]) => {
+  657→                    if (filename === 'logo.gif') return; // Skip the featured one
+  658→
+  659→                    const specialClass = data.special ? ' special-card' : '';
+  660→                    const card = document.createElement('div');
+  661→                    card.className = `247420-card${specialClass}`;
+  662→                    card.innerHTML = `
+  663→                        <img src="247420/${filename}" alt="${data.title}" class="247420-image">
+  664→                        <h3 class="247420-title">${data.title}</h3>
+  665→                        <p class="247420-description">${data.description}</p>
+  666→                    `;
+  667→
+  668→                    // Add click interaction
+  669→                    card.addEventListener('click', function() {
+  670→                        this.style.animation = 'bounce 0.5s ease-in-out';
+  671→                        setTimeout(() => {
+  672→                            this.style.animation = '';
+  673→                        }, 500);
+  674→                    });
+  675→
+  676→                    galleryContainer.appendChild(card);
+  677→                });
+  678→
+  679→                console.log('✅ Gallery loaded from JSON successfully');
+  680→            } catch (error) {
+  681→                console.error('❌ Error loading gallery from JSON:', error);
+  682→                // Fallback: show error message
+  683→                const galleryContainer = document.getElementById('247420-gallery');
+  684→                galleryContainer.innerHTML = '<p style="color: white; text-align: center; padding: 40px;">Error loading gallery content. Please check back later.</p>';
+  685→            }
+  686→        }
+  687→
+  688→        // Corner Man functionality
+  689→        let cornerManVisible = false;
+  690→        let cornerManImages = [];
+  691→
+  692→        function # {
+  693→            cornerManVisible = !cornerManVisible;
+  694→            const cornerMan = document.getElementById('corner-man');
+  695→            if (cornerManVisible) {
+  696→                cornerMan.classList.add('show');
+  697→                if (cornerManImages.length > 0) {
+  698→                    loadRandomCornerImage();
+  699→                }
+  700→            } else {
+  701→                cornerMan.classList.remove('show');
+  702→            }
+  703→        }
+  704→
+  705→        function loadCornerManImages() {
+  706→            // Load corner man images from cornermen folder
+  707→            cornerManImages = [
+  708→                'cornermen/247420-
