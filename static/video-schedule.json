@@ -1,42 +1,7 @@
 {
   "epochStart": 1735689600000,
   "programSeed": 247420,
-  "loopDurationMs": 90000,
-  "videos": [
-    {
-      "filename": "placeholder1.mp4",
-      "path": "saved_videos/placeholder1.mp4",
-      "duration": 30
-    },
-    {
-      "filename": "placeholder2.mp4",
-      "path": "saved_videos/placeholder2.mp4",
-      "duration": 30
-    },
-    {
-      "filename": "placeholder3.mp4",
-      "path": "saved_videos/placeholder3.mp4",
-      "duration": 30
-    }
-  ],
-  "loop": [
-    {
-      "videoIndex": 0,
-      "offsetMs": 0,
-      "duration": 30000,
-      "filename": "placeholder1.mp4"
-    },
-    {
-      "videoIndex": 0,
-      "offsetMs": 30000,
-      "duration": 30000,
-      "filename": "placeholder1.mp4"
-    },
-    {
-      "videoIndex": 0,
-      "offsetMs": 60000,
-      "duration": 30000,
-      "filename": "placeholder1.mp4"
-    }
-  ]
+  "loopDurationMs": 0,
+  "videos": [],
+  "loop": []
 }
