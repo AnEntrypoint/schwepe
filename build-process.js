@@ -5,7 +5,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
-import { MediaGenerator, BuildTimePhraseSystem } from './lib/420kit/phrase-system.js';
+import { MediaGenerator } from './lib/420kit/media-generator.js';
+import { BuildTimePhraseSystem } from './lib/420kit/phrase-system.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
