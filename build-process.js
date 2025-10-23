@@ -166,7 +166,7 @@ class PhraseBuildProcess {
             baseDir: __dirname,
             imageDir: 'saved_images',
             videoDir: 'saved_videos',
-            outputDir: __dirname,
+            outputDir: '.',
             generateTimestamps: true,
             sortByDate: true,
             sortOrder: 'desc',
