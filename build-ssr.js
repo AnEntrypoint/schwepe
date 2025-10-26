@@ -47,10 +47,17 @@ function copySiteAssets() {
     const sites = fs.readdirSync(sitesDir)
     sites.forEach(siteId => {
       const siteDir = path.join(sitesDir, siteId)
-      const stat = fs.statSync(siteDir)
-      if (stat.isDirectory()) {
-        const destDir = path.join(__dirname, 'dist', siteId, 'site-assets')
-        copyDirectory(siteDir, destDir)
+      if (fs.existsSync(siteDir)) {
+        const stat = fs.statSync(siteDir)
+        if (stat.isDirectory()) {
+          const destDir = path.join(__dirname, 'dist', siteId, 'site-assets')
+          try {
+            copyDirectory(siteDir, destDir)
+            console.log(`✅ Copied site assets for ${siteId}/`)
+          } catch (error) {
+            console.warn(`⚠️ Warning copying ${siteId} assets:`, error.message)
+          }
+        }
       }
     })
   }
