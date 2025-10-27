@@ -1,28 +1,8 @@
-[phases.setup]
-nixPkgs = ["nodejs_20", "git"]
-
-[variables]
-CI = "true"
-NPM_CONFIG_UPDATE_NOTIFIER = "false"
-NODE_ENV = "production"
-PORT = "3000"
-
-[phases.install]
-cmds = [
-  "rm -rf node_modules package-lock.json",
-  "npm install --no-cache --prefer-offline --omit=dev"
-]
-
 [phases.build]
-cmds = [
-  "npm run build"
-]
+cmds = ['npm run build']
 
-[start]
-cmd = "node server.js"
-
-# Remove the problematic runPhases directive that may be interfering with Coolify
-# and ensure proper environment variables are set for deployment
+[phases.start]
+cmd = 'npm start'
 
 [deploy]
 healthcheckPath = "/api/health"
@@ -31,5 +11,5 @@ restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 port = 3000
 
-# Fixed deployment permissions - 2025-10-27T12:21:30.000Z
-# Simplified configuration to avoid Coolify permission issues
+# Fixed deployment permissions - 2025-10-27T12:25:30.000Z
+# Added explicit start command for proper deployment
