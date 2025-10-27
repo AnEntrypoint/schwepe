@@ -118,7 +118,17 @@ async function createServer() {
   });
   
   const port = process.env.PORT || 3000;
-  app.listen(port, () => {
+  // Health check endpoint for deployment monitoring
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    env: process.env.NODE_ENV || 'development'
+  });
+});
+
+app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
     console.log(`Environment: ${isDev ? 'development' : 'production'}`);
     console.log('Sites:', Array.from(domainRouter.domainMap.entries()));

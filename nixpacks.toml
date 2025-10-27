@@ -23,9 +23,11 @@ cmd = "node server.js"
 runPhases = ["install", "build", "start"]
 
 [deploy]
-healthcheckPath = "/"
-healthcheckTimeout = 100
+healthcheckPath = "/api/health"
+healthcheckTimeout = 30
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
+port = 3000
 
-# Deployment fix - 2025-10-27T10:17:09.979Z
+# Fixed deployment permissions - 2025-10-27T10:20:15.142Z
+# Updated healthcheck path to match actual API endpoint
