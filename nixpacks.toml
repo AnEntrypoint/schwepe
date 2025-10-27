@@ -27,3 +27,5 @@ healthcheckPath = "/"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
+
+# Deployment fix - 2025-10-27T10:17:09.979Z
