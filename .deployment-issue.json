@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-10-27T11:42:52.824Z",
+  "status": "blocked-by-coolify-permissions",
+  "summary": "CI/CD process is configured correctly but blocked by Coolify server-side permission issues",
+  "application_status": "working_locally",
+  "problem": "Coolify server cannot write .env and docker-compose.yaml files due to permission denied errors",
+  "error_logs": [
+    "tee: /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0/.env: Permission denied",
+    "tee: /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0/docker-compose.yaml: Permission denied"
+  ],
+  "fixes_applied": [
+    "Updated nixpacks.toml with proper Node.js configuration",
+    "Fixed Dockerfile.coolify to use non-root user (UID 1001)",
+    "Added proper health checks and environment variables",
+    "Ensured application builds and runs correctly locally"
+  ],
+  "next_required_actions": [
+    "Contact Coolify administrator to fix server directory permissions",
+    "Verify /data/coolify/applications/ directory is writable by coolify user",
+    "Check if Coolify instance has proper filesystem permissions",
+    "Consider redeploying once server permissions are fixed"
+  ],
+  "commits_deployed": [
+    "06ad4b0 - Update deployment documentation and status",
+    "971ebcc - Fixed all syntax and build issues"
+  ]
+}
