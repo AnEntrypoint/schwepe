@@ -9,11 +9,23 @@ cmds = ["npm ci --only=production"]
 
 [phases.build]
 dependsOn = ["install"]
-cmds = ["rm -rf dist || true", "npm run build:multi-site"]
+cmds = [
+  "npm run build:multi-site",
+  "mkdir -p dist",
+  "cp server.cjs dist/",
+  "cp package.json dist/",
+  "cp .env dist/ || echo 'No .env file to copy'",
+  "cp -r lib dist/ 2>/dev/null || echo 'No lib directory'",
+  "cp -r public dist/ 2>/dev/null || echo 'No public directory'",
+  "cp -r static dist/ 2>/dev/null || echo 'No static directory'",
+  "cp -r sites dist/ 2>/dev/null || echo 'No sites directory'",
+  "cp -r dist/schwepe/* dist/ 2>/dev/null || echo 'No schwepe build'",
+  "cp -r dist/247420/* dist/ 2>/dev/null || echo 'No 247420 build'"
+]
 
 [phases.start]
 dependsOn = ["build"]
-cmds = ["NODE_ENV=production node server.cjs"]
+cmds = ["cd dist && npm ci --only=production && NODE_ENV=production node server.cjs"]
 
 [deploy]
 healthcheckPath = "/api/health"
@@ -21,3 +33,4 @@ healthcheckTimeout = 60
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 5
 port = 3000
+startCommand = "cd dist && NODE_ENV=production node server.cjs"
