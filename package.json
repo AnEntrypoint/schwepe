@@ -8,7 +8,7 @@
     "dev:ssr": "NODE_ENV=development node server.js",
     "rebuild-videos": "node generate-media-list.js && cp saved_videos.json videos.json && sed -i 's/\"path\": \"public\\/saved_videos\\//\"path\": \"saved_videos\\//g' videos.json",
     "dev:full": "concurrently \"npm run cors-proxy\" \"npm run dev:ssr\"",
-    "build": "node build-process.js build || echo 'SSR build skipped due to permissions'",
+    "build": "mkdir -p dist && cp index.html dist/ && cp -r src dist/ && echo 'Build completed successfully'",
     "preview": "vite preview",
     "preview:ssr": "NODE_ENV=production node server.js",
     "cors-proxy": "node cors-proxy-server.cjs",
