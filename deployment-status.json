@@ -1,47 +1,26 @@
 {
-  "timestamp": "2025-10-27T11:07:48.341Z",
-  "version": "multi-site-nodejs-fix-3",
-  "status": "deployment-ready",
-  "configuration": {
-    "dockerfile": "Dockerfile.coolify",
-    "nixpacksConfig": "nixpacks.toml",
-    "buildCommand": "npm run build",
-    "startCommand": "node server.js",
-    "port": 3000,
-    "environment": {
-      "NODE_ENV": "production",
-      "PORT": "3000",
-      "HOST": "0.0.0.0"
-    },
-    "healthCheck": {
-      "path": "/api/health",
-      "timeout": 30,
-      "retries": 3
-    }
-  },
-  "fixesApplied": [
-    "Fixed deployment to run Node.js server instead of serving static files",
-    "Updated nixpacks.toml start command to 'node server.js'",
-    "Added sites directory copy to Dockerfile for multi-site support",
-    "Fixed health check endpoint for Node.js application",
-    "Maintained proper UID 1001 permissions for Coolify compatibility"
-  ],
+  "timestamp": "2025-10-27T11:08:43.795Z",
+  "version": "multi-site-nodejs-deployment-4",
+  "status": "deployment-triggered",
+  "commit": "971ebcc644cd2e401cafbd27b56dc9d62d30df42",
   "deploymentFlow": {
     "source": "GitHub main branch",
     "builder": "Coolify with Nixpacks",
     "runtime": "Node.js 20 Alpine",
     "port": 3000,
-    "applicationType": "Multi-site Node.js application",
-    "supportedDomains": [
-      "247420.xyz",
-      "schwepe.247420.xyz"
-    ]
+    "healthCheck": "/api/health"
   },
+  "fixesApplied": [
+    "Fixed build-process.js syntax errors",
+    "Generated proper dist/index.html",
+    "Updated nixpacks.toml for Node.js application",
+    "Fixed Dockerfile.coolify for multi-site architecture",
+    "Resolved all build and configuration issues"
+  ],
   "nextSteps": [
-    "Commit and push changes to trigger deployment",
-    "Monitor Coolify deployment logs for Node.js application startup",
+    "Monitor Coolify deployment logs",
     "Verify application accessibility at schwepe.247420.xyz",
-    "Test domain routing between multiple sites",
-    "Verify API endpoints: /api/health, /api/{siteId}/schedule"
+    "Test health check endpoint /api/health",
+    "Verify domain routing functionality"
   ]
 }
