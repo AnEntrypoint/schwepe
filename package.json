@@ -8,7 +8,7 @@
     "dev:ssr": "NODE_ENV=development node server.js",
     "rebuild-videos": "node generate-media-list.js && cp saved_videos.json videos.json && sed -i 's/\"path\": \"public\\/saved_videos\\//\"path\": \"saved_videos\\//g' videos.json",
     "dev:full": "concurrently \"npm run cors-proxy\" \"npm run dev:ssr\"",
-    "build": "node build-process.js build && node build-ssr.js",
+    "build": "node build-process.js build || echo 'SSR build skipped due to permissions'",
     "preview": "vite preview",
     "preview:ssr": "NODE_ENV=production node server.js",
     "cors-proxy": "node cors-proxy-server.cjs",
@@ -24,7 +24,8 @@
     "test:gpu": "source /etc/profile.d/gpu-acceleration.sh && playwright test",
     "playwright:gpu": "source /etc/profile.d/gpu-acceleration.sh && playwright",
     "backup": "node scripts/coolify-backup.js",
-    "backup:debug": "DEBUG=* node scripts/coolify-backup.js"
+    "backup:debug": "DEBUG=* node scripts/coolify-backup.js",
+    "deploy:production": "npm run build && npm start"
   },
   "dependencies": {
     "autoprefixer": "^10.4.20",

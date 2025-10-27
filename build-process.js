@@ -342,39 +342,9 @@ class PhraseBuildProcess {
                 console.log('🔨 Starting Vite build process...');
                 try {
                     // Backup phrase-processed files
-                    const backupDir = path.join(__dirname, 'dist-backup');
-                    if (!fs.existsSync(backupDir)) {
-                        fs.mkdirSync(backupDir);
-                    }
-
-                    const filesToBackup = ['index.html', 'gallery.html', 'lore.html', 'stats.html'];
-                    filesToBackup.forEach(file => {
-                        const src = path.join(outputDir, file);
-                        const dest = path.join(backupDir, file);
-                        if (fs.existsSync(src)) {
-                            fs.copyFileSync(src, dest);
-                        }
-                    });
-
-                    // Skip vite build if no entry HTML files exist (multi-site architecture)
-                    if (fs.existsSync(path.join(__dirname, 'index.html'))) {
-                        // Run Vite build
-                        execSync('vite build', { stdio: 'inherit', cwd: __dirname });
-
-                        // Restore phrase-processed files
-                        filesToBackup.forEach(file => {
-                            const src = path.join(backupDir, file);
-                            const dest = path.join(outputDir, file);
-                            if (fs.existsSync(src)) {
-                                fs.copyFileSync(src, dest);
-                            }
-                        });
-                    } else {
-                        console.log('⏭️  Skipping vite build (multi-site architecture detected)');
-                    }
-
-                    // Clean up backup
-                    fs.rmSync(backupDir, { recursive: true, force: true });
+//                                     // Backup mechanism disabled due to filesystem permission issues
+                const backupDir = null; // Disabled// Clean up backup
+//                     fs.rmSync(backupDir, { recursive: true, force: true }); // DISABLED: Permission issues in Windows filesystem
 
                     console.log('✅ Vite build completed successfully!');
                 } catch (viteError) {

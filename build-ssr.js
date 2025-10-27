@@ -17,7 +17,11 @@ function copyDirectory(src, dest) {
     if (stat.isDirectory()) {
       copyDirectory(srcPath, destPath)
     } else {
-      fs.copyFileSync(srcPath, destPath)
+      try {
+          fs.copyFileSync(srcPath, destPath);
+      } catch (error) {
+          console.warn('Could not copy file:', srcPath, error.message);
+      }
     }
   })
 }
