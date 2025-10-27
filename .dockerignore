@@ -6,9 +6,10 @@ README.md
 .env
 .nyc_output
 coverage
-.cache
-dist
-static/.cache
-*.log
-.DS_Store
-Thumbs.db
+.nyc_output
+.coverage
+.coverage/
+dist/
+.cache/
+temp/
+tmp/
