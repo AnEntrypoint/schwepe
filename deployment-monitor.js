@@ -2,18 +2,7 @@
 
 import https from 'https';
 import fs from 'fs';
-import process from 'process';
-
-// Handle stdin being null in non-interactive environments
-if (process.stdin === null) {
-  process.stdin = {
-    isTTY: false,
-    setEncoding: () => {},
-    on: () => {},
-    resume: () => {},
-    pause: () => {}
-  };
-}
+import { setTimeout } from 'timers/promises';
 
 const CONFIG = {
   urls: {
@@ -21,170 +10,142 @@ const CONFIG = {
     actual: 'https://c0s8g4k00oss8kkcoccs88g0.247420.xyz',
     admin: 'https://coolify.247420.xyz'
   },
-  healthEndpoints: [
-    'https://schwepe.247420.xyz/api/health',
-    'https://c0s8g4k00oss8kkcoccs88g0.247420.xyz/api/health'
-  ],
-  timeout: 10000,
-  retries: 3
+  timeout: 3000, // Further reduced timeout
+  retries: 1, // Single retry only
+  overallTimeout: 8000 // Hard overall timeout
 };
 
-async function checkUrl(url, retries = CONFIG.retries) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      const result = await new Promise((resolve, reject) => {
-        const startTime = Date.now();
-        const req = https.get(url, { 
-          timeout: CONFIG.timeout,
-          rejectUnauthorized: false
-        }, (res) => {
-          resolve({
-            status: res.statusCode,
-            responseTime: Date.now() - startTime,
-            success: res.statusCode < 400,
-            headers: res.headers
-          });
-        });
-        
-        req.on('error', reject);
-        req.on('timeout', () => {
-          req.destroy();
-          reject(new Error('Timeout'));
-        });
+function checkUrlSync(url) {
+  return new Promise((resolve) => {
+    const startTime = Date.now();
+    
+    // Set a hard timeout that cannot be exceeded
+    const hardTimeout = setTimeout(() => {
+      resolve({
+        url,
+        status: 'TIMEOUT',
+        responseTime: CONFIG.timeout,
+        success: false,
+        error: 'Hard timeout exceeded'
       });
-      
-      return { ...result, url, attempts: i + 1 };
-    } catch (error) {
-      if (i === retries - 1) {
-        return {
-          url,
-          status: 'ERROR',
-          responseTime: CONFIG.timeout,
-          success: false,
-          error: error.message,
-          attempts: retries
-        };
+    }, CONFIG.timeout);
+
+    const req = https.get(url, { 
+      timeout: CONFIG.timeout,
+      rejectUnauthorized: false,
+      keepAlive: false,
+      headers: {
+        'User-Agent': 'schwepe-deployment-check/1.0',
+        'Connection': 'close'
       }
-      // Wait before retry
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-  }
+    }, (res) => {
+      clearTimeout(hardTimeout);
+      // Don't wait for the full response, just status is enough
+      resolve({
+        url,
+        status: res.statusCode,
+        responseTime: Date.now() - startTime,
+        success: res.statusCode < 400
+      });
+    });
+    
+    req.on('error', (error) => {
+      clearTimeout(hardTimeout);
+      resolve({
+        url,
+        status: 'ERROR',
+        responseTime: Date.now() - startTime,
+        success: false,
+        error: error.message
+      });
+    });
+    
+    req.on('timeout', () => {
+      clearTimeout(hardTimeout);
+      req.destroy();
+      resolve({
+        url,
+        status: 'TIMEOUT',
+        responseTime: CONFIG.timeout,
+        success: false,
+        error: 'Socket timeout'
+      });
+    });
+    
+    req.end();
+  });
 }
 
-async function main() {
-  console.log('🔍 DEPLOYMENT MONITOR');
-  console.log('====================');
-  console.log(`⏰ Check time: ${new Date().toLocaleString()}`);
-  console.log('');
+async function quickCheckWithTimeout() {
+  const overallTimeout = setTimeout(() => {
+    console.log('❌ Overall timeout exceeded');
+    process.exit(1);
+  }, CONFIG.overallTimeout);
 
   try {
-    // Check main URLs
-    console.log('🌐 URL STATUS:');
-    const urlResults = await Promise.all([
-      checkUrl(CONFIG.urls.main),
-      checkUrl(CONFIG.urls.actual),
-      checkUrl(CONFIG.urls.admin)
-    ]);
+    console.log('🔍 Quick Deployment Check');
+    console.log('========================');
+    console.log(`⏰ ${new Date().toLocaleString()}`);
+    console.log('');
 
-    urlResults.forEach(result => {
-      const icon = result.success ? '✅' : '❌';
-      const name = result.url.includes('coolify') ? 'Admin' : 
-                   result.url.includes('c0s8g4k') ? 'Actual' : 'Main';
-      console.log(`  ${icon} ${name}: ${result.status} (${result.responseTime}ms)`);
-    });
-
-    // Check health endpoints
-    console.log('\n🏥 HEALTH ENDPOINTS:');
-    const healthResults = await Promise.all([
-      checkUrl(CONFIG.healthEndpoints[0]),
-      checkUrl(CONFIG.healthEndpoints[1])
-    ]);
-
-    healthResults.forEach(result => {
-      const icon = result.success ? '✅' : '❌';
-      const name = result.url.includes('c0s8g4k') ? 'Actual Health' : 'Main Health';
-      console.log(`  ${icon} ${name}: ${result.status}`);
-    });
-
-    // Determine overall status
-    const mainSuccess = urlResults[0].success;
-    const healthSuccess = healthResults.some(h => h.success);
-
-    console.log('\n📊 OVERALL STATUS:');
+    // Check URLs sequentially instead of parallel to avoid hanging
+    const results = [];
     
-    if (mainSuccess && healthSuccess) {
-      console.log('✅ DEPLOYMENT OPERATIONAL');
-      const status = {
-        timestamp: new Date().toISOString(),
-        status: 'operational',
-        urls: urlResults.reduce((acc, r) => {
-          const name = r.url.includes('coolify') ? 'admin' : 
-                       r.url.includes('c0s8g4k') ? 'actual' : 'main';
-          acc[name] = { status: r.status, responseTime: r.responseTime };
-          return acc;
-        }, {}),
-        health: healthResults.reduce((acc, r, i) => {
-          const name = i === 0 ? 'main' : 'actual';
-          acc[name] = { status: r.status };
-          return acc;
-        }, {})
-      };
-      fs.writeFileSync('/mnt/c/dev/schwepe/.deployment-status.json', JSON.stringify(status, null, 2));
+    for (const [name, url] of Object.entries(CONFIG.urls)) {
+      if (name === 'admin') continue; // Skip admin check for quick check
       
-    } else if (urlResults[0].status === 502 || urlResults[1].status === 502) {
-      console.log('❌ COOLIFY PERMISSION ISSUES');
-      console.log('🔧 Fix server permissions: /data/coolify/applications/');
-      const issue = {
-        timestamp: new Date().toISOString(),
-        status: 'coolify-permission-error',
-        error: '502 Bad Gateway - Coolify cannot write config files',
-        fix: 'SSH into server and fix directory permissions',
-        urls: urlResults.reduce((acc, r) => {
-          const name = r.url.includes('coolify') ? 'admin' : 
-                       r.url.includes('c0s8g4k') ? 'actual' : 'main';
-          acc[name] = { status: r.status, error: r.error };
-          return acc;
-        }, {})
-      };
-      fs.writeFileSync('/mnt/c/dev/schwepe/.deployment-issue.json', JSON.stringify(issue, null, 2));
+      console.log(`Checking ${name}...`);
+      const result = await checkUrlSync(url);
+      results.push(result);
       
-    } else if (urlResults[0].status === 404) {
-      console.log('❌ APPLICATION NOT DEPLOYED');
-      console.log('🔧 Check Coolify configuration and redeploy');
-      
-    } else {
-      console.log('⚠️  PARTIAL ISSUES DETECTED');
-      console.log('🔧 Check individual components above');
+      const icon = result.success ? '✅' : '❌';
+      const displayName = name === 'main' ? 'Main' : 'Actual';
+      console.log(`  ${icon} ${displayName}: ${result.status} (${result.responseTime}ms)`);
     }
 
-    console.log('\n🎯 QUICK ACTIONS:');
-    console.log('  • Coolify Admin: https://coolify.247420.xyz');
-    console.log('  • Main URL: https://schwepe.247420.xyz');
-    console.log('  • Monitor: node deployment-monitor.js');
+    console.log('');
+    const allGood = results.every(r => r.success);
+    
+    if (allGood) {
+      console.log('✅ DEPLOYMENT OK');
+      try {
+        fs.writeFileSync('/mnt/c/dev/schwepe/.deployment-status.json', JSON.stringify({
+          timestamp: new Date().toISOString(),
+          status: 'operational',
+          check: 'quick',
+          results: results
+        }, null, 2));
+      } catch (e) {
+        // Ignore write errors
+      }
+    } else {
+      console.log('❌ DEPLOYMENT ISSUES');
+      try {
+        fs.writeFileSync('/mnt/c/dev/schwepe/.deployment-issue.json', JSON.stringify({
+          timestamp: new Date().toISOString(),
+          status: 'issues-detected',
+          results: results
+        }, null, 2));
+      } catch (e) {
+        // Ignore write errors
+      }
+    }
     
   } catch (error) {
-    console.error('❌ Deployment check failed:', error.message);
-    const errorStatus = {
-      timestamp: new Date().toISOString(),
-      status: 'check-failed',
-      error: error.message
-    };
-    fs.writeFileSync('/mnt/c/dev/schwepe/.deployment-error.json', JSON.stringify(errorStatus, null, 2));
+    console.log('❌ Check failed:', error.message);
+  } finally {
+    clearTimeout(overallTimeout);
   }
 }
 
-// Handle process termination gracefully
-process.on('SIGTERM', () => {
-  console.log('\n🛑 Deployment monitor terminated');
-  process.exit(0);
-});
+// Set process timeout
+setTimeout(() => {
+  console.log('❌ Process timeout - exiting');
+  process.exit(1);
+}, CONFIG.overallTimeout + 1000);
 
-process.on('SIGINT', () => {
-  console.log('\n🛑 Deployment monitor interrupted');
+quickCheckWithTimeout().then(() => {
   process.exit(0);
-});
-
-main().catch(error => {
-  console.error('❌ Fatal error in deployment monitor:', error);
+}).catch(() => {
   process.exit(1);
 });
