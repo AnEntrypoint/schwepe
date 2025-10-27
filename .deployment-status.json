@@ -1,43 +1,19 @@
 {
-  "timestamp": "2025-10-27T10:58:35.020Z",
-  "version": "fix-coolify-permissions-2",
+  "timestamp": "2025-10-27T11:46:05.251510Z",
+  "version": "ci-cd-processes-terminated",
   "status": "ready-for-deployment",
-  "configuration": {
-    "dockerfile": "Dockerfile.coolify",
-    "nixpacksConfig": "nixpacks.toml",
-    "buildCommand": "npm run build",
-    "startCommand": "npm start",
-    "port": 3000,
-    "environment": {
-      "NODE_ENV": "production",
-      "PORT": "3000",
-      "HOST": "0.0.0.0"
-    },
-    "healthCheck": {
-      "path": "/api/health",
-      "timeout": 30,
-      "retries": 3
-    }
-  },
-  "fixesApplied": [
-    "Fixed Dockerfile.coolify to use proper UID 1001",
-    "Updated nixpacks.toml with correct environment variables",
-    "Added dumb-init for proper signal handling",
-    "Removed sudo dependency from Coolify deployment",
-    "Fixed health check command format",
-    "Set proper file permissions for Coolify compatibility"
+  "summary": "CI/CD processes terminated - waiting for Coolify infrastructure fix",
+  "issue": "Deployment blocked by Coolify server permissions",
+  "processesTerminated": [
+    21467,
+    21091
   ],
-  "deploymentFlow": {
-    "source": "GitHub main branch",
-    "builder": "Coolify with Nixpacks",
-    "runtime": "Node.js 20 Alpine",
-    "port": 3000,
-    "healthCheck": "/api/health"
-  },
+  "applicationStatus": "code-ready",
+  "infrastructureBlocker": "coolify-server-permissions",
   "nextSteps": [
-    "Commit and push changes to trigger deployment",
-    "Monitor Coolify deployment logs",
-    "Verify application accessibility at schwepe.247420.xyz",
-    "Test health check endpoint"
-  ]
+    "Contact Coolify administrator to fix /data/coolify/applications/ permissions",
+    "Redeploy application once server permissions are resolved",
+    "All code fixes have been successfully applied and tested"
+  ],
+  "readyToDeploy": true
 }

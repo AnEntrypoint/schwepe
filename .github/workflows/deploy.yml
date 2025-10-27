@@ -1,0 +1,62 @@
+name: Deploy to Coolify
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run build verification
+      run: |
+        chmod +x scripts/verify-build.sh
+        ./scripts/verify-build.sh
+        
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/
+        retention-days: 1
+        
+    - name: Deploy to Coolify
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      run: |
+        npx --package=setdomain-coolify-deployer@latest setdomain-coolify coolify.247420.xyz schwepe.247420.xyz
+      env:
+        COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+        
+    - name: Wait for deployment
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      run: |
+        echo "Waiting for deployment to propagate..."
+        sleep 180
+        
+    - name: Verify deployment
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      run: |
+        chmod +x scripts/check-deployment.sh
+        ./scripts/check-deployment.sh verbose
+        
+    - name: Notify on failure
+      if: failure()
+      run: |
+        echo "❌ Deployment failed! Check logs above for details."
+        exit 1

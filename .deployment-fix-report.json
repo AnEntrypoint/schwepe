@@ -1,0 +1,72 @@
+{
+  "title": "SCHWEPE CI/CD DEPLOYMENT FIX REPORT",
+  "generated": "2025-10-27T12:39:54.995Z",
+  "status": "ANALYSIS_COMPLETE",
+  "summary": {
+    "issue": "Coolify deployment failing due to server permissions and configuration",
+    "rootCause": "Coolify server cannot write .env and docker-compose.yaml files",
+    "impact": "Production URLs returning 404, application not accessible",
+    "urgency": "HIGH - Requires server admin access"
+  },
+  "currentStatus": {
+    "localBuild": "WORKING ✅",
+    "serverStartup": "WORKING ✅",
+    "healthEndpoint": "WORKING ✅",
+    "deploymentTool": "WORKING ✅",
+    "productionUrls": "FAILING ❌ (404 errors)",
+    "coolifyServer": "RESPONDING ✅ (302 redirect to login)"
+  },
+  "fixesRequired": [
+    {
+      "priority": "CRITICAL",
+      "title": "Fix Coolify Server Permissions",
+      "description": "Coolify server cannot write application configuration files",
+      "actions": [
+        "SSH into Coolify server as root",
+        "Run: chown -R coolify:coolify /data/coolify/applications/",
+        "Run: chmod -R 755 /data/coolify/applications/",
+        "Test write access: sudo -u coolify touch /data/coolify/applications/test",
+        "Restart Coolify if needed"
+      ],
+      "adminAccess": true
+    },
+    {
+      "priority": "HIGH",
+      "title": "Configure Coolify Application",
+      "description": "Ensure correct Dockerfile and settings in Coolify",
+      "actions": [
+        "Login to https://coolify.247420.xyz",
+        "Select Dockerfile.coolify (NOT Dockerfile)",
+        "Set Build Command: npm run build",
+        "Set Start Command: npm start",
+        "Set Port: 3000",
+        "Configure Health Check: /api/health",
+        "Add Environment Variables: NODE_ENV=production, PORT=3000"
+      ],
+      "adminAccess": true
+    }
+  ],
+  "verificationSteps": [
+    "Fix server permissions (requires server admin)",
+    "Update Coolify application configuration",
+    "Trigger deployment via GitHub Actions or manual",
+    "Monitor deployment with: node deployment-monitor.js",
+    "Verify URLs: https://schwepe.247420.xyz returns 200",
+    "Test health endpoint: /api/health returns JSON"
+  ],
+  "filesCreated": [
+    "scripts/deploy-enhanced.sh - Enhanced deployment script",
+    "deployment-monitor.js - Real-time deployment monitoring"
+  ],
+  "nextActions": [
+    "CONTACT COOLIFY ADMIN to fix server permissions",
+    "UPDATE COOLIFY CONFIGURATION with correct settings",
+    "TEST DEPLOYMENT once permissions are fixed",
+    "MONITOR with deployment monitoring tools"
+  ],
+  "contactInfo": {
+    "coolifyAdmin": "https://coolify.247420.xyz",
+    "productionUrl": "https://schwepe.247420.xyz",
+    "actualUrl": "https://c0s8g4k00oss8kkcoccs88g0.247420.xyz"
+  }
+}
