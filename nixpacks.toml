@@ -1,15 +1,19 @@
-[phases.setup]
-nixPkgs = ["nodejs-18_x", "npm"]
+# Nixpacks configuration for Coolify deployment
+[variables]
+NIXPACKS_VERSION = "1.0.11"
+NODE_ENV = "production"
 
 [phases.build]
+dependsOn = ["install"]
 cmds = ["npm run build"]
 
-[start]
-cmd = "npm start"
+[phases.start]
+cmds = ["npm start"]
 
-[variables]
-NODE_ENV = "production"
-PORT = "3000"
-
-[phases.install]
-paths = ["package.json", "package-lock.json"]
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/"
+healthcheckTimeout = 100
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+port = 3000

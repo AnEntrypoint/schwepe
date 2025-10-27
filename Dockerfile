@@ -1,10 +1,4 @@
-# Use Node.js 18 LTS
 FROM node:18-alpine
-
-# Create app directory with proper permissions
-RUN mkdir -p /app /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0 && \
-    chown -R node:node /app /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0 && \
-    chmod -R 755 /app /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0
 
 WORKDIR /app
 
@@ -15,17 +9,15 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 # Copy application code
-COPY --chown=node:node . .
+COPY . .
 
-# Set proper permissions for all directories
-RUN mkdir -p /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0 && \
-    chown -R node:node /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0 && \
-    chmod -R 755 /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0 && \
-    chown -R node:node /app && \
-    chmod -R 755 /app
+# Create non-root user for better security
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nodejs -u 1001
 
-# Switch to non-root user
-USER node
+# Change ownership of the app directory
+RUN chown -R nodejs:nodejs /app
+USER nodejs
 
 # Expose port
 EXPOSE 3000

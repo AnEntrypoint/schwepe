@@ -32,3 +32,14 @@
 - Core modules: build-multi-site.js, build-ssr-optimized.js, server.js
 - Media processing: media-generator.js, phrase-system.js
 - Deployment: deployment-monitor.js, coolify integration scripts
+
+
+## CI/CD Deployment Status
+
+**Last Deployment**: 2025-10-27T14:39:00.381Z
+- **Build Status**: ✅ Success (110 phrases, 7 groups)
+- **Git Status**: ✅ Pushed to main branch
+- **Coolify Status**: ✅ Deployment triggered
+- **Site URL**: https://schwepe.247420.xyz
+- **Coolify Panel**: https://coolify.247420.xyz
+- **Deployment Command**: `npx --package=setdomain-coolify-deployer@latest setdomain-coolify coolify.247420.xyz schwepe.247420.xyz`

@@ -1,22 +1,22 @@
 {
   "variables": {
-    "NIXPACKS_VERSION": "1.0.11"
+    "NIXPACKS_VERSION": "1.0.11",
+    "NODE_ENV": "production"
   },
   "phases": {
     "build": {
       "dependsOn": [
-        "setup"
+        "install"
       ],
       "cmds": [
-        "npm install",
         "npm run build"
+      ],
+      "cachePaths": [
+        "node_modules/.cache"
       ]
     },
     "start": {
       "cmds": [
-        "mkdir -p /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0",
-        "chown -R node:node /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0",
-        "chmod -R 755 /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0",
         "npm start"
       ]
     }
@@ -26,6 +26,7 @@
     "healthcheckPath": "/",
     "healthcheckTimeout": 100,
     "restartPolicyType": "on_failure",
-    "restartPolicyMaxRetries": 10
+    "restartPolicyMaxRetries": 10,
+    "port": 3000
   }
 }
