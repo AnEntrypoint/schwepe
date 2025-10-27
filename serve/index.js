@@ -1,5 +1,5 @@
 // Enhanced health check handler for Coolify deployment
-export default async function handler(req, res) {
+async function handler(req, res) {
   const url = req.url;
   const method = req.method;
   
@@ -77,3 +77,5 @@ export default async function handler(req, res) {
 </html>
   `);
 }
+
+module.exports = { handler };

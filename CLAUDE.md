@@ -1,45 +1,49 @@
-# SCHWEPE Technical Documentation
+# CLAUDE.md - Final Technical Documentation
 
-## Current Status (2025-06-20 15:34)
+## DEPLOYMENT STATUS: 🟡 BLOCKED BY COOLIFY INFRASTRUCTURE
 
-### Deployment Environment
-- ✅ Clean deployment environment achieved
-- ✅ Temporary deployment monitoring process terminated
-- ✅ Deployment status files cleaned
-- ✅ System ready for next deployment
+### Application Status: ✅ READY
+- Multi-site Node.js application fully functional
+- Builds successfully with npm run build:multi-site
+- Server starts correctly with npm start
+- Health endpoint /api/health working
+- All ES module compatibility issues resolved
 
-### Coolify Deployment Status
-- Application: schwepe.247420.xyz
-- Coolify Admin: coolify.247420.xyz
-- Status: Code ready, blocked by Coolify server permissions
-- Issue: Coolify cannot write .env and docker-compose.yaml files
-- Required: Server admin access to fix /data/coolify/applications/ permissions
+### Deployment Status: ❌ COOLIFY PERMISSIONS
+- Coolify cannot write .env files (Permission denied)
+- Coolify cannot write docker-compose.yaml (Permission denied)
+- This is a Coolify server configuration issue
+- NOT an application code problem
 
 ### Technical Architecture
-- Build system: Multi-site SSR optimized build
-- Media generation: Dynamic phrase system with video processing
-- Deployment: CI/CD with Coolify integration
-- Monitoring: URL monitoring and health checks
+- Runtime: Node.js 20 Alpine
+- Build System: Custom multi-site builder
+- Sites: 247420, schwepe
+- Health Check: /api/health (30s timeout)
+- Server: Express.js with static file serving
 
-### Recent Actions
-- Cleaned up Alfred AI deployment monitoring processes
-- Removed temporary deployment status files (.deployment-*.json)
-- Verified system readiness for next deployment
-- Maintained clean development environment per workflow requirements
+### Fixed Issues
+1. ES Module Compatibility: Converted to CommonJS where needed
+2. Build Process: Multi-site builder implementation
+3. Docker Configuration: Proper user permissions
+4. Health Checks: Correct endpoint configuration
+5. CI/CD Pipeline: GitHub Actions with proper validation
 
-## Project Structure
-- Entry points: url-monitor.cjs, schwepe-tv-scheduler.js
-- Core modules: build-multi-site.js, build-ssr-optimized.js, server.js
-- Media processing: media-generator.js, phrase-system.js
-- Deployment: deployment-monitor.js, coolify integration scripts
+### Deployment Logs Analysis
+```
+tee: /data/coolify/applications/[uuid]/.env: Permission denied
+tee: /data/coolify/applications/[uuid]/docker-compose.yaml: Permission denied
+```
+This indicates Coolify server cannot write to its own directories.
 
+### Next Steps
+1. Contact Coolify support about permission issues
+2. Consider alternative deployment platforms
+3. Manual deployment via Docker commands
+4. VPS deployment as fallback option
 
-## CI/CD Deployment Status
-
-**Last Deployment**: 2025-10-27T14:39:00.381Z
-- **Build Status**: ✅ Success (110 phrases, 7 groups)
-- **Git Status**: ✅ Pushed to main branch
-- **Coolify Status**: ✅ Deployment triggered
-- **Site URL**: https://schwepe.247420.xyz
-- **Coolify Panel**: https://coolify.247420.xyz
-- **Deployment Command**: `npx --package=setdomain-coolify-deployer@latest setdomain-coolify coolify.247420.xyz schwepe.247420.xyz`
+### Verification Commands
+- npm run build:multi-site ✅
+- npm start ✅
+- curl http://localhost:3000/api/health ✅
+- ./scripts/verify-build.sh ✅

@@ -16,17 +16,7 @@
   },
   "deployment": {
     "port": 3000,
-    "healthCheckPath": "/",
+    "healthCheckPath": "/api/health",
     "autoDeploy": true
-  },
-  "permissions": {
-    "user": "node",
-    "group": "node",
-    "directories": {
-      "/data/coolify/applications/c0s8g4k00oss8kkcoccs88g0": {
-        "owner": "node:node",
-        "mode": "755"
-      }
-    }
   }
 }

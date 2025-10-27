@@ -15,13 +15,15 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Create non-root user for better security
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
+# Create node user (matching Coolify expectations)
+RUN addgroup -g 1001 -S node && \
+    adduser -S node -u 1001 -G node
 
-# Change ownership of the app directory
-RUN chown -R nextjs:nodejs /app
-USER nextjs
+# Change ownership of the app directory to node user
+RUN chown -R node:node /app
+
+# Switch to node user
+USER node
 
 # Expose port
 EXPOSE 3000
