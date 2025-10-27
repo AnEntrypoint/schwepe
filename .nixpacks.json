@@ -15,10 +15,15 @@
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 30,
     "restartPolicyType": "on_failure",
-    "restartPolicyMaxRetries": 10
+    "restartPolicyMaxRetries": 3
   },
   "variables": {
     "NODE_ENV": "production",
     "PORT": "3000"
+  },
+  "phases": {
+    "build": {
+      "dockerfile": "FROM node:20-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci --only=production\nCOPY . .\nRUN npm run build\nUSER node\nEXPOSE 3000\nCMD [\"npm\", \"start\"]"
+    }
   }
 }
