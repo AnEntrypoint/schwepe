@@ -1,14 +1,16 @@
 [phases.setup]
-nixPkgs = ["nodejs_20"]
+nixPkgs = ["nodejs_20", "git"]
 
 [variables]
 CI = "true"
 NPM_CONFIG_UPDATE_NOTIFIER = "false"
+NODE_ENV = "production"
+PORT = "3000"
 
 [phases.install]
 cmds = [
   "rm -rf node_modules package-lock.json",
-  "npm install --no-cache --prefer-offline"
+  "npm install --no-cache --prefer-offline --omit=dev"
 ]
 
 [phases.build]
@@ -17,4 +19,11 @@ cmds = [
 ]
 
 [start]
-cmd = "npm start"
+cmd = "node server.js"
+runPhases = ["install", "build", "start"]
+
+[deploy]
+healthcheckPath = "/"
+healthcheckTimeout = 100
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
