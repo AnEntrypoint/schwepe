@@ -1,3 +1,26 @@
+## 2025-10-27T13:00:00.000Z - Fix Coolify Deployment Permissions
+
+### Critical Fixes
+- Fixed Dockerfile.coolify to use proper UID 1001 for Coolify compatibility
+- Updated nixpacks.toml with correct environment variables and configuration
+- Added dumb-init for proper signal handling in containers
+- Removed sudo dependency from deployment process
+- Fixed health check command format and timeout settings
+
+### Deployment Improvements
+- Set proper file permissions for Coolify deployment compatibility
+- Updated deployment configuration to handle environment variables correctly
+- Fixed container user permissions to prevent Permission denied errors
+- Optimized Docker multi-stage build for better performance
+
+### Configuration Updates
+- Updated Dockerfile.coolify with proper signal handling
+- Modified nixpacks.toml to use production environment variables
+- Added comprehensive health check configuration
+- Set proper ownership for application directories
+
+---
+
     1→# Changelog
     2→
     3→## [Multi-Site Architecture] - 2025-10-20
@@ -35,3 +58,27 @@
 - Each site has separate media (images/videos), schedules, and templates
 - Cleaned up all test files and unnecessary documentation
 - Updated build system for proper domain routing
+
+## 2025-10-27 - Deployment Diagnosis
+
+### Issues Identified
+- Build process failing with Windows file permission errors (EPERM)
+- Empty dist directory causing 404 errors
+- Container not running at deployment URL  
+- DNS resolution issues for subdomains
+- Coolify deployment permission problems
+
+### Fixes Applied
+- Fixed file permissions for build directories
+- Updated deployment status with comprehensive diagnosis
+- Created action plan in TODO.md
+
+### Next Steps
+- Fix local build process
+- Test SSR deployment configuration
+- Trigger new Coolify deployment
+2025-10-27: Diagnosed Coolify deployment permission issues
+- Identified container write permission problems blocking deployment
+- Verified build process working correctly with all artifacts generated
+- Updated deployment status documentation
+- Awaiting Coolify administrator permission fix

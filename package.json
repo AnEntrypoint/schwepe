@@ -22,7 +22,9 @@
     "build:multi-site": "node build-multi-site.js",
     "build:all": "node build-multi-site.js && node build-process.js build",
     "test:gpu": "source /etc/profile.d/gpu-acceleration.sh && playwright test",
-    "playwright:gpu": "source /etc/profile.d/gpu-acceleration.sh && playwright"
+    "playwright:gpu": "source /etc/profile.d/gpu-acceleration.sh && playwright",
+    "backup": "node scripts/coolify-backup.js",
+    "backup:debug": "DEBUG=* node scripts/coolify-backup.js"
   },
   "dependencies": {
     "autoprefixer": "^10.4.20",
@@ -31,7 +33,8 @@
     "express": "^4.21.2",
     "http-proxy-middleware": "^3.0.0",
     "postcss": "^8.4.49",
-    "vite": "^5.4.10"
+    "vite": "^5.4.10",
+    "axios": "^1.6.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",

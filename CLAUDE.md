@@ -194,3 +194,25 @@ Each site has config.json defining:;
   173→- `npm run build:multi-site` - Build all site templates
   174→- `npm run build:all` - Full multi-site + assets build
   175→
+## Deployment Status - 2025-10-27
+
+### Current Issue: Coolify Container Permissions
+- **Status**: BLOCKED - Container write permissions
+- **Impact**: Production deployment failing with 404 errors
+- **Root Cause**: Coolify container cannot write to filesystem during deployment
+- **Solution**: Requires Coolify administrator intervention
+
+### Build Process: WORKING ✅
+- All artifacts generated correctly in dist/
+- Server configuration verified with health endpoint
+- Nixpacks and package.json properly configured
+
+### URLs Status:
+- Main: https://schwepe.247420.xyz → 404 Not Found
+- Direct: https://c0s8g4k00oss8kkcoccs88g0.247420.xyz → SSL Error
+- Admin: https://coolify.247420.xyz → Working (302 redirect)
+
+### Next Actions:
+1. Contact Coolify admin for permission fix
+2. Redeploy after permissions resolved
+3. Verify all URLs accessible

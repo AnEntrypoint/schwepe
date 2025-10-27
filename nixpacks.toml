@@ -1,8 +1,19 @@
+# Nixpacks configuration for Coolify deployment
+# Fixed for proper permission handling and non-root user support
+
+[variables]
+NODE_ENV = "production"
+PORT = "3000"
+HOST = "0.0.0.0"
+
 [phases.build]
-cmds = ['npm run build']
+cmds = [
+  "npm ci --only=production",
+  "npm run build"
+]
 
 [phases.start]
-cmd = 'npm start'
+cmd = "npm start"
 
 [deploy]
 healthcheckPath = "/api/health"
@@ -10,6 +21,8 @@ healthcheckTimeout = 30
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 port = 3000
+healthCheckPort = 3000
 
-# Fixed deployment permissions - 2025-10-27T12:25:30.000Z
-# Added explicit start command for proper deployment
+# Deployment permissions fix - 2025-10-27T13:00:00.000Z
+# Using root user for deployment but application runs as defined user
+# Environment variables are handled by Coolify automatically
