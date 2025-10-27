@@ -1,5 +1,5 @@
 # Nixpacks configuration for Coolify deployment
-# Fixed for proper permission handling and non-root user support
+# Fixed for Node.js application deployment (not static files)
 
 [variables]
 NODE_ENV = "production"
@@ -13,7 +13,7 @@ cmds = [
 ]
 
 [phases.start]
-cmd = "npm start"
+cmd = "node server.js"
 
 [deploy]
 healthcheckPath = "/api/health"
@@ -23,6 +23,6 @@ restartPolicyMaxRetries = 10
 port = 3000
 healthCheckPort = 3000
 
-# Deployment permissions fix - 2025-10-27T13:00:00.000Z
-# Using root user for deployment but application runs as defined user
-# Environment variables are handled by Coolify automatically
+# Multi-site Node.js application deployment fix - 2025-10-27T15:00:00.000Z
+# Runs as Node.js application with domain routing and template engine
+# Serves multiple sites: 247420.xyz and schwepe.247420.xyz

@@ -1,12 +1,12 @@
 {
-  "timestamp": "2025-10-27T10:58:35.020Z",
-  "version": "fix-coolify-permissions-2",
-  "status": "ready-for-deployment",
+  "timestamp": "2025-10-27T11:07:48.341Z",
+  "version": "multi-site-nodejs-fix-3",
+  "status": "deployment-ready",
   "configuration": {
     "dockerfile": "Dockerfile.coolify",
     "nixpacksConfig": "nixpacks.toml",
     "buildCommand": "npm run build",
-    "startCommand": "npm start",
+    "startCommand": "node server.js",
     "port": 3000,
     "environment": {
       "NODE_ENV": "production",
@@ -20,24 +20,28 @@
     }
   },
   "fixesApplied": [
-    "Fixed Dockerfile.coolify to use proper UID 1001",
-    "Updated nixpacks.toml with correct environment variables",
-    "Added dumb-init for proper signal handling",
-    "Removed sudo dependency from Coolify deployment",
-    "Fixed health check command format",
-    "Set proper file permissions for Coolify compatibility"
+    "Fixed deployment to run Node.js server instead of serving static files",
+    "Updated nixpacks.toml start command to 'node server.js'",
+    "Added sites directory copy to Dockerfile for multi-site support",
+    "Fixed health check endpoint for Node.js application",
+    "Maintained proper UID 1001 permissions for Coolify compatibility"
   ],
   "deploymentFlow": {
     "source": "GitHub main branch",
     "builder": "Coolify with Nixpacks",
     "runtime": "Node.js 20 Alpine",
     "port": 3000,
-    "healthCheck": "/api/health"
+    "applicationType": "Multi-site Node.js application",
+    "supportedDomains": [
+      "247420.xyz",
+      "schwepe.247420.xyz"
+    ]
   },
   "nextSteps": [
     "Commit and push changes to trigger deployment",
-    "Monitor Coolify deployment logs",
+    "Monitor Coolify deployment logs for Node.js application startup",
     "Verify application accessibility at schwepe.247420.xyz",
-    "Test health check endpoint"
+    "Test domain routing between multiple sites",
+    "Verify API endpoints: /api/health, /api/{siteId}/schedule"
   ]
 }
