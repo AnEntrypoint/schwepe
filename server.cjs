@@ -17,50 +17,84 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Serve static files from the build directory
-const distPath = path.join(__dirname, 'dist', '247420', 'site-assets');
-const fallbackPath = path.join(__dirname, 'dist', 'schwepe');
-
-if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath));
-  console.log(`Serving static files from: ${distPath}`);
-}
-
-if (fs.existsSync(fallbackPath)) {
-  app.use(express.static(fallbackPath));
-  console.log(`Serving static files from fallback: ${fallbackPath}`);
-}
-
-// Main route - serve index.html
-app.get('/', (req, res) => {
-  const indexPath = path.join(distPath, 'templates', 'index.html');
-  const fallbackIndexPath = path.join(fallbackPath, 'index.html');
+// Domain-based routing middleware
+app.use((req, res, next) => {
+  const host = req.headers.host || '';
+  console.log('Request for host:', host);
   
-  if (fs.existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else if (fs.existsSync(fallbackIndexPath)) {
-    res.sendFile(fallbackIndexPath);
+  // Extract domain (remove port if present)
+  const domain = host.split(':')[0];
+  
+  // Determine which site to serve based on domain
+  let siteId = '247420'; // default
+  
+  if (domain.includes('schwepe')) {
+    siteId = 'schwepe';
+  } else if (domain.includes('coolify')) {
+    siteId = '247420'; // coolify serves main site
+  }
+  
+  console.log('Serving site:', siteId);
+  
+  // Set the correct static path for this request
+  const staticPath = path.join(__dirname, 'dist', siteId, 'site-assets');
+  const siteRoot = path.join(__dirname, 'dist', siteId);
+  
+  // Make paths available to subsequent middleware
+  req.siteId = siteId;
+  req.staticPath = staticPath;
+  req.siteRoot = siteRoot;
+  
+  next();
+});
+
+// Serve static files from the appropriate site directory
+app.use('/static', express.static(path.join(__dirname, 'dist', 'static')));
+app.use('/public', express.static(path.join(__dirname, 'dist', 'public')));
+
+// Serve site-specific assets
+app.use((req, res, next) => {
+  if (req.staticPath && fs.existsSync(req.staticPath)) {
+    express.static(req.staticPath)(req, res, next);
   } else {
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head><title>Schwepe Application</title></head>
-      <body>
-        <h1>🚀 Schwepe Application</h1>
-        <p>Server is running successfully!</p>
-        <p><a href="/api/health">Health Check</a></p>
-      </body>
-      </html>
-    `);
+    next();
   }
 });
 
-// All other routes redirect to home
+// Serve HTML pages from the correct site
 app.get('*', (req, res) => {
-  res.redirect('/');
+  if (!req.siteRoot || !fs.existsSync(req.siteRoot)) {
+    return res.status(404).send('Site not found');
+  }
+  
+  // Try to serve the requested file
+  const filePath = path.join(req.siteRoot, req.path);
+  
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    return res.sendFile(filePath);
+  }
+  
+  // Try index.html for directories
+  const indexPath = path.join(req.siteRoot, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+  
+  // Return 404 if nothing found
+  res.status(404).send('File not found');
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
-  console.log(`🏥 Health endpoint: http://0.0.0.0:${PORT}/api/health`);
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).send('Internal server error');
 });
+
+// Start the server
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('🚀 Server running on http://0.0.0.0:' + PORT);
+  console.log('🏥 Health endpoint: http://0.0.0.0:' + PORT + '/api/health');
+  console.log('📁 Serving from:', path.join(__dirname, 'dist'));
+});
+
+module.exports = app;
