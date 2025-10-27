@@ -1,17 +1,12 @@
 [phases.setup]
-nixPkgs = ["nodejs_20", "npm"]
+nixPkgs = ["...", "nodejs", "npm"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm start"
 
 [variables]
 NODE_ENV = "production"
 PORT = "3000"
-HOST = "0.0.0.0"
-NPM_CONFIG_PRODUCTION = "false"
-
-[build.args]
-NIXPACKS_DOCKERFILE = "./Dockerfile.coolify"
-
-[deploy]
-healthcheckPath = "/api/health"
-healthcheckTimeout = 30
-restartPolicyType = "always"
-restartPolicyMaxRetries = 10
