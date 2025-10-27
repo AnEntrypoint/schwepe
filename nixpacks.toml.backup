@@ -1,0 +1,24 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "git"]
+
+[variables]
+CI = "true"
+NPM_CONFIG_UPDATE_NOTIFIER = "false"
+NODE_ENV = "production"
+PORT = "3000"
+
+[phases.install]
+cmds = [
+  "npm install --no-cache --prefer-offline --omit=dev"
+]
+
+[phases.build]
+cmds = [
+  "npm run build"
+]
+
+[start]
+cmd = "node server.js"
+
+# Fixed deployment permissions - 2025-10-27T12:22:00.000Z
+# Simplified configuration to avoid Coolify permission issues
