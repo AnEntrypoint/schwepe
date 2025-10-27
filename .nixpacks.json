@@ -1,0 +1,31 @@
+{
+  "variables": {
+    "NIXPACKS_VERSION": "1.0.11"
+  },
+  "phases": {
+    "build": {
+      "dependsOn": [
+        "setup"
+      ],
+      "cmds": [
+        "npm install",
+        "npm run build"
+      ]
+    },
+    "start": {
+      "cmds": [
+        "mkdir -p /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0",
+        "chown -R node:node /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0",
+        "chmod -R 755 /data/coolify/applications/c0s8g4k00oss8kkcoccs88g0",
+        "npm start"
+      ]
+    }
+  },
+  "deploy": {
+    "startCommand": "npm start",
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 100,
+    "restartPolicyType": "on_failure",
+    "restartPolicyMaxRetries": 10
+  }
+}

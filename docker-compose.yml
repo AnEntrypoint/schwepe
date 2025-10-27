@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  schwepe:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+    volumes:
+      - ./data:/data/coolify/applications/c0s8g4k00oss8kkcoccs88g0
+    user: "node:node"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
