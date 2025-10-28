@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-10-28T10:32:12.929Z",
+  "localFilesFound": true,
+  "urlChecks": [
+    {
+      "url": "https://schwepe.247420.xyz",
+      "error": "Timeout",
+      "success": false
+    },
+    {
+      "url": "https://c0s8g4k00oss8kkcoccs88g0.247420.xyz",
+      "error": "Timeout",
+      "success": false
+    },
+    {
+      "url": "https://c0s8g4k00oss8kkcoccs88g0.247420.xyz",
+      "error": "socket hang up",
+      "success": false
+    }
+  ],
+  "summary": {
+    "accessibleUrls": 0,
+    "totalUrls": 3,
+    "status": "Failed"
+  }
+}

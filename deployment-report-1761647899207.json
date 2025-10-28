@@ -1,0 +1,65 @@
+{
+  "timestamp": "2025-10-28T10:38:19.207Z",
+  "localStatus": {
+    "timestamp": "2025-10-28T10:38:15.154Z",
+    "projectRoot": "/mnt/c/dev/schwepe",
+    "files": {
+      "package.json": {
+        "exists": true,
+        "path": "/mnt/c/dev/schwepe/package.json",
+        "modified": "2025-10-28T10:37:21.377Z",
+        "size": 2199
+      },
+      "server.cjs": {
+        "exists": true,
+        "path": "/mnt/c/dev/schwepe/server.cjs",
+        "modified": "2025-10-27T17:35:04.319Z",
+        "size": 2771
+      },
+      "sites/247420/config.json": {
+        "exists": true,
+        "path": "/mnt/c/dev/schwepe/sites/247420/config.json",
+        "modified": "2025-10-20T07:43:11.025Z",
+        "size": 909
+      },
+      "sites/schwepe/config.json": {
+        "exists": true,
+        "path": "/mnt/c/dev/schwepe/sites/schwepe/config.json",
+        "modified": "2025-10-20T07:31:35.207Z",
+        "size": 1080
+      },
+      "dist": {
+        "exists": true,
+        "path": "/mnt/c/dev/schwepe/dist",
+        "modified": "2025-10-28T10:37:21.422Z",
+        "size": 4096,
+        "contents": [
+          "public"
+        ]
+      }
+    },
+    "buildStatus": "partial",
+    "overall": "needs-work"
+  },
+  "urlChecks": [
+    {
+      "url": "https://schwepe.247420.xyz",
+      "success": false,
+      "error": "Timeout",
+      "timestamp": "2025-10-28T10:38:17.203Z"
+    },
+    {
+      "url": "https://coolify.247420.xyz",
+      "success": false,
+      "error": "Timeout",
+      "timestamp": "2025-10-28T10:38:19.206Z"
+    }
+  ],
+  "summary": {
+    "localOverall": "needs-work",
+    "buildStatus": "partial",
+    "urlSuccess": 0,
+    "urlTotal": 2,
+    "overallStatus": "FAILED"
+  }
+}

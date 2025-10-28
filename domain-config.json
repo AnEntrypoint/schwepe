@@ -1,0 +1,14 @@
+{
+  "timestamp": "2025-10-28T10:26:25.503Z",
+  "sourceDomain": "coolify.247420.xyz",
+  "targetDomain": "schwepe.247420.xyz",
+  "status": "locally_configured",
+  "operation": "domain_routing",
+  "originalError": "Command timed out after 15000ms",
+  "instructions": [
+    "1. Log into Coolify admin panel",
+    "2. Navigate to application settings for schwepe.247420.xyz",
+    "3. Update domain configuration to route from source to target",
+    "4. Save and deploy the configuration"
+  ]
+}

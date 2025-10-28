@@ -1,0 +1,81 @@
+{
+  "timestamp": "2025-10-28T10:36:19.722Z",
+  "localFilesFound": true,
+  "localFiles": {
+    ".deployment-issue.json": {
+      "timestamp": "2025-10-27T17:41:50.034Z",
+      "status": "ci-cd-issues-resolved",
+      "summary": "All CI/CD problems have been identified and fixed",
+      "fixes_applied": [
+        "Fixed build-multi-site.js path resolution issues",
+        "Created domain-aware server.cjs for proper multi-site routing",
+        "Successfully built both 247420 and schwepe sites",
+        "Implemented proper domain-based routing (coolify.247420.xyz -> 247420 site, schwepe.247420.xyz -> schwepe site)",
+        "Committed and pushed all changes to trigger Coolify deployment",
+        "Verified local functionality before deployment"
+      ],
+      "deployment_status": "Triggered via git push - Coolify should automatically redeploy",
+      "expected_behavior": {
+        "coolify.247420.xyz": "Should serve the 247420 TV site",
+        "schwepe.247420.xyz": "Should serve Schwepe's Funky Universe site"
+      },
+      "local_verification": {
+        "build_process": "✅ Working",
+        "server_routing": "✅ Working correctly for both domains",
+        "both_sites_built": "✅ Both sites built successfully"
+      },
+      "next_steps": [
+        "Monitor Coolify deployment completion (usually 2-5 minutes)",
+        "Verify both URLs are accessible and serving correct content",
+        "Set up monitoring if needed for ongoing reliability"
+      ]
+    },
+    "deployment-status.json": {
+      "timestamp": "2025-10-27T14:43:05.601Z",
+      "status": "deployment_triggered",
+      "fixes_applied": [
+        "Added main field to package.json",
+        "Added Node.js engine specification",
+        "Updated .nixpacks.json with production settings",
+        "Created Dockerfile as fallback",
+        "Created nixpacks.toml configuration",
+        "Fixed server.js entry point",
+        "Created serve/index.js handler with health checks",
+        "Added comprehensive health check endpoints",
+        "Configured proper CORS and security headers",
+        "Added graceful shutdown handling"
+      ],
+      "deployment_url": "https://schwepe.247420.xyz",
+      "coolify_url": "https://coolify.247420.xyz"
+    }
+  },
+  "buildArtifacts": {
+    "distExists": true,
+    "buildLogExists": true
+  },
+  "urlChecks": [
+    {
+      "url": "https://schwepe.247420.xyz",
+      "success": false,
+      "error": "Timeout",
+      "message": "Connection timeout"
+    },
+    {
+      "url": "https://coolify.247420.xyz",
+      "success": false,
+      "error": "Timeout",
+      "message": "Connection timeout"
+    },
+    {
+      "url": "http://localhost:3000",
+      "success": false,
+      "error": "connect ECONNREFUSED 127.0.0.1:3000",
+      "message": "Error: connect ECONNREFUSED 127.0.0.1:3000"
+    }
+  ],
+  "summary": {
+    "accessibleUrls": 0,
+    "totalUrls": 3,
+    "status": "Build Successful - Checking Deployment"
+  }
+}
