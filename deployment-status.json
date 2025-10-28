@@ -1,18 +1,7 @@
 {
-  "timestamp": "2025-10-27T14:43:05.601Z",
-  "status": "deployment_triggered",
-  "fixes_applied": [
-    "Added main field to package.json",
-    "Added Node.js engine specification",
-    "Updated .nixpacks.json with production settings",
-    "Created Dockerfile as fallback",
-    "Created nixpacks.toml configuration",
-    "Fixed server.js entry point",
-    "Created serve/index.js handler with health checks",
-    "Added comprehensive health check endpoints",
-    "Configured proper CORS and security headers",
-    "Added graceful shutdown handling"
-  ],
-  "deployment_url": "https://schwepe.247420.xyz",
-  "coolify_url": "https://coolify.247420.xyz"
+  "localOverall": "needs-work",
+  "buildStatus": "partial",
+  "urlSuccess": 0,
+  "urlTotal": 2,
+  "overallStatus": "FAILED"
 }

@@ -7,7 +7,7 @@
     "dev:ssr": "NODE_ENV=development node server.cjs",
     "rebuild-videos": "node generate-media-list.js && cp saved_videos.json videos.json && sed -i 's/\"path\": \"public\\/saved_videos\\//\"path\": \"saved_videos\\//g' videos.json",
     "dev:full": "concurrently \"npm run cors-proxy\" \"npm run dev:ssr\"",
-    "build": "npm run build:multi-site",
+    "build": "node build-working.cjs",
     "preview": "vite preview",
     "preview:ssr": "NODE_ENV=production node server.cjs",
     "cors-proxy": "node cors-proxy-server.cjs",
