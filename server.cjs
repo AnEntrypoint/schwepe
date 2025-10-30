@@ -90,11 +90,30 @@ app.use((err, req, res, next) => {
   res.status(500).send('Internal server error');
 });
 
-// Start the server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log('🚀 Server running on http://0.0.0.0:' + PORT);
-  console.log('🏥 Health endpoint: http://0.0.0.0:' + PORT + '/api/health');
-  console.log('📁 Serving from:', path.join(__dirname, 'dist'));
-});
+// Start the server with retry logic
+function startServer(port) {
+  const server = app.listen(port, '0.0.0.0', () => {
+    console.log('🚀 Server running on http://0.0.0.0:' + port);
+    console.log('🏥 Health endpoint: http://0.0.0.0:' + port + '/api/health');
+    console.log('📁 Serving from:', path.join(__dirname, 'dist'));
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`⚠️  Port ${port} is already in use, trying next port...`);
+      if (port < 3010) {
+        startServer(port + 1);
+      } else {
+        console.error('❌ Could not find an available port');
+        process.exit(1);
+      }
+    } else {
+      console.error('❌ Server error:', err);
+      process.exit(1);
+    }
+  });
+}
+
+startServer(PORT);
 
 module.exports = app;
