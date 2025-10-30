@@ -8,12 +8,22 @@
 - Server starts correctly with npm start
 - Health endpoint /api/health working
 - All ES module compatibility issues resolved
+- Docker image builds successfully in Coolify
+
+### Build Issue: ✅ FIXED
+- **Problem**: Build phase was trying to start server, causing port conflicts
+  - Error: "Port 3000 is already in use, trying next port..."
+  - Error: "Could not find an available port"
+- **Solution**: Removed server startup from build phase in nixpacks.toml
+  - Changed `[phases.start] cmds` from server startup command to empty array
+  - Start phase should only define startup behavior, not execute during build
+  - Server now correctly starts only at runtime via docker-compose
 
 ### Deployment Status: ❌ COOLIFY PERMISSIONS
 - Coolify cannot write .env files (Permission denied)
 - Coolify cannot write docker-compose.yaml (Permission denied)
 - This is a Coolify server configuration issue
-- NOT an application code problem
+- Docker image builds successfully - infrastructure permission issue only
 
 ### Technical Architecture
 - Runtime: Node.js 20 Alpine
