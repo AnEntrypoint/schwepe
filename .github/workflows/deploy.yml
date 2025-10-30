@@ -23,7 +23,10 @@ jobs:
         
     - name: Install dependencies
       run: npm ci
-      
+
+    - name: Build application
+      run: npm run build:multi-site
+
     - name: Run build verification
       run: |
         chmod +x scripts/verify-build.sh
