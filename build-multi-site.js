@@ -67,6 +67,18 @@ async function buildAll() {
   } catch (err) {
     console.log('⚠ Static directory not found, skipping');
   }
+
+  // Copy package-lock.json for deployment
+  try {
+    await fs.access(path.join(projectRoot, 'package-lock.json'));
+    await fs.copyFile(
+      path.join(projectRoot, 'package-lock.json'),
+      path.join(distPath, 'package-lock.json')
+    );
+    console.log('✓ Copied package-lock.json');
+  } catch (err) {
+    console.log('⚠ package-lock.json not found, skipping');
+  }
   
   for (const siteId of sites.filter(s => !s.startsWith('.') && s !== 'README.md')) {
     const statResult = await fs.stat(path.join(sitesDir, siteId));
