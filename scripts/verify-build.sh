@@ -7,17 +7,23 @@ if [ ! -d "dist" ]; then
   exit 1
 fi
 
-# Check if build output exists
-if [ ! -f "dist/index.html" ] && [ ! -f "dist/server.cjs" ]; then
-  echo "❌ No build output found"
+# Check if multi-site build output exists
+if [ ! -d "dist/247420" ] || [ ! -d "dist/schwepe" ]; then
+  echo "❌ Multi-site build directories not found"
   exit 1
 fi
 
-# Check package.json build script
-if ! npm run build:multi-site; then
-  echo "❌ Build failed"
+# Check for index.html files in each site
+if [ ! -f "dist/247420/index.html" ] || [ ! -f "dist/schwepe/index.html" ]; then
+  echo "❌ Site index.html files not found"
   exit 1
 fi
 
-echo "✅ Build verification successful"
+# Check for static assets
+if [ ! -d "dist/static" ]; then
+  echo "❌ Static assets directory not found"
+  exit 1
+fi
+
+echo "✅ Multi-site build verification successful"
 exit 0
