@@ -19,21 +19,28 @@ app.get('/api/health', (req, res) => {
 
 // Domain-based routing middleware
 app.use((req, res, next) => {
-  const host = req.headers.host || '';
+  let host = req.headers.host || '';
+
+  // Check for X-Forwarded-Host header (used by reverse proxies like Coolify)
+  if (req.headers['x-forwarded-host']) {
+    host = req.headers['x-forwarded-host'];
+    console.log('Using X-Forwarded-Host:', host);
+  }
+
   console.log('Request for host:', host);
-  
+
   // Extract domain (remove port if present)
   const domain = host.split(':')[0];
-  
+
   // Determine which site to serve based on domain
   let siteId = '247420'; // default
-  
+
   if (domain.includes('schwepe')) {
     siteId = 'schwepe';
   } else if (domain.includes('coolify')) {
     siteId = '247420'; // coolify serves main site
   }
-  
+
   console.log('Serving site:', siteId);
   
   // Set the correct static path for this request
