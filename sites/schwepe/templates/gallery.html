@@ -1,398 +1,343 @@
-    1→    1→<!DOCTYPE html>
-    2→    2→<html lang="en">
-    3→    3→<head>
-    4→    4→    <meta charset="UTF-8">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
     <meta name="site-id" content="{{ id }}">
-    5→    5→    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    6→    6→    <title>Schwepe Gallery - All Schwepes</title>
-    7→    7→    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    8→    8→
-    9→    9→    <!-- SEO Meta Tags -->
-   10→   10→    <meta name="description" content="Explore the complete Schwepe multiverse - Every degen emotion, trading vibe, and 247420 moment captured in pink frog form.">
-   11→   11→    <meta name="keywords" content="schwepe gallery, meme gallery, degen emotions, crypto vibes, 247420, schwepe collection">
-   12→   12→    <meta name="robots" content="index, follow">
-   13→   13→    <link rel="canonical" href="https://schwepe.247420.xyz/gallery.html">
-   14→   14→
-   15→   15→    <!-- Open Graph Meta Tags -->
-   16→   16→    <meta property="og:type" content="website">
-   17→   17→    <meta property="og:url" content="https://schwepe.247420.xyz/gallery.html">
-   18→   18→    <meta property="og:title" content="Schwepe Gallery - The Complete Schwepe Multiverse">
-   19→   19→    <meta property="og:description" content="Every degen emotion, every trading vibe, every 247420 moment captured in pink frog form.">
-   20→   20→    <meta property="og:image" content="https://schwepe.247420.xyz/site-assets/media/images/schwepe.gif">
-   21→   21→    <meta property="og:site_name" content="Schwepe's Meme Dimension">
-   22→   22→
-   23→   23→    <!-- Twitter Card Meta Tags -->
-   24→   24→    <meta name="twitter:card" content="summary_large_image">
-   25→   25→    <meta name="twitter:title" content="Schwepe Gallery - The Complete Schwepe Multiverse">
-   26→   26→    <meta name="twitter:description" content="Every degen emotion, every trading vibe, every 247420 moment captured in pink frog form.">
-   27→   27→    <meta name="twitter:image" content="https://schwepe.247420.xyz/site-assets/media/images/schwepe.gif">
-   28→   28→    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-   29→   29→    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-   30→   30→    <link rel="stylesheet" href="/site-assets/styles/navbar.css">
-   31→   31→    <style>
-   32→   32→        * {
-   33→   33→            margin: 0;
-   34→   34→            padding: 0;
-   35→   35→            box-sizing: border-box;
-   36→   36→        }
-   37→   37→
-   38→   38→        body {
-   39→   39→            font-family: 'Fredoka', sans-serif;
-   40→   40→            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-   41→   41→            min-height: 100vh;
-   42→   42→            overflow-x: hidden;
-   43→   43→            position: relative;
-   44→   44→        }
-   45→   45→
-   46→   46→        .animated-bg {
-   47→   47→            position: fixed;
-   48→   48→            top: 0;
-   49→   49→            left: 0;
-   50→   50→            width: 100%;
-   51→   51→            height: 100%;
-   52→   52→            z-index: -1;
-   53→   53→            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-   54→   54→            animation: bgShift 10s ease-in-out infinite;
-   55→   55→        }
-   56→   56→
-   57→   57→        @keyframes bgShift {
-   58→   58→            0%, 100% { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); }
-   59→   59→            25% { background: linear-gradient(135deg, #16a085 0%, #27ae60 100%); }
-   60→   60→            50% { background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); }
-   61→   61→            75% { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); }
-   62→   62→        }
-   63→   63→
-   64→   64→        .container {
-   65→   65→            max-width: 1200px;
-   66→   66→            margin: 0 auto;
-   67→   67→            padding: 0 20px;
-   68→   68→        }
-   69→   69→
-   70→   70→        .header {
-   71→   71→            text-align: center;
-   72→   72→            padding: 40px 0 40px;
-   73→   73→        }
-   74→   74→
-   75→   75→    
-   76→   76→        .back-button {
-   77→   77→            position: absolute;
-   78→   78→            top: 30px;
-   79→   79→            left: 30px;
-   80→   80→            background: rgba(255, 255, 255, 0.15);
-   81→   81→            backdrop-filter: blur(15px);
-   82→   82→            border: 1px solid rgba(255, 255, 255, 0.2);
-   83→   83→            color: #ffffff;
-   84→   84→            padding: 15px 20px;
-   85→   85→            border-radius: 25px;
-   86→   86→            text-decoration: none;
-   87→   87→            font-weight: 600;
-   88→   88→            transition: transform 0.3s ease;
-   89→   89→            display: inline-flex;
-   90→   90→            align-items: center;
-   91→   91→            gap: 10px;
-   92→   92→        }
-   93→   93→
-   94→   94→        .back-button:hover {
-   95→   95→            transform: translateY(-2px);
-   96→   96→        }
-   97→   97→
-   98→   98→        .gallery-title {
-   99→   99→            font-size: 3.5rem;
-  100→  100→            color: #ffffff;
-  101→  101→            margin-bottom: 20px;
-  102→  102→            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-  103→  103→        }
-  104→  104→
-  105→  105→        .gallery-subtitle {
-  106→  106→            font-size: 1.2rem;
-  107→  107→            color: rgba(255, 255, 255, 0.9);
-  108→  108→            margin-bottom: 40px;
-  109→  109→        }
-  110→  110→
-  111→  111→        .complete-gallery {
-  112→  112→            display: grid;
-  113→  113→            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  114→  114→            gap: 30px;
-  115→  115→            padding: 40px 0;
-  116→  116→        }
-  117→  117→
-  118→  118→        .schwepe-card {
-  119→  119→            background: rgba(255, 255, 255, 0.15);
-  120→  120→            backdrop-filter: blur(15px);
-  121→  121→            border-radius: 20px;
-  122→  122→            padding: 30px;
-  123→  123→            text-align: center;
-  124→  124→            border: 1px solid rgba(255, 255, 255, 0.2);
-  125→  125→            transition: transform 0.3s ease, box-shadow 0.3s ease;
-  126→  126→            cursor: pointer;
-  127→  127→        }
-  128→  128→
-  129→  129→        .schwepe-card:hover {
-  130→  130→            transform: translateY(-10px);
-  131→  131→            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  132→  132→        }
-  133→  133→
-  134→  134→        .schwepe-image {
-  135→  135→            width: 100%;
-  136→  136→            height: 200px;
-  137→  137→            object-fit: cover;
-  138→  138→            border-radius: 15px;
-  139→  139→            margin-bottom: 20px;
-  140→  140→            transition: transform 0.3s ease;
-  141→  141→        }
-  142→  142→
-  143→  143→        .schwepe-card:hover .schwepe-image {
-  144→  144→            transform: scale(1.05);
-  145→  145→        }
-  146→  146→
-  147→  147→        .schwepe-title {
-  148→  148→            font-size: 1.5rem;
-  149→  149→            color: #ffffff;
-  150→  150→            margin-bottom: 10px;
-  151→  151→            font-weight: 600;
-  152→  152→        }
-  153→  153→
-  154→  154→        .schwepe-description {
-  155→  155→            color: rgba(255, 255, 255, 0.9);
-  156→  156→            font-size: 1rem;
-  157→  157→            line-height: 1.5;
-  158→  158→        }
-  159→  159→
-  160→  160→        .special-card {
-  161→  161→            border: 2px solid #f093fb;
-  162→  162→            background: linear-gradient(135deg, rgba(240, 147, 251, 0.2) 0%, rgba(245, 87, 108, 0.2) 100%);
-  163→  163→        }
-  164→  164→
-  165→  165→        /* Corner Man Styles */
-  166→  166→        .corner-man {
-  167→  167→            position: fixed;
-  168→  168→            bottom: 20px;
-  169→  169→            left: 20px;
-  170→  170→            width: 120px;
-  171→  171→            height: 120px;
-  172→  172→            z-index: 247420;
-  173→  173→            cursor: pointer;
-  174→  174→            transition: all 0.3s ease;
-  175→  175→            opacity: 0;
-  176→  176→            transform: scale(0);
-  177→  177→            border-radius: 15px;
-  178→  178→            overflow: hidden;
-  179→  179→            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  180→  180→            border: 2px solid rgba(255, 255, 255, 0.2);
-  181→  181→        }
-  182→  182→
-  183→  183→        .corner-man.show {
-  184→  184→            opacity: 1;
-  185→  185→            transform: scale(1);
-  186→  186→        }
-  187→  187→
-  188→  188→        .corner-man:hover {
-  189→  189→            transform: scale(1.1);
-  190→  190→            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
-  191→  191→        }
-  192→  192→
-  193→  193→        .corner-man img {
-  194→  194→            width: 100%;
-  195→  195→            height: 100%;
-  196→  196→            object-fit: cover;
-  197→  197→            background: transparent;
-  198→  198→        }
-  199→  199→
-  200→  200→        @media (max-width: 768px) {
-  201→  201→            .complete-gallery {
-  202→  202→                grid-template-columns: 1fr;
-  203→  203→                gap: 20px;
-  204→  204→            }
-  205→  205→
-  206→  206→            .gallery-title {
-  207→  207→                font-size: 2.5rem;
-  208→  208→            }
-  209→  209→
-  210→  210→            .back-button {
-  211→  211→                position: relative;
-  212→  212→                top: 0;
-  213→  213→                left: 0;
-  214→  214→                margin: 20px auto;
-  215→  215→                display: flex;
-  216→  216→                width: fit-content;
-  217→  217→            }
-  218→  218→        }
-  219→  219→    </style>
-  220→  220→</head>
-  221→  221→<body>
-  222→  222→    <div class="animated-bg"></div>
-  223→  223→    <div id="corner-man" class="corner-man">
-  224→  224→        <img src="cornermen/schwepe-corner-1.png" alt="Corner Man">
-  225→  225→    </div>
-  226→  226→
-  227→  227→    <a href="index.html" class="back-button">
-  228→  228→        <i class="fas fa-arrow-left"></i> Back to Degen HQ
-  229→  229→    </a>
-  230→  230→
-  231→  231→    <div class="container">
-  232→  232→        <div class="header">
-  233→  233→            <h1 class="gallery-title">🎭 The Schwepe Multiverse 🎭</h1>
-  234→  234→            <p class="gallery-subtitle">Every degen emotion, every trading vibe, every 247420 moment captured in pink frog form 🐸</p>
-  235→  235→        </div>
-  236→  236→
-  237→  237→        <!-- Navigation -->
-  238→  238→        <div id="navbar-container"></div>
-  239→  239→
-  240→  240→        <div class="complete-gallery" id="schwepe-gallery">
-  241→  241→            <!-- Gallery content will be loaded dynamically from schwepe-descriptions.json -->
-  242→  242→        </div>
-  243→  243→    </div>
-  244→  244→
-  245→  245→    <script>
-  246→  246→        // Load shared navbar
-  247→  247→        async function loadNavbar() {
-  248→  248→            try {
-  249→  249→                const response = await fetch('navbar.html');
-  250→  250→                const navbarHTML = await response.text();
-  251→  251→                document.getElementById('navbar-container').innerHTML = navbarHTML;
-  252→  252→
-  253→  253→                // Load navbar JavaScript
-  254→  254→                const script = document.createElement('script');
-  255→  255→                script.src = 'navbar.js';
-  256→  256→                document.body.appendChild(script);
-  257→  257→
-  258→  258→                // Set active state for current page
-  259→  259→                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  260→  260→                const navLinks = document.querySelectorAll('#navbar-container a');
-  261→  261→                navLinks.forEach(link => {
-  262→  262→                    if (link.getAttribute('href') === currentPage) {
-  263→  263→                        link.classList.add('active');
-  264→  264→                    }
-  265→  265→                });
-  266→  266→
-  267→  267→                console.log('✅ Navbar loaded successfully');
-  268→  268→            } catch (error) {
-  269→  269→                console.error('❌ Error loading navbar:', error);
-  270→  270→            }
-  271→  271→        }
-  272→  272→
-  273→  273→        // Load gallery content from JSON
-  274→  274→        async function loadGalleryFromJSON() {
-  275→  275→            try {
-  276→  276→                const response = await fetch('schwepe-descriptions.json');
-  277→  277→                const descriptions = await response.json();
-  278→  278→
-  279→  279→                const galleryContainer = document.getElementById('schwepe-gallery');
-  280→  280→                galleryContainer.innerHTML = '';
-  281→  281→
-  282→  282→                // Add featured official Schwepe first
-  283→  283→                const featuredCard = document.createElement('div');
-  284→  284→                featuredCard.className = 'schwepe-card special-card';
-  285→  285→                featuredCard.innerHTML = `
-  286→  286→                    <img src="/schwepe.gif" alt="Official Schwepe Logo" class="schwepe-image">
-  287→  287→                    <h3 class="schwepe-title">Official $SCHWEPE</h3>
-  288→  288→                    <p class="schwepe-description">The official branding and identity of our beloved token</p>
-  289→  289→                `;
-  290→  290→                galleryContainer.appendChild(featuredCard);
-  291→  291→
-  292→  292→                // Add all other Schwepes
-  293→  293→                Object.entries(descriptions).forEach(([filename, data]) => {
-  294→  294→                    if (filename === 'schwepe.gif') return; // Skip the featured one
-  295→  295→
-  296→  296→                    const specialClass = data.special ? ' special-card' : '';
-  297→  297→                    const card = document.createElement('div');
-  298→  298→                    card.className = `schwepe-card${specialClass}`;
-  299→  299→                    card.innerHTML = `
-  300→  300→                        <img src="schwepe/${filename}" alt="${data.title}" class="schwepe-image">
-  301→  301→                        <h3 class="schwepe-title">${data.title}</h3>
-  302→  302→                        <p class="schwepe-description">${data.description}</p>
-  303→  303→                    `;
-  304→  304→
-  305→  305→                    // Add click interaction
-  306→  306→                    card.addEventListener('click', function() {
-  307→  307→                        this.style.animation = 'bounce 0.5s ease-in-out';
-  308→  308→                        setTimeout(() => {
-  309→  309→                            this.style.animation = '';
-  310→  310→                        }, 500);
-  311→  311→                    });
-  312→  312→
-  313→  313→                    galleryContainer.appendChild(card);
-  314→  314→                });
-  315→  315→
-  316→  316→                console.log('✅ Gallery loaded from JSON successfully');
-  317→  317→            } catch (error) {
-  318→  318→                console.error('❌ Error loading gallery from JSON:', error);
-  319→  319→                // Fallback: show error message
-  320→  320→                const galleryContainer = document.getElementById('schwepe-gallery');
-  321→  321→                galleryContainer.innerHTML = '<p style="color: white; text-align: center; padding: 40px;">Error loading gallery content. Please check back later.</p>';
-  322→  322→            }
-  323→  323→        }
-  324→  324→
-  325→  325→        // Corner Man functionality
-  326→  326→        let cornerManVisible = false;
-  327→  327→        let cornerManImages = [];
-  328→  328→
-  329→  329→        function # {
-  330→  330→            cornerManVisible = !cornerManVisible;
-  331→  331→            const cornerMan = document.getElementById('corner-man');
-  332→  332→            if (cornerManVisible) {
-  333→  333→                cornerMan.classList.add('show');
-  334→  334→                if (cornerManImages.length > 0) {
-  335→  335→                    loadRandomCornerImage();
-  336→  336→                }
-  337→  337→            } else {
-  338→  338→                cornerMan.classList.remove('show');
-  339→  339→            }
-  340→  340→        }
-  341→  341→
-  342→  342→        function loadCornerManImages() {
-  343→  343→            // Load corner man images from cornermen folder
-  344→  344→            cornerManImages = [
-  345→  345→                'cornermen/schwepe-corner-1.png',
-  346→  346→                'cornermen/schwepe-corner-2.png',
-  347→  347→                'cornermen/schwepe-corner-3.png',
-  348→  348→                'cornermen/schwepe-corner-4.png',
-  349→  349→                'cornermen/schwepe-corner-5.png'
-  350→  350→            ];
-  351→  351→        }
-  352→  352→
-  353→  353→        function loadRandomCornerImage() {
-  354→  354→            if (cornerManImages.length === 0) return;
-  355→  355→
-  356→  356→            const cornerMan = document.getElementById('corner-man');
-  357→  357→            const randomIndex = Math.floor(Math.random() * cornerManImages.length);
-  358→  358→            const img = cornerMan.querySelector('img');
-  359→  359→            img.src = cornerManImages[randomIndex];
-  360→  360→
-  361→  361→            // Preload next images
-  362→  362→            cornerManImages.forEach(imageSrc => {
-  363→  363→                const preloadImg = new Image();
-  364→  364→                preloadImg.src = imageSrc;
-  365→  365→            });
-  366→  366→        }
-  367→  367→
-  368→  368→        function showStats() {
-  369→  369→            alert('🎯 Schwepe Stats:\n\n' +
-  370→  370→                  '• Total Schwepes: 28\n' +
-  371→  371→                  '• Special Schwepes: 20\n' +
-  372→  372→                  '• Corner Men: 5\n' +
-  373→  373→                  '• Degen Energy: 247420%\n' +
-  374→  374→                  '• Meme Power: MAXIMUM');
-  375→  375→        }
-  376→  376→
-  377→  377→        // Initialize page
-  378→  378→        document.addEventListener('DOMContentLoaded', function() {
-  379→  379→            // Load shared navbar
-  380→  380→            loadNavbar();
-  381→  381→
-  382→  382→            // Load gallery from JSON
-  383→  383→            loadGalleryFromJSON();
-  384→  384→
-  385→  385→            // Initialize corner man
-  386→  386→            loadCornerManImages();
-  387→  387→
-  388→  388→            // Change corner man image every 30 seconds when visible
-  389→  389→            setInterval(() => {
-  390→  390→                if (cornerManVisible) {
-  391→  391→                    loadRandomCornerImage();
-  392→  392→                }
-  393→  393→            }, 30000);
-  394→  394→        });
-  395→  395→    </script>
-  396→  396→</body>
-  397→  397→</html>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schwepe Gallery - All Schwepes</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- SEO Meta Tags -->
+   <meta name="description" content="Explore the complete Schwepe multiverse - Every degen emotion, trading vibe, and 247420 moment captured in pink frog form.">
+   <meta name="keywords" content="schwepe gallery, meme gallery, degen emotions, crypto vibes, 247420, schwepe collection">
+   <meta name="robots" content="index, follow">
+   <link rel="canonical" href="https://schwepe.247420.xyz/gallery.html">
+   <!-- Open Graph Meta Tags -->
+   <meta property="og:type" content="website">
+   <meta property="og:url" content="https://schwepe.247420.xyz/gallery.html">
+   <meta property="og:title" content="Schwepe Gallery - The Complete Schwepe Multiverse">
+   <meta property="og:description" content="Every degen emotion, every trading vibe, every 247420 moment captured in pink frog form.">
+   <meta property="og:image" content="https://schwepe.247420.xyz/site-assets/media/images/schwepe.gif">
+   <meta property="og:site_name" content="Schwepe's Meme Dimension">
+   <!-- Twitter Card Meta Tags -->
+   <meta name="twitter:card" content="summary_large_image">
+   <meta name="twitter:title" content="Schwepe Gallery - The Complete Schwepe Multiverse">
+   <meta name="twitter:description" content="Every degen emotion, every trading vibe, every 247420 moment captured in pink frog form.">
+   <meta name="twitter:image" content="https://schwepe.247420.xyz/site-assets/media/images/schwepe.gif">
+   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="/site-assets/styles/navbar.css">
+   <style>
+   * {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   }
+   body {
+   font-family: 'Fredoka', sans-serif;
+   background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+   min-height: 100vh;
+   overflow-x: hidden;
+   position: relative;
+   }
+   .animated-bg {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   z-index: -1;
+   background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+   animation: bgShift 10s ease-in-out infinite;
+   }
+   @keyframes bgShift {
+   0%, 100% { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); }
+   25% { background: linear-gradient(135deg, #16a085 0%, #27ae60 100%); }
+   50% { background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); }
+   75% { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); }
+   }
+   .container {
+   max-width: 1200px;
+   margin: 0 auto;
+   padding: 0 20px;
+   }
+   .header {
+   text-align: center;
+   padding: 40px 0 40px;
+   }
+   .back-button {
+   position: absolute;
+   top: 30px;
+   left: 30px;
+   background: rgba(255, 255, 255, 0.15);
+   backdrop-filter: blur(15px);
+   border: 1px solid rgba(255, 255, 255, 0.2);
+   color: #ffffff;
+   padding: 15px 20px;
+   border-radius: 25px;
+   text-decoration: none;
+   font-weight: 600;
+   transition: transform 0.3s ease;
+   display: inline-flex;
+   align-items: center;
+   gap: 10px;
+   }
+   .back-button:hover {
+   transform: translateY(-2px);
+   }
+   .gallery-title {
+   font-size: 3.5rem;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+  .gallery-subtitle {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 40px;
+  }
+  .complete-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  padding: 40px 0;
+  }
+  .schwepe-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  }
+  .schwepe-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+  .schwepe-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+  }
+  .schwepe-card:hover .schwepe-image {
+  transform: scale(1.05);
+  }
+  .schwepe-title {
+  font-size: 1.5rem;
+  color: #ffffff;
+  margin-bottom: 10px;
+  font-weight: 600;
+  }
+  .schwepe-description {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  line-height: 1.5;
+  }
+  .special-card {
+  border: 2px solid #f093fb;
+  background: linear-gradient(135deg, rgba(240, 147, 251, 0.2) 0%, rgba(245, 87, 108, 0.2) 100%);
+  }
+  /* Corner Man Styles */
+  .corner-man {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 120px;
+  height: 120px;
+  z-index: 247420;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: scale(0);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+  .corner-man.show {
+  opacity: 1;
+  transform: scale(1);
+  }
+  .corner-man:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+  }
+  .corner-man img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: transparent;
+  }
+  @media (max-width: 768px) {
+  .complete-gallery {
+  grid-template-columns: 1fr;
+  gap: 20px;
+  }
+  .gallery-title {
+  font-size: 2.5rem;
+  }
+  .back-button {
+  position: relative;
+  top: 0;
+  left: 0;
+  margin: 20px auto;
+  display: flex;
+  width: fit-content;
+  }
+  }
+  </style>
+  </head>
+  <body>
+  <div class="animated-bg"></div>
+  <div id="corner-man" class="corner-man">
+  <img src="cornermen/schwepe-corner-1.png" alt="Corner Man">
+  </div>
+  <a href="index.html" class="back-button">
+  <i class="fas fa-arrow-left"></i> Back to Degen HQ
+  </a>
+  <div class="container">
+  <div class="header">
+  <h1 class="gallery-title">🎭 The Schwepe Multiverse 🎭</h1>
+  <p class="gallery-subtitle">Every degen emotion, every trading vibe, every 247420 moment captured in pink frog form 🐸</p>
+  </div>
+  <!-- Navigation -->
+  <div id="navbar-container"></div>
+  <div class="complete-gallery" id="schwepe-gallery">
+  <!-- Gallery content will be loaded dynamically from schwepe-descriptions.json -->
+  </div>
+  </div>
+  <script>
+  // Load shared navbar
+  async function loadNavbar() {
+  try {
+  const response = await fetch('navbar.html');
+  const navbarHTML = await response.text();
+  document.getElementById('navbar-container').innerHTML = navbarHTML;
+  // Load navbar JavaScript
+  const script = document.createElement('script');
+  script.src = 'navbar.js';
+  document.body.appendChild(script);
+  // Set active state for current page
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const navLinks = document.querySelectorAll('#navbar-container a');
+  navLinks.forEach(link => {
+  if (link.getAttribute('href') === currentPage) {
+  link.classList.add('active');
+  }
+  });
+  console.log('✅ Navbar loaded successfully');
+  } catch (error) {
+  console.error('❌ Error loading navbar:', error);
+  }
+  }
+  // Load gallery content from JSON
+  async function loadGalleryFromJSON() {
+  try {
+  const response = await fetch('schwepe-descriptions.json');
+  const descriptions = await response.json();
+  const galleryContainer = document.getElementById('schwepe-gallery');
+  galleryContainer.innerHTML = '';
+  // Add featured official Schwepe first
+  const featuredCard = document.createElement('div');
+  featuredCard.className = 'schwepe-card special-card';
+  featuredCard.innerHTML = `
+  <img src="/schwepe.gif" alt="Official Schwepe Logo" class="schwepe-image">
+  <h3 class="schwepe-title">Official $SCHWEPE</h3>
+  <p class="schwepe-description">The official branding and identity of our beloved token</p>
+  `;
+  galleryContainer.appendChild(featuredCard);
+  // Add all other Schwepes
+  Object.entries(descriptions).forEach(([filename, data]) => {
+  if (filename === 'schwepe.gif') return; // Skip the featured one
+  const specialClass = data.special ? ' special-card' : '';
+  const card = document.createElement('div');
+  card.className = `schwepe-card${specialClass}`;
+  card.innerHTML = `
+  <img src="schwepe/${filename}" alt="${data.title}" class="schwepe-image">
+  <h3 class="schwepe-title">${data.title}</h3>
+  <p class="schwepe-description">${data.description}</p>
+  `;
+  // Add click interaction
+  card.addEventListener('click', function() {
+  this.style.animation = 'bounce 0.5s ease-in-out';
+  setTimeout(() => {
+  this.style.animation = '';
+  }, 500);
+  });
+  galleryContainer.appendChild(card);
+  });
+  console.log('✅ Gallery loaded from JSON successfully');
+  } catch (error) {
+  console.error('❌ Error loading gallery from JSON:', error);
+  // Fallback: show error message
+  const galleryContainer = document.getElementById('schwepe-gallery');
+  galleryContainer.innerHTML = '<p style="color: white; text-align: center; padding: 40px;">Error loading gallery content. Please check back later.</p>';
+  }
+  }
+  // Corner Man functionality
+  let cornerManVisible = false;
+  let cornerManImages = [];
+  function # {
+  cornerManVisible = !cornerManVisible;
+  const cornerMan = document.getElementById('corner-man');
+  if (cornerManVisible) {
+  cornerMan.classList.add('show');
+  if (cornerManImages.length > 0) {
+  loadRandomCornerImage();
+  }
+  } else {
+  cornerMan.classList.remove('show');
+  }
+  }
+  function loadCornerManImages() {
+  // Load corner man images from cornermen folder
+  cornerManImages = [
+  'cornermen/schwepe-corner-1.png',
+  'cornermen/schwepe-corner-2.png',
+  'cornermen/schwepe-corner-3.png',
+  'cornermen/schwepe-corner-4.png',
+  'cornermen/schwepe-corner-5.png'
+  ];
+  }
+  function loadRandomCornerImage() {
+  if (cornerManImages.length === 0) return;
+  const cornerMan = document.getElementById('corner-man');
+  const randomIndex = Math.floor(Math.random() * cornerManImages.length);
+  const img = cornerMan.querySelector('img');
+  img.src = cornerManImages[randomIndex];
+  // Preload next images
+  cornerManImages.forEach(imageSrc => {
+  const preloadImg = new Image();
+  preloadImg.src = imageSrc;
+  });
+  }
+  function showStats() {
+  alert('🎯 Schwepe Stats:\n\n' +
+  '• Total Schwepes: 28\n' +
+  '• Special Schwepes: 20\n' +
+  '• Corner Men: 5\n' +
+  '• Degen Energy: 247420%\n' +
+  '• Meme Power: MAXIMUM');
+  }
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', function() {
+  // Load shared navbar
+  loadNavbar();
+  // Load gallery from JSON
+  loadGalleryFromJSON();
+  // Initialize corner man
+  loadCornerManImages();
+  // Change corner man image every 30 seconds when visible
+  setInterval(() => {
+  if (cornerManVisible) {
+  loadRandomCornerImage();
+  }
+  }, 30000);
+  });
+  </script>
+  </body>
+  </html>
