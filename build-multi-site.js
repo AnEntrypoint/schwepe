@@ -31,10 +31,17 @@ async function buildSite(siteId) {
   
   const sitePath = path.join(projectRoot, 'sites', siteId);
   const siteDistPath = path.join(distPath, 'site-assets');
-  
-  // Copy site assets
+
   await execAsync('cp -r "' + sitePath + '" "' + siteDistPath + '"');
-  
+
+  const faviconSource = path.join(sitePath, 'media', 'static', 'favicon.ico');
+  const faviconDest = path.join(distPath, 'favicon.ico');
+  try {
+    await fs.access(faviconSource);
+    await execAsync('cp "' + faviconSource + '" "' + faviconDest + '"');
+  } catch (err) {
+  }
+
   console.log('✓ Built ' + siteId);
 }
 
