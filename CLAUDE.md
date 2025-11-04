@@ -12,11 +12,12 @@
 - Health endpoint /api/health working
 - Health check verified: `{"status":"ok","timestamp":"2025-11-04T16:40:17.544Z","version":"1.0.0"}`
 
-## Domain Routing (✅ VERIFIED LIVE)
-- `247420.xyz` → serves **247420** design ✅
-- `schwepe.247420.xyz` → serves **schwepe** design ✅
-- `schwepe.247240.xyz` → serves **schwepe** design
+## Domain Routing & Designs (✅ VERIFIED LIVE)
+- `247420.xyz` → **247420 Digital Stoner Den** (VT323 monospace, dark theme) ✅
+- `schwepe.247420.xyz` → **Schwepe's Funky Universe** (Fredoka sans-serif, animated gradients) ✅
+- `schwepe.247240.xyz` → **Schwepe's Funky Universe** (same as schwepe.247420.xyz)
 - Exact domain matching in server.cjs line 38 prevents cross-domain design confusion
+- Original Schwepe design restored from git history with cornermen assets
 
 ## Technical Architecture
 - Runtime: Node.js 20 Alpine
@@ -25,7 +26,11 @@
 - Server: Express.js with static file serving and domain-based routing
 - Container: Docker with nixpacks build
 
-## Recent Changes
+## Recent Changes (Nov 4, 2025)
 - Fixed domain routing: Changed from `domain.startsWith('schwepe.')` to exact matches
+- Restored original Schwepe design (Schwepe's Funky Universe) with Fredoka font and animated backgrounds
+- Reinstated cornermen assets in gallery templates
 - Deployment successful via Coolify
-- Both domains verified serving correct designs
+- Both domains verified serving completely distinct designs
+- 247420: Dark monospace "Stoner Den" aesthetic
+- Schwepe: Light sans-serif "Funky Universe" with animated gradients
