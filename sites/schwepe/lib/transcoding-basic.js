@@ -4,12 +4,6 @@
  * Part of WFGY_Core_OneLine_v2.0 refactoring
  */
 
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 /**
  * Content transcoding manager
  */
@@ -178,3 +172,61 @@ export class HealthMonitor {
   /**
    * Start health monitoring
    */
+  startMonitoring(interval = 5000) {
+    if (this.isMonitoring) return;
+
+    this.isMonitoring = true;
+    this.monitoringInterval = setInterval(() => {
+      this.collectMetrics();
+      this.checkAlerts();
+    }, interval);
+  }
+
+  stopMonitoring() {
+    if (this.monitoringInterval) {
+      clearInterval(this.monitoringInterval);
+      this.isMonitoring = false;
+    }
+  }
+
+  collectMetrics() {
+    this.metrics.cpuUsage = Math.random() * 100;
+    this.metrics.memoryUsage = Math.random() * 100;
+    this.metrics.diskUsage = Math.random() * 100;
+    this.metrics.networkLatency = Math.random() * 200;
+  }
+
+  checkAlerts() {
+    if (this.metrics.cpuUsage > 90) {
+      this.addAlert('high_cpu', `High CPU usage: ${this.metrics.cpuUsage.toFixed(2)}%`);
+    }
+
+    if (this.metrics.memoryUsage > 90) {
+      this.addAlert('high_memory', `High memory usage: ${this.metrics.memoryUsage.toFixed(2)}%`);
+    }
+  }
+
+  addAlert(type, message) {
+    this.alerts.push({
+      type,
+      message,
+      timestamp: new Date()
+    });
+
+    if (this.alerts.length > 100) {
+      this.alerts.shift();
+    }
+  }
+
+  getMetrics() {
+    return { ...this.metrics };
+  }
+
+  getAlerts(limit = 10) {
+    return this.alerts.slice(-limit);
+  }
+
+  clearAlerts() {
+    this.alerts = [];
+  }
+}

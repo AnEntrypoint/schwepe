@@ -4,12 +4,6 @@
  * Part of WFGY_Core_OneLine_v2.0 refactoring
  */
 
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 // Core broadcasting configuration
 export const broadcastConfig = {
   stationId: 'schwepe-tv',

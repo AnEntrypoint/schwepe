@@ -37,8 +37,11 @@ app.use((req, res, next) => {
 
   if (domain === 'schwepe.247420.xyz' || domain === 'schwepe.247240.xyz') {
     siteId = 'schwepe';
-  } else if (domain === '247420.xyz' || domain === 'localhost' || domain.includes('coolify')) {
+  } else if (domain === '247420.xyz' || domain.includes('coolify')) {
     siteId = '247420';
+  } else if (domain === 'localhost' || domain.startsWith('localhost:')) {
+    // For local testing, default to schwepe so we can test the Schwelevision system
+    siteId = 'schwepe';
   }
 
   console.log('Serving site:', siteId);
@@ -66,6 +69,26 @@ app.use((req, res, next) => {
   } else {
     next();
   }
+});
+
+// Serve site root files (including JS modules and lib directory)
+app.use((req, res, next) => {
+  if (!req.siteRoot) return next();
+
+  const filePath = path.join(req.siteRoot, req.path);
+
+  try {
+    const stats = fs.statSync(filePath);
+    if (stats.isFile()) {
+      return res.sendFile(filePath);
+    } else if (stats.isDirectory()) {
+      return next();
+    }
+  } catch (err) {
+    // File doesn't exist or other error
+  }
+
+  next();
 });
 
 // Serve HTML pages from the correct site

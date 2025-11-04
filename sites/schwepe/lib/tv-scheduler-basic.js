@@ -198,3 +198,36 @@ export class ContentLibrary {
       totalContent: this.content.size,
       categories: this.categories.size,
       tags: this.tags.size,
+      totalPlayCount: Array.from(this.content.values()).reduce(
+        (sum, content) => sum + content.playCount, 0
+      )
+    };
+  }
+}
+
+/**
+ * Play history tracker
+ */
+export class PlayHistory {
+  constructor() {
+    this.entries = [];
+  }
+
+  addEntry(program, startTime, endTime) {
+    this.entries.push({
+      program,
+      startTime,
+      endTime,
+      duration: endTime - startTime,
+      timestamp: new Date()
+    });
+  }
+
+  getHistory(limit = 50) {
+    return this.entries.slice(-limit).reverse();
+  }
+
+  clear() {
+    this.entries = [];
+  }
+}
