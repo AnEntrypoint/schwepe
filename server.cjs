@@ -35,7 +35,7 @@ app.use((req, res, next) => {
   // Determine which site to serve based on domain
   let siteId = '247420'; // default
 
-  if (domain === 'schwepe.247420.xyz' || domain.startsWith('schwepe.')) {
+  if (domain === 'schwepe.247420.xyz' || domain === 'schwepe.247240.xyz') {
     siteId = 'schwepe';
   } else if (domain === '247420.xyz' || domain === 'localhost' || domain.includes('coolify')) {
     siteId = '247420';
