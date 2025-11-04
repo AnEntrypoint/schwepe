@@ -42,6 +42,23 @@ async function buildSite(siteId) {
   } catch (err) {
   }
 
+  // Copy schwelevision.js and lib to dist root for module imports
+  const schwelevisionSource = path.join(sitePath, 'schwelevision.js');
+  const schwelevisionDest = path.join(distPath, 'schwelevision.js');
+  try {
+    await fs.access(schwelevisionSource);
+    await execAsync('cp "' + schwelevisionSource + '" "' + schwelevisionDest + '"');
+  } catch (err) {
+  }
+
+  const libSource = path.join(sitePath, 'lib');
+  const libDest = path.join(distPath, 'lib');
+  try {
+    await fs.access(libSource);
+    await execAsync('cp -r "' + libSource + '" "' + libDest + '"');
+  } catch (err) {
+  }
+
   console.log('✓ Built ' + siteId);
 }
 
