@@ -1,1189 +1,598 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-phrase-group="pages" data-phrase-key="lorePageTitle">schwepe - Digital Stoner Den Lore 🌿 | Sacred Texts & Creative Alchemy</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="schwepe Digital Dive Bar Lore - Drunk hacker protocols, bar rules, deployment guides, and chaotic network architecture from the meme culturists of the digital dive bar.">
-    <meta name="keywords" content="schwepe digital dive bar, drunk hacker protocols, meme culturists, bar rules, deployment guides, chaotic architecture, dive bar network, internet trolls">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://schwepe.xyz/lore.html">
-
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://schwepe.xyz/lore.html">
-    <meta property="og:title" content="schwepe | Digital Dive Bar Lore 🍻">
-    <meta property="og:description" content="Drunk hacker protocols, bar rules, and chaotic network architecture from the meme culturists of the digital dive bar.">
-    <meta property="og:image" content="https://schwepe.xyz/schwepe/logo.gif">
-    <meta property="og:site_name" content="schwepe Digital Dive Bar">
-
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="schwepe | Digital Dive Bar Lore 🍻">
-    <meta name="twitter:description" content="Drunk hacker protocols, bar rules, and chaotic network architecture from the meme culturists.">
-    <meta name="twitter:image" content="https://schwepe.xyz/schwepe/logo.gif">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Fira+Code:wght@400;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="navbar.css">
-    <link rel="stylesheet" href="lore.css">
-    <!-- 420kit Shared Library -->
-    <!-- Note: phrase-system now loaded from @420kit/shared npm package -->
-    <style>
-        /* Import Dive Bar Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=VT323:wght@400;700&family=Share+Tech+Mono&family=Press+Start+2P&display=swap');
-
-        /* Digital Dive Bar Theme Variables */
-        :root {
-            --dive-bar-bg: #1a1a1a;
-            --dive-bar-dark: #0d0d0d;
-            --beer-foam: #f5e6d3;
-            --dirty-wall: #2d2d2d;
-            --neon-sign: #ff6b35;
-            --neon-blue: #00d4ff;
-            --spilled-beer: #8b6914;
-            --graffiti-red: #ff1744;
-            --terminal-green: #00ff41;
-            --urine-stain: #c4b000;
-            --rust-metal: #8b4513;
-            --bar-stool: #4a3c28;
-            --vomit-green: #7a8c3a;
-            --dark-wood: #3e2723;
-            --smoke-haze: rgba(255, 255, 255, 0.05);
-            --beer-glass: rgba(255, 250, 240, 0.1);
-
-            /* Terminal Colors (kept for compatibility) */
-            --terminal-bg: var(--dive-bar-bg);
-            --terminal-green: var(--terminal-green);
-            --terminal-green-bright: var(--neon-sign);
-            --terminal-amber: var(--spilled-beer);
-            --terminal-red: var(--graffiti-red);
-            --terminal-blue: var(--neon-blue);
-            --text-primary: var(--beer-foam);
-            --text-secondary: var(--beer-foam);
-            --text-dim: var(--rust-metal);
-            --border-color: var(--dirty-wall);
-            --cursor-color: var(--terminal-green);
-            --terminal-bg-alt: var(--dive-bar-dark);
-            --terminal-border: var(--rust-metal);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'VT323', 'Share Tech Mono', 'Press Start 2P', 'JetBrains Mono', monospace;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(139, 105, 20, 0.08) 0%, transparent 50%),
-                linear-gradient(135deg, var(--dive-bar-bg) 0%, var(--dive-bar-dark) 100%);
-            color: var(--beer-foam);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-        }
-
-        /* Beer Stain Overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background:
-                radial-gradient(ellipse at 10% 20%, rgba(139, 105, 20, 0.12) 0%, transparent 40%),
-                radial-gradient(ellipse at 90% 80%, rgba(196, 0, 0, 0.08) 0%, transparent 30%),
-                radial-gradient(ellipse at 50% 50%, rgba(255, 107, 53, 0.05) 0%, transparent 60%);
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .terminal-scanlines {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(255, 107, 53, 0.03),
-                rgba(255, 107, 53, 0.03) 1px,
-                transparent 1px,
-                transparent 2px
-            );
-            pointer-events: none;
-        }
-
-        .terminal-flicker {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: var(--dive-bar-bg);
-            animation: diveBarFlicker 0.2s infinite;
-            pointer-events: none;
-        }
-
-        @keyframes diveBarFlicker {
-            0% { opacity: 0.96; }
-            25% { opacity: 1; }
-            50% { opacity: 0.98; }
-            75% { opacity: 0.97; }
-            100% { opacity: 0.99; }
-        }
-
-        /* Beer Spill Drip Animation */
-        @keyframes beerDrip {
-            0% { transform: translateY(-10px); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(100vh); opacity: 0; }
-        }
-
-        .beer-drip {
-            position: fixed;
-            top: -10px;
-            width: 3px;
-            height: 20px;
-            background: linear-gradient(to bottom, var(--beer-foam), var(--spilled-beer));
-            border-radius: 50%;
-            animation: beerDrip 8s infinite;
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .beer-drip:nth-child(1) { left: 10%; animation-delay: 0s; }
-        .beer-drip:nth-child(2) { left: 30%; animation-delay: 2s; }
-        .beer-drip:nth-child(3) { left: 50%; animation-delay: 4s; }
-        .beer-drip:nth-child(4) { left: 70%; animation-delay: 6s; }
-        .beer-drip:nth-child(5) { left: 90%; animation-delay: 1s; }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .navbar {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, var(--dive-bar-dark), var(--dirty-wall));
-            border: 2px solid var(--neon-sign);
-            border-radius: 12px;
-            padding: 10px 20px;
-            display: flex;
-            gap: 12px;
-            z-index: schwepe;
-            font-family: 'VT323', 'Share Tech Mono', monospace;
-            box-shadow:
-                0 8px 32px rgba(255, 107, 53, 0.3),
-                0 0 20px rgba(0, 212, 255, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            animation: navGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes navGlow {
-            0%, 100% { box-shadow: 0 8px 32px rgba(255, 107, 53, 0.3), 0 0 20px rgba(0, 212, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
-            50% { box-shadow: 0 12px 40px rgba(255, 107, 53, 0.5), 0 0 30px rgba(0, 212, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
-        }
-
-        .navbar a {
-            color: var(--beer-foam);
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 400;
-            font-size: 1rem;
-            position: relative;
-            border: 1px solid var(--rust-metal);
-            background: rgba(139, 69, 19, 0.2);
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            animation: navBounce 2s ease-in-out infinite;
-        }
-
-        @keyframes navBounce {
-            0%, 80%, 100% { transform: translateY(0); }
-            85% { transform: translateY(-3px); }
-            90% { transform: translateY(-1px); }
-            95% { transform: translateY(-2px); }
-        }
-
-        .navbar a:nth-child(odd) { animation-delay: 0.1s; }
-        .navbar a:nth-child(even) { animation-delay: 0.2s; }
-
-        .navbar a:hover {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(0, 212, 255, 0.2));
-            color: var(--neon-sign);
-            border: 2px solid var(--neon-blue);
-            box-shadow:
-                0 0 15px rgba(255, 107, 53, 0.6),
-                0 0 25px rgba(0, 212, 255, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px) scale(1.05);
-            animation: none;
-        }
-
-        .navbar a.active {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.4), rgba(0, 212, 255, 0.3));
-            color: var(--neon-sign);
-            border: 2px solid var(--neon-blue);
-            box-shadow:
-                0 0 20px rgba(255, 107, 53, 0.8),
-                0 0 30px rgba(0, 212, 255, 0.6),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            animation: none;
-        }
-
-        .navbar i {
-            font-size: 16px;
-            color: var(--neon-sign);
-            animation: iconGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes iconGlow {
-            0%, 100% { text-shadow: 0 0 5px var(--neon-sign); }
-            50% { text-shadow: 0 0 15px var(--neon-sign), 0 0 25px var(--neon-blue); }
-        }
-
-        .header {
-            text-align: center;
-            padding: 140px 0 80px;
-            position: relative;
-        }
-
-        .lore-title {
-            font-size: 3.5rem;
-            color: var(--neon-sign);
-            margin-bottom: 20px;
-            text-shadow:
-                0 0 10px var(--neon-sign),
-                2px 2px 4px rgba(0, 0, 0, 0.8),
-                0 0 20px rgba(255, 107, 53, 0.5);
-            line-height: 1.1;
-            font-weight: 700;
-            font-family: 'Press Start 2P', 'VT323', monospace;
-            animation: titleGlitch 4s ease-in-out infinite;
-        }
-
-        @keyframes titleGlitch {
-            0%, 90%, 100% {
-                transform: translate(0);
-                filter: hue-rotate(0deg) brightness(1);
-                text-shadow: 0 0 10px var(--neon-sign), 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 107, 53, 0.5);
-            }
-            91% {
-                transform: translate(-2px, 2px);
-                filter: hue-rotate(90deg) brightness(1.2);
-                text-shadow: 2px 2px 0 var(--graffiti-red), -2px -2px 0 var(--neon-blue);
-            }
-            92% {
-                transform: translate(2px, -2px);
-                filter: hue-rotate(180deg) brightness(0.8);
-                text-shadow: -2px 2px 0 var(--terminal-green), 2px -2px 0 var(--urine-stain);
-            }
-            93% {
-                transform: translate(-1px, 1px);
-                filter: hue-rotate(270deg) brightness(1.1);
-                text-shadow: 1px -1px 0 var(--neon-blue), -1px 1px 0 var(--spilled-beer);
-            }
-        }
-
-        .lore-subtitle {
-            font-size: 1.4rem;
-            color: var(--beer-foam);
-            margin-bottom: 40px;
-            font-weight: 400;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            animation: subtitleFlicker 3s ease-in-out infinite;
-        }
-
-        @keyframes subtitleFlicker {
-            0%, 100% { opacity: 0.9; }
-            50% { opacity: 1; }
-            75% { opacity: 0.95; }
-        }
-
-        .lore-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-            margin-bottom: 80px;
-        }
-
-        .lore-card {
-            background: linear-gradient(135deg, var(--dirty-wall), var(--dive-bar-dark));
-            border: 2px solid var(--rust-metal);
-            border-radius: 15px;
-            padding: 35px;
-            text-decoration: none;
-            color: var(--beer-foam);
-            transition: all 0.4s ease;
-            display: block;
-            position: relative;
-            overflow: hidden;
-            box-shadow:
-                0 8px 32px rgba(255, 107, 53, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-        }
-
-        .lore-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
-            animation: cardScan 5s infinite;
-        }
-
-        @keyframes cardScan {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .lore-card:hover {
-            border: 2px solid var(--neon-sign);
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), var(--dive-bar-dark));
-            box-shadow:
-                0 15px 45px rgba(255, 107, 53, 0.4),
-                0 0 30px rgba(0, 212, 255, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transform: translateY(-5px) rotate(0.5deg);
-        }
-
-        .lore-card-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            display: block;
-            text-align: center;
-            color: var(--neon-sign);
-            text-shadow: 0 0 15px var(--neon-sign);
-            animation: iconGlitch 3s ease-in-out infinite;
-        }
-
-        @keyframes iconGlitch {
-            0%, 85%, 100% {
-                transform: scale(1) rotate(0deg);
-                filter: hue-rotate(0deg);
-            }
-            86% {
-                transform: scale(1.1) rotate(-5deg);
-                filter: hue-rotate(90deg);
-            }
-            87% {
-                transform: scale(0.9) rotate(5deg);
-                filter: hue-rotate(180deg);
-            }
-            88% {
-                transform: scale(1.05) rotate(-2deg);
-                filter: hue-rotate(270deg);
-            }
-            89% {
-                transform: scale(0.95) rotate(2deg);
-                filter: hue-rotate(360deg);
-            }
-        }
-
-        .lore-card h3 {
-            font-size: 1.6rem;
-            margin-bottom: 15px;
-            color: var(--neon-sign);
-            text-align: center;
-            font-weight: 700;
-            font-family: 'VT323', monospace;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        }
-
-        .lore-card p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: var(--beer-foam);
-            text-align: center;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-        }
-
-        .lore-card-topics {
-            list-style: none;
-            text-align: center;
-        }
-
-        .lore-card-topics li {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(139, 69, 19, 0.2));
-            padding: 6px 12px;
-            margin: 4px 0;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            display: inline-block;
-            margin-right: 6px;
-            margin-bottom: 6px;
-            color: var(--beer-foam);
-            border: 1px solid var(--rust-metal);
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(3px);
-            transition: all 0.3s ease;
-        }
-
-        .lore-card-topics li:hover {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(0, 212, 255, 0.2));
-            border: 1px solid var(--neon-sign);
-            transform: scale(1.05);
-        }
-
-        .start-here {
-            text-align: center;
-            margin: 80px 0;
-            position: relative;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--dive-bar-dark), var(--dirty-wall));
-            color: var(--neon-sign);
-            padding: 18px 40px;
-            border: 2px solid var(--neon-sign);
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: all 0.4s ease;
-            font-family: 'VT323', 'Press Start 2P', monospace;
-            cursor: pointer;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            box-shadow:
-                0 8px 25px rgba(255, 107, 53, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .cta-button:hover {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), var(--dive-bar-dark));
-            border: 2px solid var(--neon-blue);
-            color: var(--beer-foam);
-            transform: translateY(-3px) scale(1.05);
-            box-shadow:
-                0 15px 40px rgba(255, 107, 53, 0.5),
-                0 0 30px rgba(0, 212, 255, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            animation: buttonPulse 1s ease-in-out infinite;
-        }
-
-        .cta-button:hover::before {
-            left: 100%;
-        }
-
-        @keyframes buttonPulse {
-            0%, 100% { transform: translateY(-3px) scale(1.05); }
-            50% { transform: translateY(-4px) scale(1.07); }
-        }
-
-        .progress-indicator {
-            text-align: center;
-            margin: 50px 0;
-            font-size: 1.1rem;
-            color: var(--beer-foam);
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-        }
-
-        .progress-dots {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .progress-dot {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: var(--rust-metal);
-            border: 1px solid var(--dirty-wall);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        .progress-dot:hover {
-            background: var(--neon-sign);
-            border: 1px solid var(--neon-blue);
-            box-shadow:
-                0 0 10px rgba(255, 107, 53, 0.8),
-                0 0 20px rgba(0, 212, 255, 0.6),
-                inset 0 1px 2px rgba(0, 0, 0, 0.5);
-            transform: scale(1.2);
-        }
-
-        @keyframes glow {
-            0%, 100% { text-shadow: 0 0 5px rgba(255, 107, 53, 0.5); }
-            50% { text-shadow: 0 0 15px rgba(255, 107, 53, 0.8), 0 0 25px rgba(0, 212, 255, 0.6); }
-        }
-
-        /* Adult Content Warning Styles - Dive Bar Edition */
-        .age-verification-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--dive-bar-bg), var(--dive-bar-dark));
-            backdrop-filter: blur(8px);
-            z-index: 9000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .age-verification-modal {
-            background: linear-gradient(135deg, var(--dirty-wall), var(--dive-bar-dark));
-            border: 2px solid var(--neon-sign);
-            border-radius: 20px;
-            padding: 50px;
-            max-width: 600px;
-            width: 90%;
-            text-align: center;
-            color: var(--beer-foam);
-            box-shadow:
-                0 20px 60px rgba(255, 107, 53, 0.4),
-                0 0 40px rgba(0, 212, 255, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .age-verification-modal h2 {
-            color: var(--neon-sign);
-            font-size: 2rem;
-            margin-bottom: 25px;
-            text-shadow:
-                0 0 15px var(--neon-sign),
-                2px 2px 4px rgba(0, 0, 0, 0.8);
-            font-weight: 700;
-            font-family: 'Press Start 2P', 'VT323', monospace;
-            animation: modalTitleGlitch 3s ease-in-out infinite;
-        }
-
-        @keyframes modalTitleGlitch {
-            0%, 85%, 100% { transform: scale(1); filter: hue-rotate(0deg); }
-            86% { transform: scale(1.05); filter: hue-rotate(90deg); }
-            87% { transform: scale(0.95); filter: hue-rotate(180deg); }
-            88% { transform: scale(1.02); filter: hue-rotate(270deg); }
-            89% { transform: scale(0.98); filter: hue-rotate(360deg); }
-        }
-
-        .age-verification-modal p {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            margin-bottom: 40px;
-            color: var(--beer-foam);
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-        }
-
-        .age-verification-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .enter-button {
-            background: linear-gradient(135deg, var(--dive-bar-dark), var(--dirty-wall));
-            color: var(--neon-sign);
-            border: 2px solid var(--neon-sign);
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            font-family: 'VT323', 'Press Start 2P', monospace;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            box-shadow:
-                0 8px 25px rgba(255, 107, 53, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        }
-
-        .enter-button:hover {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), var(--dive-bar-dark));
-            border: 2px solid var(--neon-blue);
-            color: var(--beer-foam);
-            transform: translateY(-3px) scale(1.05);
-            box-shadow:
-                0 15px 40px rgba(255, 107, 53, 0.5),
-                0 0 30px rgba(0, 212, 255, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        .leave-button {
-            background: linear-gradient(135deg, var(--rust-metal), var(--bar-stool));
-            color: var(--beer-foam);
-            border: 2px solid var(--rust-metal);
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            text-decoration: none;
-            font-family: 'VT323', 'Press Start 2P', monospace;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            box-shadow:
-                0 5px 15px rgba(139, 69, 19, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        }
-
-        .leave-button:hover {
-            background: linear-gradient(135deg, rgba(196, 0, 0, 0.3), var(--rust-metal));
-            border: 2px solid var(--graffiti-red);
-            color: var(--neon-sign);
-            transform: translateY(-2px) scale(1.03);
-            box-shadow:
-                0 10px 25px rgba(196, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        .content-blurred {
-            filter: blur(5px);
-            pointer-events: none;
-            user-select: none;
-        }
-
-        .glow-text {
-            animation: glow 2s ease-in-out infinite;
-        }
-
-        .back-button-container {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .back-button {
-            background: linear-gradient(135deg, var(--dive-bar-dark), var(--dirty-wall));
-            color: var(--neon-sign);
-            border: 2px solid var(--neon-sign);
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            font-family: 'VT323', 'Press Start 2P', monospace;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            box-shadow:
-                0 6px 20px rgba(255, 107, 53, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .back-button:hover {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), var(--dive-bar-dark));
-            border: 2px solid var(--neon-blue);
-            color: var(--beer-foam);
-            transform: translateY(-2px) scale(1.05);
-            box-shadow:
-                0 10px 30px rgba(255, 107, 53, 0.5),
-                0 0 20px rgba(0, 212, 255, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        .lore-card-mood {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(139, 69, 19, 0.3));
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--neon-sign);
-            border: 1px solid var(--rust-metal);
-            z-index: 15;
-            pointer-events: none;
-            font-weight: 700;
-            font-family: 'VT323', monospace;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(3px);
-        }
-
-        @media (max-width: 768px) {
-            .navbar {
-                flex-wrap: wrap;
-                max-width: 90%;
-                gap: 10px;
-            }
-
-            .navbar a {
-                padding: 8px 12px;
-                font-size: 14px;
-            }
-
-            .lore-title {
-                font-size: 2.5rem;
-            }
-
-            .lore-subtitle {
-                font-size: 1.3rem;
-            }
-
-            .header {
-                padding: 100px 0 40px;
-            }
-
-            .lore-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .lore-card {
-                padding: 30px 20px;
-            }
-
-            .cta-button {
-                padding: 15px 30px;
-                font-size: 1rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="terminal-scanlines"></div>
-    <div class="terminal-flicker"></div>
-
-    <!-- Beer Drip Animations -->
-    <div class="beer-drip"></div>
-    <div class="beer-drip"></div>
-    <div class="beer-drip"></div>
-    <div class="beer-drip"></div>
-    <div class="beer-drip"></div>
-
-    <!-- Age Verification Overlay -->
-    <div id="age-verification" class="age-verification-overlay">
-        <div class="age-verification-modal">
-            <h2 data-phrase-group="ageVerification" data-phrase-key="ageVerificationTitle">🍻 ./age_check.sh --beer_required</h2>
-            <p>This digital dive bar contains drunk hackers, chaotic energy, questionable decisions, and memes that may not be compatible with sober minds. By proceeding, you confirm that you're old enough to handle the chaos and won't blame us for poor life choices. Bring your own liver protection.</p>
-            <div class="age-verification-buttons">
-                <button onclick="document.getElementById('age-verification').style.display='none'; document.getElementById('main-content').classList.remove('content-blurred'); localStorage.setItem('age_verified', 'true');" class="enter-button">🍺 ./enter_bar.sh --drunk</button>
-                <a href="https://google.com" class="leave-button">🚪 ./sober_exit.sh</a>
-            </div>
-        </div>
-    </div>
-
-    <div id="main-content" class="content-blurred">
-        <div class="terminal-scanlines"></div>
-        <div class="terminal-flicker"></div>
-
-        <!-- Navigation -->
-        <nav class="navbar">
-            <a href="index.html">
-                <i class="fas fa-cannabis"></i>
-                🌿 ./home.sh
-            </a>
-            <a href="lore.html" class="active">
-                <i class="fas fa-scroll"></i>
-                📜 ./sacred_texts.txt
-            </a>
-            <a href="images-thread.html">
-                <i class="fas fa-images"></i>
-                🖼️ ./ls creations/
-            </a>
-            <a href="videos-thread.html">
-                <i class="fas fa-tv"></i>
-                📺 ./play_visuals.sh
-            </a>
-            <a href="https://420360.xyz/" target="_blank">
-                <i class="fas fa-gamepad"></i>
-                🎮 ./argcade.sh
-            </a>
-          </nav>
-
-        <div class="container">
-        <div class="header">
-            <h1 class="lore-title glow-text" id="main-title">🌿 ./sacred_texts --all</h1>
-            <p class="lore-subtitle" id="main-subtitle">Digital Stoner Den Chronicles & Creative Alchemy</p>
-        </div>
-
-        <div id="dynamic-lore-nav"></div>
-
-        <div id="lore-chapters-container">
-        </div>
-
-        <div class="start-here">
-            <p style="font-size: 1.2rem; margin-bottom: 30px; color: var(--beer-foam);">
-                New to the digital dive bar? <span id="random-lore-snippet">Loading bar wisdom...</span>
-            </p>
-            <a href="#intro" class="cta-button" id="start-journey">
-                🍺 ./read_protocols.sh
-            </a>
-        </div>
-    </div>
-    </div>
-
-    <script>
-        // Simple Lore Engine Implementation
-        window.loreEngine = {
-            loreData: {
-                chapters: [
-                    {
-                        id: 'intro',
-                        title: 'Digital Stoner Den Chronicles',
-                        subtitle: 'Welcome to the Dive Bar',
-                        icon: '🌿',
-                        mood: 'chaotic',
-                        theme: 'terminal',
-                        content: [
-                            {
-                                type: 'text',
-                                text: 'Welcome to the Digital Stoner Den, where reality blurs and memes come alive. This sacred space exists at the intersection of chaos and creativity, where drunk hackers commune with digital spirits.'
-                            },
-                            {
-                                type: 'text',
-                                text: 'Here, protocols are written in beer stains and firewalls run on pure chaos. Enter at your own risk, for what you find here may fundamentally alter your perception of digital reality.'
-                            }
-                        ]
-                    },
-                    {
-                        id: 'protocols',
-                        title: 'Bar Rules & Protocols',
-                        subtitle: 'The Sacred Commandments',
-                        icon: '📜',
-                        mood: 'serious',
-                        theme: 'terminal',
-                        content: [
-                            {
-                                type: 'text',
-                                text: 'Protocol 1: Thou shalt not question the meme magic.'
-                            },
-                            {
-                                type: 'text',
-                                text: 'Protocol 2: All bugs are features in disguise.'
-                            },
-                            {
-                                type: 'text',
-                                text: 'Protocol 3: If it works, don\'t touch it. If it\'s broken, add more chaos.'
-                            },
-                            {
-                                type: 'text',
-                                text: 'Protocol 4: The answer is always 42, unless it\'s schwepe.'
-                            },
-                            {
-                                type: 'text',
-                                text: 'Protocol 5: Leave your sanity at the door, collect it on exit if available.'
-                            }
-                        ]
-                    },
-                    {
-                        id: 'alchemy',
-                        title: 'Creative Alchemy',
-                        subtitle: 'Transforming Chaos into Art',
-                        icon: '🔮',
-                        mood: 'mystical',
-                        theme: 'terminal',
-                        content: [
-                            {
-                                type: 'text',
-                                text: 'In the digital crucible of our stoner den, we practice the ancient art of creative alchemy. Taking the lead of chaos and transmuting it into pure, unadulterated digital gold.'
-                            },
-                            {
-                                type: 'text',
-                                text: 'Every failed deployment becomes a learning opportunity. Every bug becomes a feature. Every moment of confusion sparks a moment of brilliance. This is the way of the digital alchemist.'
-                            }
-                        ]
-                    },
-                    {
-                        id: 'network',
-                        title: 'Chaotic Network Architecture',
-                        subtitle: 'Building on Shaky Foundations',
-                        icon: '🕸️',
-                        mood: 'technical',
-                        theme: 'terminal',
-                        content: [
-                            {
-                                type: 'text',
-                                text: 'Our network architecture defies conventional wisdom. Where others see chaos, we see opportunity. Where others find risk, we discover potential.'
-                            },
-                            {
-                                type: 'text',
-                                text: 'The digital dive bar operates on principles of quantum uncertainty and stochastic resonance. If you don\'t understand it, it\'s working correctly.'
-                            }
-                        ]
-                    },
-                    {
-                        id: 'meme_magic',
-                        title: 'Meme Magic & Digital Spirits',
-                        subtitle: 'The Invisible Forces',
-                        icon: '👻',
-                        mood: 'ethereal',
-                        theme: 'terminal',
-                        content: [
-                            {
-                                type: 'text',
-                                text: 'Meme magic is real, and it flows through the digital veins of our underground network. Each meme carries with it the power to reshape reality itself.'
-                            },
-                            {
-                                type: 'text',
-                                text: 'The digital spirits that inhabit our servers communicate through error messages, random crashes, and inexplicable bugs. Learning to read their language is the first step toward enlightenment.'
-                            }
-                        ]
-                    }
-                ]
-            },
-
-            getAllChapters: function() {
-                return this.loreData.chapters;
-            },
-
-            getChapter: function(id) {
-                return this.loreData.chapters.find(chapter => chapter.id === id);
-            },
-
-            getThemeConfig: function(theme) {
-                const themes = {
-                    terminal: {
-                        primaryColor: '#00ff41',
-                        secondaryColor: '#ff6b35',
-                        backgroundColor: '#0d0d0d'
-                    },
-                    mystical: {
-                        primaryColor: '#9b59b6',
-                        secondaryColor: '#3498db',
-                        backgroundColor: '#1a1a2e'
-                    }
-                };
-                return themes[theme] || themes.terminal;
-            },
-
-            getRandomLoreSnippet: function() {
-                const snippets = [
-                    "In chaos, we find clarity. In confusion, we discover truth.",
-                    "The only constant in the digital dive bar is change.",
-                    "Every error message is a poem from the machine spirits.",
-                    "Debugging is like being a detective in a crime movie where you are also the murderer.",
-                    "The best code is no code at all, but beer-stained napkin sketches work too.",
-                    "In the beginning was the command line, and it was good.",
-                    "To err is human, but to really foul things up requires a computer.",
-                    "There are only 10 types of people: those who understand binary and those who don't.",
-                    "The Internet wasn\'t built on privacy—it was built on sharing.",
-                    "In the digital stoner den, even the bugs have bugs."
-                ];
-                return snippets[Math.floor(Math.random() * snippets.length)];
-            },
-
-            generateLoreHTML: function(chapterId) {
-                const chapter = this.getChapter(chapterId);
-                if (!chapter) return '<p>Chapter not found.</p>';
-
-                const contentHTML = chapter.content.map(section => {
-                    if (section.type === 'text') {
-                        return `<p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 20px; color: var(--beer-foam); text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);">${section.text}</p>`;
-                    }
-                    return '';
-                }).join('');
-
-                return `
-                    <div style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
-                        <h2 style="font-size: 2.5rem; color: var(--neon-sign); margin-bottom: 20px; text-align: center; text-shadow: 0 0 10px var(--neon-sign), 2px 2px 4px rgba(0, 0, 0, 0.8);">
-                            ${chapter.icon} ${chapter.title}
-                        </h2>
-                        <p style="font-size: 1.4rem; color: var(--beer-foam); margin-bottom: 40px; text-align: center; font-style: italic;">
-                            ${chapter.subtitle}
-                        </p>
-                        <div style="background: linear-gradient(135deg, var(--dirty-wall), var(--dive-bar-dark)); border: 2px solid var(--rust-metal); border-radius: 15px; padding: 40px; backdrop-filter: blur(5px);">
-                            ${contentHTML}
-                        </div>
-                    </div>
-                `;
-            }
-        };
-
-        // enterSite function is now defined globally above
-
-        // Check if user is already verified
-        function checkAgeVerification() {
-            const isVerified = localStorage.getItem('age_verified') === 'true';
-
-            if (isVerified) {
-                document.getElementById('age-verification').style.display = 'none';
-                document.getElementById('main-content').classList.remove('content-blurred');
-            }
-        }
-
-        // Global enterSite function to ensure consistency
-        function enterSite() {
-            document.getElementById('age-verification').style.display = 'none';
-            document.getElementById('main-content').classList.remove('content-blurred');
-            // Use localStorage instead of cookies for file:// protocol compatibility
-            localStorage.setItem('age_verified', 'true');
-        }
-        // Stats function
-        function showStats() {
-            const statsContent = `
-                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center;">
-                    <div style="background: var(--terminal-bg-alt); border: 1px solid var(--terminal-green); border-radius: 4px; padding: 30px; max-width: 500px; width: 90%; text-align: center; color: var(--text-primary); box-shadow: 0 0 20px rgba(0, 255, 0, 0.2); font-family: 'JetBrains Mono', monospace;">
-                        <h2 style="margin-bottom: 20px; color: var(--terminal-green); font-size: 1.5rem; font-weight: 600;">⚡ System Statistics ⚡</h2>
-                        <div style="font-size: 1rem; line-height: 1.8; color: var(--text-secondary);">
-                            <p>🔗 Network Nodes: <span style="color: var(--terminal-green); font-weight: 600;">247,420</span></p>
-                            <p>🧠 Consciousness Index: <span style="color: var(--terminal-green); font-weight: 600;">∞</span></p>
-                            <p>📊 Data Flow Rate: <span style="color: var(--terminal-green); font-weight: 600;">77.7 TB/s</span></p>
-                            <p>⚛️ Quantum Coherence: <span style="color: var(--terminal-green); font-weight: 600;">99.7%</span></p>
-                            <p>🌐 Active Connections: <span style="color: var(--terminal-green); font-weight: 600;">∞</span></p>
-                            <p>🔥 Protocol Status: <span style="color: #00ff00; font-weight: 600;">ACTIVE</span></p>
-                        </div>
-                        <button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; padding: 10px 20px; background: var(--terminal-bg); color: var(--terminal-green); border: 1px solid var(--terminal-green); border-radius: 4px; font-weight: 600; cursor: pointer; font-family: 'JetBrains Mono', monospace;">$ exit</button>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', statsContent);
-        }
-
-        // Load shared navbar
-        
-        // Initialize dynamic lore system
-        async function initializeLoreSystem() {
-            try {
-                // Wait for lore engine to initialize
-                if (window.loreEngine && window.loreEngine.loreData) {
-                    renderDynamicLore();
-                } else {
-                    // Wait a bit and try again
-                    setTimeout(initializeLoreSystem, 100);
-                }
-            } catch (error) {
-                console.error('❌ Error initializing lore system:', error);
-            }
-        }
-
-        function renderDynamicLore() {
-            const chapters = window.loreEngine.getAllChapters();
-            const container = document.getElementById('lore-chapters-container');
-            const navContainer = document.getElementById('dynamic-lore-nav');
-
-            if (!container || !navContainer) return;
-
-            // Render navigation
-            navContainer.innerHTML = `
-                <div class="progress-indicator">
-                    <p>📁 System Protocols (${chapters.length} Modules)</p>
-                    <div class="progress-dots">
-                        ${chapters.map((chapter, index) =>
-                            `<div class="progress-dot" title="${chapter.title}" data-chapter="${chapter.id}" onclick="scrollToChapter('${chapter.id}')"></div>`
-                        ).join('')}
-                    </div>
-                </div>
-            `;
-
-            // Render chapter cards
-            container.innerHTML = chapters.map(chapter => {
-                const theme = window.loreEngine.getThemeConfig(chapter.theme);
-                return `
-                    <a href="#${chapter.id}" class="lore-card" data-chapter="${chapter.id}" onclick="scrollToChapter('${chapter.id}')">
-                        <span class="lore-card-icon">${chapter.icon}</span>
-                        <h3>${chapter.title}</h3>
-                        <p>${chapter.subtitle}</p>
-                        <div class="lore-card-mood">${chapter.mood}</div>
-                    </a>
-                `;
-            }).join('');
-
-            // Update random lore snippet
-            updateRandomLoreSnippet();
-        }
-
-        function scrollToChapter(chapterId) {
-            const chapter = window.loreEngine.getChapter(chapterId);
-            if (chapter) {
-                // Store chapter data and navigate to chapter page
-                localStorage.setItem('currentChapter', JSON.stringify(chapter));
-                window.location.href = `#${chapterId}`;
-                renderChapterInline(chapterId);
-            }
-        }
-
-        function renderChapterInline(chapterId) {
-            const chapter = window.loreEngine.getChapter(chapterId);
-            if (!chapter) return;
-
-            const container = document.getElementById('lore-chapters-container');
-            if (!container) return;
-
-            // Replace the chapter cards with full chapter content
-            container.innerHTML = window.loreEngine.generateLoreHTML(chapterId);
-
-            // Add back button
-            const backButton = document.createElement('div');
-            backButton.className = 'back-button-container';
-            backButton.innerHTML = `
-                <button onclick="showAllChapters()" class="back-button">
-                    <i class="fas fa-arrow-left"></i> Back to All Chapters
-                </button>
-            `;
-            container.insertBefore(backButton, container.firstChild);
-        }
-
-        function showAllChapters() {
-            // Remove hash and re-render all chapters
-            history.pushState("", document.title, window.location.pathname + window.location.search);
-            renderDynamicLore();
-        }
-
-        
-        function updateRandomLoreSnippet() {
-            const snippet = window.loreEngine.getRandomLoreSnippet();
-            const snippetElement = document.getElementById('random-lore-snippet');
-            if (snippetElement && snippet) {
-                snippetElement.textContent = snippet;
-            }
-        }
-
-        // Set active navigation and load navbar
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check age verification first
-            checkAgeVerification();
-
-            
-            // Initialize lore system
-            setTimeout(initializeLoreSystem, 500);
-
-            // Update random lore snippet every 10 seconds
-            setInterval(updateRandomLoreSnippet, 10000);
-
-            // Random lore snippet click handler
-            document.getElementById('random-lore-snippet')?.addEventListener('click', updateRandomLoreSnippet);
-        });
-    </script>
-</body>
-</html>
+    1→    1→<!DOCTYPE html>
+    2→    2→<html lang="en">
+    3→    3→<head>
+    4→    4→    <meta charset="UTF-8">
+    <meta name="site-id" content="{{ id }}">
+    5→    5→    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    6→    6→    <title data-phrase-group="pages" data-phrase-key="lorePageTitle">Schwepe Lore - The Complete Saga</title>
+    7→    7→    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    8→    8→
+    9→    9→    <!-- SEO Meta Tags -->
+   10→   10→    <meta name="description" content="Discover the complete Schwepe universe lore - Interactive stories, degen chronicles, and the epic saga of 247420 culture.">
+   11→   11→    <meta name="keywords" content="schwepe lore, degen stories, crypto chronicles, 247420 saga, interactive lore, meme culture">
+   12→   12→    <meta name="robots" content="index, follow">
+   13→   13→    <link rel="canonical" href="https://schwepe.247420.xyz/lore.html">
+   14→   14→
+   15→   15→    <!-- Open Graph Meta Tags -->
+   16→   16→    <meta property="og:type" content="website">
+   17→   17→    <meta property="og:url" content="https://schwepe.247420.xyz/lore.html">
+   18→   18→    <meta property="og:title" content="Schwepe Lore - The Complete Degen Saga">
+   19→   19→    <meta property="og:description" content="Discover the complete Schwepe universe lore - Interactive stories and the epic saga of 247420 culture.">
+   20→   20→    <meta property="og:image" content="https://schwepe.247420.xyz/site-assets/media/images/schwepe.gif">
+   21→   21→    <meta property="og:site_name" content="Schwepe's Meme Dimension">
+   22→   22→
+   23→   23→    <!-- Twitter Card Meta Tags -->
+   24→   24→    <meta name="twitter:card" content="summary_large_image">
+   25→   25→    <meta name="twitter:title" content="Schwepe Lore - The Complete Degen Saga">
+   26→   26→    <meta name="twitter:description" content="Discover the complete Schwepe universe lore - Interactive stories and the epic saga of 247420 culture.">
+   27→   27→    <meta name="twitter:image" content="https://schwepe.247420.xyz/site-assets/media/images/schwepe.gif">
+   28→   28→    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+   29→   29→    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+   30→   30→    <link rel="stylesheet" href="/site-assets/styles/navbar.css">
+   31→   31→    <link rel="stylesheet" href="/lore.css">
+   32→   32→    <script src="/static/lore-engine.js" type="module"></script>
+   33→   33→    <style>
+   34→   34→        * {
+   35→   35→            margin: 0;
+   36→   36→            padding: 0;
+   37→   37→            box-sizing: border-box;
+   38→   38→        }
+   39→   39→
+   40→   40→        body {
+   41→   41→            font-family: 'Fredoka', sans-serif;
+   42→   42→            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+   43→   43→            min-height: 100vh;
+   44→   44→            overflow-x: hidden;
+   45→   45→            position: relative;
+   46→   46→            color: #ffffff;
+   47→   47→        }
+   48→   48→
+   49→   49→        .animated-bg {
+   50→   50→            position: fixed;
+   51→   51→            top: 0;
+   52→   52→            left: 0;
+   53→   53→            width: 100%;
+   54→   54→            height: 100%;
+   55→   55→            z-index: -1;
+   56→   56→            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+   57→   57→            animation: bgShift 15s ease-in-out infinite;
+   58→   58→        }
+   59→   59→
+   60→   60→        @keyframes bgShift {
+   61→   61→            0%, 100% { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); }
+   62→   62→            25% { background: linear-gradient(135deg, #16a085 0%, #27ae60 100%); }
+   63→   63→            50% { background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); }
+   64→   64→            75% { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); }
+   65→   65→        }
+   66→   66→
+   67→   67→        .container {
+   68→   68→            max-width: 1000px;
+   69→   69→            margin: 0 auto;
+   70→   70→            padding: 0 20px;
+   71→   71→        }
+   72→   72→
+   73→   73→  
+   74→   74→        .header {
+   75→   75→            text-align: center;
+   76→   76→            padding: 120px 0 60px;
+   77→   77→        }
+   78→   78→
+   79→   79→        .lore-title {
+   80→   80→            font-size: 4rem;
+   81→   81→            color: #fff;
+   82→   82→            margin-bottom: 20px;
+   83→   83→            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+   84→   84→            line-height: 1.1;
+   85→   85→        }
+   86→   86→
+   87→   87→        .lore-subtitle {
+   88→   88→            font-size: 1.8rem;
+   89→   89→            color: rgba(255, 255, 255, 0.9);
+   90→   90→            margin-bottom: 40px;
+   91→   91→            font-weight: 400;
+   92→   92→        }
+   93→   93→
+   94→   94→        .lore-grid {
+   95→   95→            display: grid;
+   96→   96→            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+   97→   97→            gap: 30px;
+   98→   98→            margin-bottom: 60px;
+   99→   99→        }
+  100→  100→
+  101→  101→        .lore-card {
+  102→  102→            background: rgba(255, 255, 255, 0.1);
+  103→  103→            backdrop-filter: blur(15px);
+  104→  104→            border-radius: 25px;
+  105→  105→            padding: 40px 30px;
+  106→  106→            border: 1px solid rgba(255, 255, 255, 0.2);
+  107→  107→            text-decoration: none;
+  108→  108→            color: #fff;
+  109→  109→            transition: all 0.3s ease;
+  110→  110→            position: relative !important;
+  111→  111→            display: block !important;
+  112→  112→            overflow: hidden !important;
+  113→  113→        }
+  114→  114→
+  115→  115→        .lore-card::before {
+  116→  116→            content: '';
+  117→  117→            position: absolute;
+  118→  118→            top: 0;
+  119→  119→            left: -100%;
+  120→  120→            width: 100%;
+  121→  121→            height: 100%;
+  122→  122→            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  123→  123→            transition: left 0.5s ease;
+  124→  124→        }
+  125→  125→
+  126→  126→        .lore-card:hover::before {
+  127→  127→            left: 100%;
+  128→  128→        }
+  129→  129→
+  130→  130→        .lore-card:hover {
+  131→  131→            transform: translateY(-10px);
+  132→  132→            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  133→  133→            border-color: rgba(240, 147, 251, 0.5);
+  134→  134→        }
+  135→  135→
+  136→  136→        .lore-card-icon {
+  137→  137→            font-size: 3rem;
+  138→  138→            margin-bottom: 20px;
+  139→  139→            display: block;
+  140→  140→            text-align: center;
+  141→  141→        }
+  142→  142→
+  143→  143→        .lore-card h3 {
+  144→  144→            font-size: 1.8rem;
+  145→  145→            margin-bottom: 15px;
+  146→  146→            color: #f093fb;
+  147→  147→            text-align: center;
+  148→  148→        }
+  149→  149→
+  150→  150→        .lore-card p {
+  151→  151→            font-size: 1.1rem;
+  152→  152→            line-height: 1.6;
+  153→  153→            color: rgba(255, 255, 255, 0.9);
+  154→  154→            text-align: center;
+  155→  155→            margin-bottom: 20px;
+  156→  156→        }
+  157→  157→
+  158→  158→        .lore-card-topics {
+  159→  159→            list-style: none;
+  160→  160→            text-align: center;
+  161→  161→        }
+  162→  162→
+  163→  163→        .lore-card-topics li {
+  164→  164→            background: rgba(255, 255, 255, 0.1);
+  165→  165→            padding: 8px 15px;
+  166→  166→            margin: 5px 0;
+  167→  167→            border-radius: 20px;
+  168→  168→            font-size: 0.9rem;
+  169→  169→            display: inline-block;
+  170→  170→            margin-right: 8px;
+  171→  171→            margin-bottom: 8px;
+  172→  172→        }
+  173→  173→
+  174→  174→        .start-here {
+  175→  175→            text-align: center;
+  176→  176→            margin: 60px 0;
+  177→  177→        }
+  178→  178→
+  179→  179→        .cta-button {
+  180→  180→            display: inline-block;
+  181→  181→            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  182→  182→            color: #fff;
+  183→  183→            padding: 20px 40px;
+  184→  184→            border-radius: 30px;
+  185→  185→            text-decoration: none;
+  186→  186→            font-weight: 600;
+  187→  187→            font-size: 1.2rem;
+  188→  188→            transition: all 0.3s ease;
+  189→  189→            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+  190→  190→        }
+  191→  191→
+  192→  192→        .cta-button:hover {
+  193→  193→            transform: translateY(-5px);
+  194→  194→            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
+  195→  195→        }
+  196→  196→
+  197→  197→        .progress-indicator {
+  198→  198→            text-align: center;
+  199→  199→            margin: 40px 0;
+  200→  200→            font-size: 1.1rem;
+  201→  201→            color: rgba(255, 255, 255, 0.8);
+  202→  202→        }
+  203→  203→
+  204→  204→        .progress-dots {
+  205→  205→            display: flex;
+  206→  206→            justify-content: center;
+  207→  207→            gap: 15px;
+  208→  208→            margin-top: 20px;
+  209→  209→        }
+  210→  210→
+  211→  211→        .progress-dot {
+  212→  212→            width: 15px;
+  213→  213→            height: 15px;
+  214→  214→            border-radius: 50%;
+  215→  215→            background: rgba(255, 255, 255, 0.3);
+  216→  216→            transition: all 0.3s ease;
+  217→  217→        }
+  218→  218→
+  219→  219→        .progress-dot:hover {
+  220→  220→            background: rgba(240, 147, 251, 0.8);
+  221→  221→            transform: scale(1.2);
+  222→  222→        }
+  223→  223→
+  224→  224→        @keyframes glow {
+  225→  225→            0%, 100% { text-shadow: 0 0 10px rgba(240, 147, 251, 0.5); }
+  226→  226→            50% { text-shadow: 0 0 20px rgba(240, 147, 251, 0.8); }
+  227→  227→        }
+  228→  228→
+  229→  229→        /* Adult Content Warning Styles */
+  230→  230→        .age-verification-overlay {
+  231→  231→            position: fixed;
+  232→  232→            top: 0;
+  233→  233→            left: 0;
+  234→  234→            width: 100%;
+  235→  235→            height: 100%;
+  236→  236→            background: rgba(0, 0, 0, 0.95);
+  237→  237→            backdrop-filter: blur(20px);
+  238→  238→            z-index: 9000;
+  239→  239→            display: flex;
+  240→  240→            justify-content: center;
+  241→  241→            align-items: center;
+  242→  242→        }
+  243→  243→
+  244→  244→        .age-verification-modal {
+  245→  245→            background: rgba(0, 0, 0, 0.9);
+  246→  246→            border: 2px solid rgba(240, 147, 251, 0.5);
+  247→  247→            border-radius: 20px;
+  248→  248→            padding: 40px;
+  249→  249→            max-width: 500px;
+  250→  250→            width: 90%;
+  251→  251→            text-align: center;
+  252→  252→            color: white;
+  253→  253→            box-shadow: 0 0 50px rgba(240, 147, 251, 0.3);
+  254→  254→        }
+  255→  255→
+  256→  256→        .age-verification-modal h2 {
+  257→  257→            color: #f093fb;
+  258→  258→            font-size: 2rem;
+  259→  259→            margin-bottom: 20px;
+  260→  260→            text-shadow: 0 0 20px rgba(240, 147, 251, 0.5);
+  261→  261→        }
+  262→  262→
+  263→  263→        .age-verification-modal p {
+  264→  264→            font-size: 1.1rem;
+  265→  265→            line-height: 1.6;
+  266→  266→            margin-bottom: 30px;
+  267→  267→            color: rgba(255, 255, 255, 0.9);
+  268→  268→        }
+  269→  269→
+  270→  270→        .age-verification-buttons {
+  271→  271→            display: flex;
+  272→  272→            gap: 20px;
+  273→  273→            justify-content: center;
+  274→  274→            flex-wrap: wrap;
+  275→  275→        }
+  276→  276→
+  277→  277→        .enter-button {
+  278→  278→            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  279→  279→            color: white;
+  280→  280→            border: none;
+  281→  281→            padding: 15px 30px;
+  282→  282→            border-radius: 15px;
+  283→  283→            font-size: 1.2rem;
+  284→  284→            font-weight: 600;
+  285→  285→            cursor: pointer;
+  286→  286→            transition: all 0.3s ease;
+  287→  287→            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+  288→  288→        }
+  289→  289→
+  290→  290→        .enter-button:hover {
+  291→  291→            transform: translateY(-3px);
+  292→  292→            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
+  293→  293→        }
+  294→  294→
+  295→  295→        .leave-button {
+  296→  296→            background: rgba(255, 255, 255, 0.1);
+  297→  297→            color: white;
+  298→  298→            border: 1px solid rgba(255, 255, 255, 0.3);
+  299→  299→            padding: 15px 30px;
+  300→  300→            border-radius: 15px;
+  301→  301→            font-size: 1.2rem;
+  302→  302→            font-weight: 600;
+  303→  303→            cursor: pointer;
+  304→  304→            transition: all 0.3s ease;
+  305→  305→            text-decoration: none;
+  306→  306→        }
+  307→  307→
+  308→  308→        .leave-button:hover {
+  309→  309→            background: rgba(255, 255, 255, 0.2);
+  310→  310→            transform: translateY(-3px);
+  311→  311→        }
+  312→  312→
+  313→  313→        .content-blurred {
+  314→  314→            filter: blur(10px);
+  315→  315→            pointer-events: none;
+  316→  316→            user-select: none;
+  317→  317→        }
+  318→  318→
+  319→  319→        .glow-text {
+  320→  320→            animation: glow 2s ease-in-out infinite;
+  321→  321→        }
+  322→  322→
+  323→  323→        .lore-card-mood {
+  324→  324→            position: absolute !important;
+  325→  325→            top: 15px !important;
+  326→  326→            right: 15px !important;
+  327→  327→            background: rgba(0, 0, 0, 0.8) !important;
+  328→  328→            padding: 4px 10px !important;
+  329→  329→            border-radius: 12px !important;
+  330→  330→            font-size: 0.7rem !important;
+  331→  331→            text-transform: uppercase !important;
+  332→  332→            letter-spacing: 0.5px !important;
+  333→  333→            backdrop-filter: blur(8px) !important;
+  334→  334→            color: #f093fb !important;
+  335→  335→            border: 1px solid rgba(240, 147, 251, 0.4) !important;
+  336→  336→            z-index: 15 !important;
+  337→  337→            pointer-events: none !important;
+  338→  338→            font-weight: 600 !important;
+  339→  339→            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  340→  340→        }
+  341→  341→
+  342→  342→        @media (max-width: 768px) {
+  343→  343→
+  344→  344→            .lore-title {
+  345→  345→                font-size: 2.5rem;
+  346→  346→            }
+  347→  347→
+  348→  348→            .lore-subtitle {
+  349→  349→                font-size: 1.3rem;
+  350→  350→            }
+  351→  351→
+  352→  352→            .header {
+  353→  353→                padding: 100px 0 40px;
+  354→  354→            }
+  355→  355→
+  356→  356→            .lore-grid {
+  357→  357→                grid-template-columns: 1fr;
+  358→  358→                gap: 20px;
+  359→  359→            }
+  360→  360→
+  361→  361→            .lore-card {
+  362→  362→                padding: 30px 20px;
+  363→  363→            }
+  364→  364→
+  365→  365→            .cta-button {
+  366→  366→                padding: 15px 30px;
+  367→  367→                font-size: 1rem;
+  368→  368→            }
+  369→  369→        }
+  370→  370→    </style>
+  371→  371→</head>
+  372→  372→<body>
+  373→  373→    <!-- Age Verification Overlay -->
+  374→  374→    <div id="age-verification" class="age-verification-overlay">
+  375→  375→        <div class="age-verification-modal">
+  376→  376→            <h2 data-phrase-group="ageVerification" data-phrase-key="ageVerificationTitle">⚠️ Age Verification Required</h2>
+  377→  377→            <p>This content contains mature themes, strong language, and existential dread that may not be suitable for all audiences. By proceeding, you confirm that you are 18+ years of age and mentally prepared for the financial trauma ahead.</p>
+  378→  378→            <div class="age-verification-buttons">
+  379→  379→                <button onclick="enterSite()" class="enter-button">I'm 18+ and 99% Ape</button>
+  380→  380→                <a href="https://google.com" class="leave-button">Take Me to Safety</a>
+  381→  381→            </div>
+  382→  382→        </div>
+  383→  383→    </div>
+  384→  384→
+  385→  385→    <div id="main-content" class="content-blurred">
+  386→  386→        <div class="animated-bg"></div>
+  387→  387→
+  388→  388→        <!-- Navigation -->
+  389→  389→        <div id="navbar-container"></div>
+  390→  390→
+  391→  391→        <div class="container">
+  392→  392→        <div class="header">
+  393→  393→            <h1 class="lore-title glow-text" id="main-title">🚀🐸 Schwepe Lore Library 🐸🚀</h1>
+  394→  394→            <p class="lore-subtitle" id="main-subtitle">Choose Your Chapter in the Saga of 247420</p>
+  395→  395→        </div>
+  396→  396→
+  397→  397→        <div id="dynamic-lore-nav"></div>
+  398→  398→
+  399→  399→        <div id="lore-chapters-container">
+  400→  400→        </div>
+  401→  401→
+  402→  402→        <div class="start-here">
+  403→  403→            <p style="font-size: 1.3rem; margin-bottom: 30px; color: rgba(255, 255, 255, 0.9);">
+  404→  404→                New to the Schwepe universe? <span id="random-lore-snippet">Click to discover your destiny...</span>
+  405→  405→            </p>
+  406→  406→            <a href="#intro" class="cta-button" id="start-journey">
+  407→  407→                <i class="fas fa-play"></i> Begin Your Journey
+  408→  408→            </a>
+  409→  409→        </div>
+  410→  410→    </div>
+  411→  411→    </div>
+  412→  412→
+  413→  413→    <script>
+  414→  414→        // enterSite function is now defined globally above
+  415→  415→
+  416→  416→        // Check if user is already verified
+  417→  417→        function checkAgeVerification() {
+  418→  418→            const isVerified = localStorage.getItem('age_verified') === 'true';
+  419→  419→
+  420→  420→            if (isVerified) {
+  421→  421→                document.getElementById('age-verification').style.display = 'none';
+  422→  422→                document.getElementById('main-content').classList.remove('content-blurred');
+  423→  423→            }
+  424→  424→        }
+  425→  425→
+  426→  426→        // Global enterSite function to ensure consistency
+  427→  427→        function enterSite() {
+  428→  428→            document.getElementById('age-verification').style.display = 'none';
+  429→  429→            document.getElementById('main-content').classList.remove('content-blurred');
+  430→  430→            // Use localStorage instead of cookies for file:// protocol compatibility
+  431→  431→            localStorage.setItem('age_verified', 'true');
+  432→  432→        }
+  433→  433→        // Stats function
+  434→  434→        function showStats() {
+  435→  435→            const statsContent = `
+  436→  436→                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+  437→  437→                    <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; text-align: center; color: white; border: 1px solid rgba(255,255,255,0.2);">
+  438→  438→                        <h2 style="margin-bottom: 20px; color: #f093fb;">🚀 Schwepe Stats 🚀</h2>
+  439→  439→                        <div style="font-size: 1.2rem; line-height: 1.8;">
+  440→  440→                            <p>🐸 Total Schwepes: 28 Unique Frogs</p>
+  441→  441→                            <p>💎 Diamond Hands: Infinite</p>
+  442→  442→                            <p>🎯 Memes Created: Countless</p>
+  443→  443→                            <p>🌙 Moonshots: Many</p>
+  444→  444→                            <p>💀 Bags Held: All of them</p>
+  445→  445→                            <p>⚡ Degeneracy Level: Maximum</p>
+  446→  446→                        </div>
+  447→  447→                        <button onclick="this.parentElement.parentElement.remove()" style="margin-top: 20px; padding: 10px 20px; background: #f093fb; border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer;">Close Stats</button>
+  448→  448→                    </div>
+  449→  449→                </div>
+  450→  450→            `;
+  451→  451→            document.body.insertAdjacentHTML('beforeend', statsContent);
+  452→  452→        }
+  453→  453→
+  454→  454→        // Load shared navbar
+  455→  455→        async function loadNavbar() {
+  456→  456→            try {
+  457→  457→                const response = await fetch('navbar.html');
+  458→  458→                const navbarHTML = await response.text();
+  459→  459→                document.getElementById('navbar-container').innerHTML = navbarHTML;
+  460→  460→
+  461→  461→                // Load navbar JavaScript
+  462→  462→                const script = document.createElement('script');
+  463→  463→                script.src = 'navbar.js';
+  464→  464→                document.body.appendChild(script);
+  465→  465→
+  466→  466→                // Set active state for current page
+  467→  467→                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  468→  468→                const navLinks = document.querySelectorAll('#navbar-container a');
+  469→  469→                navLinks.forEach(link => {
+  470→  470→                    if (link.getAttribute('href') === currentPage) {
+  471→  471→                        link.classList.add('active');
+  472→  472→                    }
+  473→  473→                });
+  474→  474→
+  475→  475→                console.log('✅ Navbar loaded successfully');
+  476→  476→            } catch (error) {
+  477→  477→                console.error('❌ Error loading navbar:', error);
+  478→  478→            }
+  479→  479→        }
+  480→  480→
+  481→  481→        // Initialize dynamic lore system
+  482→  482→        async function initializeLoreSystem() {
+  483→  483→            try {
+  484→  484→                // Wait for lore engine to initialize
+  485→  485→                if (window.loreEngine && window.loreEngine.loreData) {
+  486→  486→                    renderDynamicLore();
+  487→  487→                } else {
+  488→  488→                    // Wait a bit and try again
+  489→  489→                    setTimeout(initializeLoreSystem, 100);
+  490→  490→                }
+  491→  491→            } catch (error) {
+  492→  492→                console.error('❌ Error initializing lore system:', error);
+  493→  493→            }
+  494→  494→        }
+  495→  495→
+  496→  496→        function renderDynamicLore() {
+  497→  497→            const chapters = window.loreEngine.getAllChapters();
+  498→  498→            const container = document.getElementById('lore-chapters-container');
+  499→  499→            const navContainer = document.getElementById('dynamic-lore-nav');
+  500→  500→
+  501→  501→            if (!container || !navContainer) return;
+  502→  502→
+  503→  503→            // Render navigation
+  504→  504→            navContainer.innerHTML = `
+  505→  505→                <div class="progress-indicator">
+  506→  506→                    <p>📚 Complete Schwepe Saga (${chapters.length} Chapters)</p>
+  507→  507→                    <div class="progress-dots">
+  508→  508→                        ${chapters.map((chapter, index) =>
+  509→  509→                            `<div class="progress-dot" title="${chapter.title}" data-chapter="${chapter.id}" onclick="scrollToChapter('${chapter.id}')"></div>`
+  510→  510→                        ).join('')}
+  511→  511→                    </div>
+  512→  512→                </div>
+  513→  513→            `;
+  514→  514→
+  515→  515→            // Render chapter cards
+  516→  516→            container.innerHTML = chapters.map(chapter => {
+  517→  517→                const theme = window.loreEngine.getThemeConfig(chapter.theme);
+  518→  518→                return `
+  519→  519→                    <a href="#${chapter.id}" class="lore-card" data-chapter="${chapter.id}" onclick="scrollToChapter('${chapter.id}')">
+  520→  520→                        <span class="lore-card-icon">${chapter.icon}</span>
+  521→  521→                        <h3>${chapter.title}</h3>
+  522→  522→                        <p>${chapter.subtitle}</p>
+  523→  523→                        <div class="lore-card-mood">${chapter.mood}</div>
+  524→  524→                    </a>
+  525→  525→                `;
+  526→  526→            }).join('');
+  527→  527→
+  528→  528→            // Update random lore snippet
+  529→  529→            updateRandomLoreSnippet();
+  530→  530→        }
+  531→  531→
+  532→  532→        function scrollToChapter(chapterId) {
+  533→  533→            const chapter = window.loreEngine.getChapter(chapterId);
+  534→  534→            if (chapter) {
+  535→  535→                // Store chapter data and navigate to chapter page
+  536→  536→                localStorage.setItem('currentChapter', JSON.stringify(chapter));
+  537→  537→                window.location.href = `#${chapterId}`;
+  538→  538→                renderChapterInline(chapterId);
+  539→  539→            }
+  540→  540→        }
+  541→  541→
+  542→  542→        function renderChapterInline(chapterId) {
+  543→  543→            const chapter = window.loreEngine.getChapter(chapterId);
+  544→  544→            if (!chapter) return;
+  545→  545→
+  546→  546→            const container = document.getElementById('lore-chapters-container');
+  547→  547→            if (!container) return;
+  548→  548→
+  549→  549→            // Replace the chapter cards with full chapter content
+  550→  550→            container.innerHTML = window.loreEngine.generateLoreHTML(chapterId);
+  551→  551→
+  552→  552→            // Add back button
+  553→  553→            const backButton = document.createElement('div');
+  554→  554→            backButton.className = 'back-button-container';
+  555→  555→            backButton.innerHTML = `
+  556→  556→                <button onclick="showAllChapters()" class="back-button">
+  557→  557→                    <i class="fas fa-arrow-left"></i> Back to All Chapters
+  558→  558→                </button>
+  559→  559→            `;
+  560→  560→            container.insertBefore(backButton, container.firstChild);
+  561→  561→        }
+  562→  562→
+  563→  563→        function showAllChapters() {
+  564→  564→            // Remove hash and re-render all chapters
+  565→  565→            history.pushState("", document.title, window.location.pathname + window.location.search);
+  566→  566→            renderDynamicLore();
+  567→  567→        }
+  568→  568→
+  569→  569→        
+  570→  570→        function updateRandomLoreSnippet() {
+  571→  571→            const snippet = window.loreEngine.getRandomLoreSnippet();
+  572→  572→            const snippetElement = document.getElementById('random-lore-snippet');
+  573→  573→            if (snippetElement && snippet) {
+  574→  574→                snippetElement.textContent = snippet;
+  575→  575→            }
+  576→  576→        }
+  577→  577→
+  578→  578→        // Set active navigation and load navbar
+  579→  579→        document.addEventListener('DOMContentLoaded', function() {
+  580→  580→            // Check age verification first
+  581→  581→            checkAgeVerification();
+  582→  582→
+  583→  583→            // Load shared navbar
+  584→  584→            loadNavbar();
+  585→  585→
+  586→  586→            // Initialize lore system
+  587→  587→            setTimeout(initializeLoreSystem, 500);
+  588→  588→
+  589→  589→            // Update random lore snippet every 10 seconds
+  590→  590→            setInterval(updateRandomLoreSnippet, 10000);
+  591→  591→
+  592→  592→            // Random lore snippet click handler
+  593→  593→            document.getElementById('random-lore-snippet')?.addEventListener('click', updateRandomLoreSnippet);
+  594→  594→        });
+  595→  595→    </script>
+  596→  596→</body>
+  597→  597→</html>
