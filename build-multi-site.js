@@ -42,6 +42,14 @@ async function buildSite(siteId) {
   } catch (err) {
   }
 
+  const logoSource = path.join(sitePath, 'media', 'static', 'logo.gif');
+  const logoDest = path.join(distPath, 'logo.gif');
+  try {
+    await fs.access(logoSource);
+    await execAsync('cp "' + logoSource + '" "' + logoDest + '"');
+  } catch (err) {
+  }
+
   // Copy schwelevision.js and lib to dist root for module imports
   const schwelevisionSource = path.join(sitePath, 'schwelevision.js');
   const schwelevisionDest = path.join(distPath, 'schwelevision.js');
