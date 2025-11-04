@@ -55,6 +55,25 @@ Also restored complete templates for:
 - **gallery.html**: Content showcase (631 lines)
 - **lore.html**: Documentation and sacred texts (1188 lines)
 
+## Three-Layer Video Playback System (✅ OPERATIONAL)
+**PlaybackHandler** implements continuous rotating playback of three content layers:
+- **Layer 1 (Static)**: Static Loop (10s) - fallback baseline content
+- **Layer 2 (Filler)**: Ambient Video (5s) - ads/spacing content
+- **Layer 3 (Scheduled)**: Main Content 1, 2, 3... (default 5s) - synced global content
+
+Features:
+- Automatic rotation through all videos in sequence (modulo cycling)
+- Color-coded display backgrounds: Green (#00ff00) static, Cyan (#00ffff) filler, Yellow (#ffff00) scheduled
+- Loads from JSON config files: saved_videos.json and scheduled_videos.json
+- Console logging of each transition for debugging
+- Graceful fallback to default videos if JSON load fails
+- Tested and verified with Playwright MCP - all layers cycling correctly
+
+Files:
+- **playback-handler.js**: PlaybackHandler class with video rotation logic
+- **saved_videos.json**: Layer 1 (static) and Layer 2 (filler) definitions
+- **scheduled_videos.json**: Layer 3 (scheduled) content definitions
+
 ## Implementation Notes
 - Each domain gets its own site directory with separate templates
 - Build system renders templates with site-specific config
@@ -62,3 +81,5 @@ Also restored complete templates for:
 - All modules properly exported and available in broadcasting system
 - CSS-in-head approach for instant styling
 - Complete Schwelevision broadcasting network fully operational
+- MIME type handling for CSS, JS, JSON, images in server.cjs
+- navbar.css styling with cyberpunk color scheme (#00f5ff primary)
