@@ -1,556 +1,485 @@
-    1→    1→    1→    1→<!DOCTYPE html>
-    2→    2→    2→    2→<html lang="en">
-    3→    3→    3→    3→<head>
-    4→    4→    4→    4→    <meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
     <meta name="site-id" content="{{ id }}">
-    5→    5→    5→    5→    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    6→    6→    6→    6→    <title>{{ meta.title }}</title>
-    7→    7→    7→    7→    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    8→    8→    8→    8→
-    9→    9→    9→    9→    <!-- SEO Meta Tags -->
-   10→   10→   10→   10→    <meta name="description" content="{{ meta.description }}">
-   11→   11→   11→   11→    <meta name="keywords" content="{{ meta.keywords }}">
-   12→   12→   12→   12→    <meta name="author" content="{{ meta.author }}">
-   13→   13→   13→   13→    <meta name="robots" content="index, follow">
-   14→   14→   14→   14→    <link rel="canonical" href="https://{{ domain }}/">
-   15→   15→   15→   15→
-   16→   16→   16→   16→    <!-- Open Graph Meta Tags -->
-   17→   17→   17→   17→    <meta property="og:type" content="website">
-   18→   18→   18→   18→    <meta property="og:url" content="https://{{ domain }}/">
-   19→   19→   19→   19→    <meta property="og:title" content="Schwepe's Meme Dimension - 247420 Degen Energy & Meme Culture">
-   20→   20→   20→   20→    <meta property="og:description" content="{{ meta.description }}">
-   21→   21→   21→   21→    <meta property="og:image" content="https://{{ domain }}{{ meta.ogImage }}">
-   22→   22→   22→   22→    <meta property="og:image:width" content="400">
-   23→   23→   23→   23→    <meta property="og:image:height" content="400">
-   24→   24→   24→   24→    <meta property="og:site_name" content="Schwepe's Meme Dimension">
-   25→   25→   25→   25→    <meta property="og:locale" content="en_US">
-   26→   26→   26→   26→
-   27→   27→   27→   27→    <!-- Twitter Card Meta Tags -->
-   28→   28→   28→   28→    <meta name="twitter:card" content="summary_large_image">
-   29→   29→   29→   29→    <meta name="twitter:site" content="{{ meta.twitter }}">
-   30→   30→   30→   30→    <meta name="twitter:creator" content="{{ meta.twitter }}">
-   31→   31→   31→   31→    <meta name="twitter:title" content="Schwepe's Meme Dimension - 247420 Degen Energy & Meme Culture">
-   32→   32→   32→   32→    <meta name="twitter:description" content="{{ meta.description }}">
-   33→   33→   33→   33→    <meta name="twitter:image" content="https://{{ domain }}{{ meta.ogImage }}">
-   34→   34→   34→   34→
-   35→   35→   35→   35→    <!-- Additional SEO Tags -->
-   36→   36→   36→   36→    <meta name="theme-color" content="{{ meta.themeColor }}">
-   37→   37→   37→   37→    <meta name="msapplication-TileColor" content="{{ meta.themeColor }}">
-   38→   38→   38→   38→
-   39→   39→   39→   39→    <!-- Structured Data -->
-   40→   40→   40→   40→    <script type="application/ld+json">
-   41→   41→   41→   41→    {
-   42→   42→   42→   42→        "@context": "https://schema.org",
-   43→   43→   43→   43→        "@type": "WebSite",
-   44→   44→   44→   44→        "name": "Schwepe's Meme Dimension",
-   45→   45→   45→   45→        "description": "{{ meta.description }}",
-   46→   46→   46→   46→        "url": "https://{{ domain }}/",
-   47→   47→   47→   47→        "image": "https://{{ domain }}{{ meta.ogImage }}",
-   48→   48→   48→   48→        "author": {
-   49→   49→   49→   49→            "@type": "Organization",
-   50→   50→   50→   50→            "name": "{{ meta.author }}"
-   51→   51→   51→   51→        },
-   52→   52→   52→   52→        "potentialAction": {
-   53→   53→   53→   53→            "@type": "SearchAction",
-   54→   54→   54→   54→            "target": "https://{{ domain }}/search?q={search_term_string}",
-   55→   55→   55→   55→            "query-input": "required name=search_term_string"
-   56→   56→   56→   56→        },
-   57→   57→   57→   57→        "sameAs": [
-   58→   58→   58→   58→            "https://twitter.com/schwepe",
-   59→   59→   59→   59→        ]
-   60→   60→   60→   60→    }
-   61→   61→   61→   61→    </script>
-   62→   62→   62→   62→    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-   63→   63→   63→   63→    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-   64→   64→   64→   64→    <link rel="stylesheet" href="/site-assets/styles/navbar.css">
-   65→   65→   65→   65→    <style>
-   66→   66→   66→   66→        * {
-   67→   67→   67→   67→            margin: 0;
-   68→   68→   68→   68→            padding: 0;
-   69→   69→   69→   69→            box-sizing: border-box;
-   70→   70→   70→   70→        }
-   71→   71→   71→   71→
-   72→   72→   72→   72→        body {
-   73→   73→   73→   73→            font-family: 'Fredoka', sans-serif;
-   74→   74→   74→   74→            background: linear-gradient(135deg, {{ meta.themeColor }} 0%, #34495e 100%);
-   75→   75→   75→   75→            min-height: 100vh;
-   76→   76→   76→   76→            overflow-x: hidden;
-   77→   77→   77→   77→            position: relative;
-   78→   78→   78→   78→        }
-   79→   79→   79→   79→
-   80→   80→   80→   80→        .animated-bg {
-   81→   81→   81→   81→            position: fixed;
-   82→   82→   82→   82→            top: 0;
-   83→   83→   83→   83→            left: 0;
-   84→   84→   84→   84→            width: 100%;
-   85→   85→   85→   85→            height: 100%;
-   86→   86→   86→   86→            z-index: -1;
-   87→   87→   87→   87→            background: linear-gradient(135deg, {{ meta.themeColor }} 0%, #34495e 100%);
-   88→   88→   88→   88→            animation: bgShift 15s ease-in-out infinite;
-   89→   89→   89→   89→        }
-   90→   90→   90→   90→
-   91→   91→   91→   91→        @keyframes bgShift {
-   92→   92→   92→   92→            0%, 100% { background: linear-gradient(135deg, {{ meta.themeColor }} 0%, #34495e 100%); }
-   93→   93→   93→   93→            25% { background: linear-gradient(135deg, #16a085 0%, #27ae60 100%); }
-   94→   94→   94→   94→            50% { background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); }
-   95→   95→   95→   95→            75% { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); }
-   96→   96→   96→   96→        }
-   97→   97→   97→   97→
-   98→   98→   98→   98→        .floating-shapes {
-   99→   99→   99→   99→            position: fixed;
-  100→  100→  100→  100→            top: 0;
-  101→  101→  101→  101→            left: 0;
-  102→  102→  102→  102→            width: 100%;
-  103→  103→  103→  103→            height: 100%;
-  104→  104→  104→  104→            z-index: -1;
-  105→  105→  105→  105→            pointer-events: none;
-  106→  106→  106→  106→        }
-  107→  107→  107→  107→
-  108→  108→  108→  108→        .shape {
-  109→  109→  109→  109→            position: absolute;
-  110→  110→  110→  110→            border-radius: 50%;
-  111→  111→  111→  111→            animation: float 6s ease-in-out infinite;
-  112→  112→  112→  112→        }
-  113→  113→  113→  113→
-  114→  114→  114→  114→        .shape:nth-child(1) {
-  115→  115→  115→  115→            width: 80px;
-  116→  116→  116→  116→            height: 80px;
-  117→  117→  117→  117→            background: rgba(255, 255, 255, 0.1);
-  118→  118→  118→  118→            top: 10%;
-  119→  119→  119→  119→            left: 10%;
-  120→  120→  120→  120→            animation-delay: 0s;
-  121→  121→  121→  121→        }
-  122→  122→  122→  122→
-  123→  123→  123→  123→        .shape:nth-child(2) {
-  124→  124→  124→  124→            width: 120px;
-  125→  125→  125→  125→            height: 120px;
-  126→  126→  126→  126→            background: rgba(255, 255, 255, 0.05);
-  127→  127→  127→  127→            top: 60%;
-  128→  128→  128→  128→            right: 10%;
-  129→  129→  129→  129→            animation-delay: 2s;
-  130→  130→  130→  130→        }
-  131→  131→  131→  131→
-  132→  132→  132→  132→        .shape:nth-child(3) {
-  133→  133→  133→  133→            width: 60px;
-  134→  134→  134→  134→            height: 60px;
-  135→  135→  135→  135→            background: rgba(255, 255, 255, 0.08);
-  136→  136→  136→  136→            bottom: 20%;
-  137→  137→  137→  137→            left: 20%;
-  138→  138→  138→  138→            animation-delay: 4s;
-  139→  139→  139→  139→        }
-  140→  140→  140→  140→
-  141→  141→  141→  141→        @keyframes float {
-  142→  142→  142→  142→            0%, 100% { transform: translateY(0px) rotate(0deg); }
-  143→  143→  143→  143→            50% { transform: translateY(-20px) rotate(180deg); }
-  144→  144→  144→  144→        }
-  145→  145→  145→  145→
-  146→  146→  146→  146→        .container {
-  147→  147→  147→  147→            max-width: 1200px;
-  148→  148→  148→  148→            margin: 0 auto;
-  149→  149→  149→  149→            padding: 0 20px;
-  150→  150→  150→  150→        }
-  151→  151→  151→  151→
-  152→  152→  152→  152→        header {
-  153→  153→  153→  153→            text-align: center;
-  154→  154→  154→  154→            padding: 40px 0;
-  155→  155→  155→  155→            position: relative;
-  156→  156→  156→  156→            z-index: 10;
-  157→  157→  157→  157→        }
-  158→  158→  158→  158→
-  159→  159→  159→  159→  
-  160→  160→  160→  160→        .title {
-  161→  161→  161→  161→            font-size: clamp(3rem, 8vw, 6rem);
-  162→  162→  162→  162→            font-weight: 700;
-  163→  163→  163→  163→            color: #ffffff;
-  164→  164→  164→  164→            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.2);
-  165→  165→  165→  165→            margin-bottom: 20px;
-  166→  166→  166→  166→            animation: bounce 2s ease-in-out infinite;
-  167→  167→  167→  167→        }
-  168→  168→  168→  168→
-  169→  169→  169→  169→        @keyframes bounce {
-  170→  170→  170→  170→            0%, 100% { transform: translateY(0px); }
-  171→  171→  171→  171→            50% { transform: translateY(-10px); }
-  172→  172→  172→  172→        }
-  173→  173→  173→  173→
-  174→  174→  174→  174→        .subtitle {
-  175→  175→  175→  175→            font-size: clamp(1.2rem, 3vw, 1.8rem);
-  176→  176→  176→  176→            color: rgba(255, 255, 255, 0.95);
-  177→  177→  177→  177→            font-weight: 500;
-  178→  178→  178→  178→            margin-bottom: 40px;
-  179→  179→  179→  179→            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  180→  180→  180→  180→        }
-  181→  181→  181→  181→
-  182→  182→  182→  182→        .gallery {
-  183→  183→  183→  183→            display: grid;
-  184→  184→  184→  184→            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  185→  185→  185→  185→            gap: 30px;
-  186→  186→  186→  186→            margin-bottom: 60px;
-  187→  187→  187→  187→        }
-  188→  188→  188→  188→
-  189→  189→  189→  189→        .pepe-card {
-  190→  190→  190→  190→            background: rgba(255, 255, 255, 0.15);
-  191→  191→  191→  191→            backdrop-filter: blur(15px);
-  192→  192→  192→  192→            border-radius: 20px;
-  193→  193→  193→  193→            padding: 25px;
-  194→  194→  194→  194→            text-align: center;
-  195→  195→  195→  195→            transition: all 0.3s ease;
-  196→  196→  196→  196→            border: 1px solid rgba(255, 255, 255, 0.3);
-  197→  197→  197→  197→            animation: slideIn 0.6s ease-out;
-  198→  198→  198→  198→            animation-fill-mode: both;
-  199→  199→  199→  199→        }
-  200→  200→  200→  200→
-  201→  201→  201→  201→        .pepe-card:nth-child(1) { animation-delay: 0.1s; }
-  202→  202→  202→  202→        .pepe-card:nth-child(2) { animation-delay: 0.2s; }
-  203→  203→  203→  203→        .pepe-card:nth-child(3) { animation-delay: 0.3s; }
-  204→  204→  204→  204→        .pepe-card:nth-child(4) { animation-delay: 0.4s; }
-  205→  205→  205→  205→        .pepe-card:nth-child(5) { animation-delay: 0.5s; }
-  206→  206→  206→  206→        .pepe-card:nth-child(6) { animation-delay: 0.6s; }
-  207→  207→  207→  207→
-  208→  208→  208→  208→        @keyframes slideIn {
-  209→  209→  209→  209→            from {
-  210→  210→  210→  210→                opacity: 0;
-  211→  211→  211→  211→                transform: translateY(30px);
-  212→  212→  212→  212→            }
-  213→  213→  213→  213→            to {
-  214→  214→  214→  214→                opacity: 1;
-  215→  215→  215→  215→                transform: translateY(0);
-  216→  216→  216→  216→            }
-  217→  217→  217→  217→        }
-  218→  218→  218→  218→
-  219→  219→  219→  219→        .pepe-card:hover {
-  220→  220→  220→  220→            transform: translateY(-10px) scale(1.05);
-  221→  221→  221→  221→            background: rgba(255, 255, 255, 0.2);
-  222→  222→  222→  222→            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  223→  223→  223→  223→        }
-  224→  224→  224→  224→
-  225→  225→  225→  225→        .pepe-image {
-  226→  226→  226→  226→            width: 100%;
-  227→  227→  227→  227→            height: 250px;
-  228→  228→  228→  228→            object-fit: cover;
-  229→  229→  229→  229→            border-radius: 15px;
-  230→  230→  230→  230→            margin-bottom: 15px;
-  231→  231→  231→  231→            transition: transform 0.3s ease;
-  232→  232→  232→  232→        }
-  233→  233→  233→  233→
-  234→  234→  234→  234→        .pepe-card:hover .pepe-image {
-  235→  235→  235→  235→            transform: scale(1.1);
-  236→  236→  236→  236→        }
-  237→  237→  237→  237→
-  238→  238→  238→  238→        .pepe-title {
-  239→  239→  239→  239→            color: #ffffff;
-  240→  240→  240→  240→            font-size: 1.3rem;
-  241→  241→  241→  241→            font-weight: 700;
-  242→  242→  242→  242→            margin-bottom: 10px;
-  243→  243→  243→  243→            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  244→  244→  244→  244→        }
-  245→  245→  245→  245→
-  246→  246→  246→  246→        .pepe-description {
-  247→  247→  247→  247→            color: rgba(255, 255, 255, 0.9);
-  248→  248→  248→  248→            font-size: 1rem;
-  249→  249→  249→  249→            line-height: 1.5;
-  250→  250→  250→  250→            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-  251→  251→  251→  251→        }
-  252→  252→  252→  252→
-  253→  253→  253→  253→        .featured-section {
-  254→  254→  254→  254→            text-align: center;
-  255→  255→  255→  255→            margin: 80px 0;
-  256→  256→  256→  256→            padding: 40px 20px;
-  257→  257→  257→  257→            background: rgba(255, 255, 255, 0.05);
-  258→  258→  258→  258→            backdrop-filter: blur(10px);
-  259→  259→  259→  259→            border-radius: 30px;
-  260→  260→  260→  260→            border: 1px solid rgba(255, 255, 255, 0.1);
-  261→  261→  261→  261→        }
-  262→  262→  262→  262→
-  263→  263→  263→  263→        .featured-title {
-  264→  264→  264→  264→            font-size: 2.5rem;
-  265→  265→  265→  265→            color: #fff;
-  266→  266→  266→  266→            margin-bottom: 20px;
-  267→  267→  267→  267→            font-weight: 700;
-  268→  268→  268→  268→        }
-  269→  269→  269→  269→
-  270→  270→  270→  270→        .featured-image {
-  271→  271→  271→  271→            width: 100%;
-  272→  272→  272→  272→            max-width: 500px;
-  273→  273→  273→  273→            height: 400px;
-  274→  274→  274→  274→            object-fit: cover;
-  275→  275→  275→  275→            border-radius: 20px;
-  276→  276→  276→  276→            margin: 20px auto;
-  277→  277→  277→  277→            display: block;
-  278→  278→  278→  278→            border: 3px solid rgba(255, 255, 255, 0.3);
-  279→  279→  279→  279→            animation: glow 2s ease-in-out infinite alternate;
-  280→  280→  280→  280→        }
-  281→  281→  281→  281→
-  282→  282→  282→  282→        @keyframes glow {
-  283→  283→  283→  283→            from { box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
-  284→  284→  284→  284→            to { box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
-  285→  285→  285→  285→        }
-  286→  286→  286→  286→
-  287→  287→  287→  287→        .featured-description {
-  288→  288→  288→  288→            color: rgba(255, 255, 255, 0.9);
-  289→  289→  289→  289→            font-size: 1.2rem;
-  290→  290→  290→  290→            margin-top: 20px;
-  291→  291→  291→  291→            font-style: italic;
-  292→  292→  292→  292→            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-  293→  293→  293→  293→            text-align: center;
-  294→  294→  294→  294→        }
-  295→  295→  295→  295→
-  296→  296→  296→  296→        .stats {
-  297→  297→  297→  297→            display: grid;
-  298→  298→  298→  298→            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  299→  299→  299→  299→            gap: 30px;
-  300→  300→  300→  300→            margin: 60px 0;
-  301→  301→  301→  301→        }
-  302→  302→  302→  302→
-  303→  303→  303→  303→        .stat-card {
-  304→  304→  304→  304→            background: rgba(255, 255, 255, 0.1);
-  305→  305→  305→  305→            backdrop-filter: blur(10px);
-  306→  306→  306→  306→            border-radius: 20px;
-  307→  307→  307→  307→            padding: 30px;
-  308→  308→  308→  308→            text-align: center;
-  309→  309→  309→  309→            border: 1px solid rgba(255, 255, 255, 0.2);
-  310→  310→  310→  310→            transition: transform 0.3s ease;
-  311→  311→  311→  311→        }
-  312→  312→  312→  312→
-  313→  313→  313→  313→        .stat-card:hover {
-  314→  314→  314→  314→            transform: translateY(-5px);
-  315→  315→  315→  315→        }
-  316→  316→  316→  316→
-  317→  317→  317→  317→        .stat-number {
-  318→  318→  318→  318→            font-size: 2.2rem;
-  319→  319→  319→  319→            font-weight: 700;
-  320→  320→  320→  320→            color: #fff;
-  321→  321→  321→  321→            margin-bottom: 10px;
-  322→  322→  322→  322→            word-wrap: break-word;
-  323→  323→  323→  323→            overflow-wrap: break-word;
-  324→  324→  324→  324→            hyphens: auto;
-  325→  325→  325→  325→        }
-  326→  326→  326→  326→
-  327→  327→  327→  327→        .stat-label {
-  328→  328→  328→  328→            font-size: 1.2rem;
-  329→  329→  329→  329→            color: rgba(255, 255, 255, 0.8);
-  330→  330→  330→  330→        }
-  331→  331→  331→  331→
-  332→  332→  332→  332→        .cta-section {
-  333→  333→  333→  333→            text-align: center;
-  334→  334→  334→  334→            margin: 80px 0;
-  335→  335→  335→  335→            padding: 60px 20px;
-  336→  336→  336→  336→            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-  337→  337→  337→  337→            border-radius: 30px;
-  338→  338→  338→  338→            backdrop-filter: blur(10px);
-  339→  339→  339→  339→        }
-  340→  340→  340→  340→
-  341→  341→  341→  341→        .cta-title {
-  342→  342→  342→  342→            font-size: 2.5rem;
-  343→  343→  343→  343→            color: #fff;
-  344→  344→  344→  344→            margin-bottom: 20px;
-  345→  345→  345→  345→            font-weight: 700;
-  346→  346→  346→  346→        }
-  347→  347→  347→  347→
-  348→  348→  348→  348→        .cta-description {
-  349→  349→  349→  349→            font-size: 1.2rem;
-  350→  350→  350→  350→            color: rgba(255, 255, 255, 0.9);
-  351→  351→  351→  351→            margin-bottom: 40px;
-  352→  352→  352→  352→            max-width: 600px;
-  353→  353→  353→  353→            margin-left: auto;
-  354→  354→  354→  354→            margin-right: auto;
-  355→  355→  355→  355→        }
-  356→  356→  356→  356→
-  357→  357→  357→  357→        .cta-button {
-  358→  358→  358→  358→            display: inline-block;
-  359→  359→  359→  359→            padding: 15px 40px;
-  360→  360→  360→  360→            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  361→  361→  361→  361→            color: #fff;
-  362→  362→  362→  362→            text-decoration: none;
-  363→  363→  363→  363→            border-radius: 50px;
-  364→  364→  364→  364→            font-size: 1.2rem;
-  365→  365→  365→  365→            font-weight: 600;
-  366→  366→  366→  366→            transition: all 0.3s ease;
-  367→  367→  367→  367→            border: 2px solid rgba(255, 255, 255, 0.3);
-  368→  368→  368→  368→        }
-  369→  369→  369→  369→
-  370→  370→  370→  370→        .cta-button:hover {
-  371→  371→  371→  371→            transform: translateY(-3px);
-  372→  372→  372→  372→            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  373→  373→  373→  373→            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-  374→  374→  374→  374→        }
-  375→  375→  375→  375→
-  376→  376→  376→  376→        footer {
-  377→  377→  377→  377→            text-align: center;
-  378→  378→  378→  378→            padding: 40px 0;
-  379→  379→  379→  379→            color: rgba(255, 255, 255, 0.8);
-  380→  380→  380→  380→            font-size: 1rem;
-  381→  381→  381→  381→        }
-  382→  382→  382→  382→
-  383→  383→  383→  383→        .social-links {
-  384→  384→  384→  384→            margin: 20px 0;
-  385→  385→  385→  385→        }
-  386→  386→  386→  386→
-  387→  387→  387→  387→        .social-links a {
-  388→  388→  388→  388→            color: rgba(255, 255, 255, 0.8);
-  389→  389→  389→  389→            font-size: 1.5rem;
-  390→  390→  390→  390→            margin: 0 15px;
-  391→  391→  391→  391→            transition: color 0.3s ease;
-  392→  392→  392→  392→        }
-  393→  393→  393→  393→
-  394→  394→  394→  394→        .social-links a:hover {
-  395→  395→  395→  395→            color: #fff;
-  396→  396→  396→  396→        }
-  397→  397→  397→  397→
-  398→  398→  398→  398→        /* Meme Generator Styles */
-  399→  399→  399→  399→        .meme-section {
-  400→  400→  400→  400→            margin: 80px 0;
-  401→  401→  401→  401→            padding: 40px 20px;
-  402→  402→  402→  402→            background: rgba(255, 255, 255, 0.05);
-  403→  403→  403→  403→            backdrop-filter: blur(15px);
-  404→  404→  404→  404→            border-radius: 30px;
-  405→  405→  405→  405→            border: 1px solid rgba(255, 255, 255, 0.1);
-  406→  406→  406→  406→            text-align: center;
-  407→  407→  407→  407→        }
-  408→  408→  408→  408→
-  409→  409→  409→  409→        .meme-header {
-  410→  410→  410→  410→            margin-bottom: 40px;
-  411→  411→  411→  411→        }
-  412→  412→  412→  412→
-  413→  413→  413→  413→        .meme-title {
-  414→  414→  414→  414→            font-size: 2.5rem;
-  415→  415→  415→  415→            color: #fff;
-  416→  416→  416→  416→            margin-bottom: 15px;
-  417→  417→  417→  417→            font-weight: 700;
-  418→  418→  418→  418→            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-  419→  419→  419→  419→        }
-  420→  420→  420→  420→
-  421→  421→  421→  421→        .meme-subtitle {
-  422→  422→  422→  422→            font-size: 1.2rem;
-  423→  423→  423→  423→            color: rgba(255, 255, 255, 0.9);
-  424→  424→  424→  424→            margin-bottom: 30px;
-  425→  425→  425→  425→        }
-  426→  426→  426→  426→
-  427→  427→  427→  427→        .meme-generator {
-  428→  428→  428→  428→            margin-bottom: 40px;
-  429→  429→  429→  429→        }
-  430→  430→  430→  430→
-  431→  431→  431→  431→        .meme-btn {
-  432→  432→  432→  432→            background: linear-gradient(135deg, #ff006e 0%, #8338ec 50%, #3a86ff 100%);
-  433→  433→  433→  433→            color: white;
-  434→  434→  434→  434→            border: none;
-  435→  435→  435→  435→            padding: 20px 40px;
-  436→  436→  436→  436→            font-size: 1.3rem;
-  437→  437→  437→  437→            font-weight: 700;
-  438→  438→  438→  438→            border-radius: 50px;
-  439→  439→  439→  439→            cursor: pointer;
-  440→  440→  440→  440→            transition: all 0.3s ease;
-  441→  441→  441→  441→            box-shadow: 0 10px 30px rgba(255, 0, 110, 0.3);
-  442→  442→  442→  442→            text-transform: uppercase;
-  443→  443→  443→  443→            letter-spacing: 2px;
-  444→  444→  444→  444→            margin-bottom: 30px;
-  445→  445→  445→  445→        }
-  446→  446→  446→  446→
-  447→  447→  447→  447→        .meme-btn:hover {
-  448→  448→  448→  448→            transform: translateY(-5px) scale(1.05);
-  449→  449→  449→  449→            box-shadow: 0 15px 40px rgba(255, 0, 110, 0.5);
-  450→  450→  450→  450→            background: linear-gradient(135deg, #8338ec 0%, #3a86ff 50%, #ff006e 100%);
-  451→  451→  451→  451→        }
-  452→  452→  452→  452→
-  453→  453→  453→  453→        .meme-output {
-  454→  454→  454→  454→            background: rgba(0, 0, 0, 0.3);
-  455→  455→  455→  455→            border: 2px solid rgba(255, 255, 255, 0.2);
-  456→  456→  456→  456→            border-radius: 20px;
-  457→  457→  457→  457→            padding: 30px;
-  458→  458→  458→  458→            margin: 20px auto;
-  459→  459→  459→  459→            max-width: 800px;
-  460→  460→  460→  460→            min-height: 100px;
-  461→  461→  461→  461→            color: white;
-  462→  462→  462→  462→            font-size: 1.2rem;
-  463→  463→  463→  463→            line-height: 1.6;
-  464→  464→  464→  464→            text-align: left;
-  465→  465→  465→  465→            backdrop-filter: blur(10px);
-  466→  466→  466→  466→            display: none;
-  467→  467→  467→  467→        }
-  468→  468→  468→  468→
-  469→  469→  469→  469→        .meme-output.show {
-  470→  470→  470→  470→            display: block;
-  471→  471→  471→  471→            animation: memeAppear 0.5s ease-out;
-  472→  472→  472→  472→        }
-  473→  473→  473→  473→
-  474→  474→  474→  474→        @keyframes memeAppear {
-  475→  475→  475→  475→            from {
-  476→  476→  476→  476→                opacity: 0;
-  477→  477→  477→  477→                transform: translateY(20px);
-  478→  478→  478→  478→            }
-  479→  479→  479→  479→            to {
-  480→  480→  480→  480→                opacity: 1;
-  481→  481→  481→  481→                transform: translateY(0);
-  482→  482→  482→  482→            }
-  483→  483→  483→  483→        }
-  484→  484→  484→  484→
-  485→  485→  485→  485→        .meme-stats {
-  486→  486→  486→  486→            display: grid;
-  487→  487→  487→  487→            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  488→  488→  488→  488→            gap: 20px;
-  489→  489→  489→  489→            margin-top: 40px;
-  490→  490→  490→  490→        }
-  491→  491→  491→  491→
-  492→  492→  492→  492→        .meme-stat {
-  493→  493→  493→  493→            background: rgba(255, 255, 255, 0.1);
-  494→  494→  494→  494→            backdrop-filter: blur(10px);
-  495→  495→  495→  495→            border-radius: 15px;
-  496→  496→  496→  496→            padding: 20px;
-  497→  497→  497→  497→            text-align: center;
-  498→  498→  498→  498→            transition: all 0.3s ease;
-  499→  499→  499→  499→            border: 1px solid rgba(255, 255, 255, 0.2);
-  500→  500→  500→  500→        }
-  501→  501→  501→  501→
-  502→  502→  502→  502→        .meme-stat:hover {
-  503→  503→  503→  503→            transform: translateY(-5px);
-  504→  504→  504→  504→            background: rgba(255, 255, 255, 0.15);
-  505→  505→  505→  505→            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  506→  506→  506→  506→        }
-  507→  507→  507→  507→
-  508→  508→  508→  508→        .meme-emoji {
-  509→  509→  509→  509→            font-size: 3rem;
-  510→  510→  510→  510→            margin-bottom: 10px;
-  511→  511→  511→  511→            animation: emojiFloat 2s ease-in-out infinite;
-  512→  512→  512→  512→        }
-  513→  513→  513→  513→
-  514→  514→  514→  514→        .meme-stat:nth-child(1) .meme-emoji { animation-delay: 0s; }
-  515→  515→  515→  515→        .meme-stat:nth-child(2) .meme-emoji { animation-delay: 0.2s; }
-  516→  516→  516→  516→        .meme-stat:nth-child(3) .meme-emoji { animation-delay: 0.4s; }
-  517→  517→  517→  517→        .meme-stat:nth-child(4) .meme-emoji { animation-delay: 0.6s; }
-  518→  518→  518→  518→
-  519→  519→  519→  519→        @keyframes emojiFloat {
-  520→  520→  520→  520→            0%, 100% { transform: translateY(0px); }
-  521→  521→  521→  521→            50% { transform: translateY(-10px); }
-  522→  522→  522→  522→        }
-  523→  523→  523→  523→
-  524→  524→  524→  524→        .meme-text {
-  525→  525→  525→  525→            color: rgba(255, 255, 255, 0.9);
-  526→  526→  526→  526→            font-size: 1rem;
-  527→  527→  527→  527→            font-weight: 600;
-  528→  528→  528→  528→            text-transform: uppercase;
-  529→  529→  529→  529→            letter-spacing: 1px;
-  530→  530→  530→  530→        }
-  531→  531→  531→  531→
-  532→  532→  532→  532→        /* Token Information Styles */
-  533→  533→  533→  533→        .token-info {
-  534→  534→  534→  534→            padding: 80px 0;
-  535→  535→  535→  535→            text-align: center;
-  536→  536→  536→  536→        }
-  537→  537→  537→  537→
-  538→  538→  538→  538→        .token-header {
-  539→  539→  539→  539→            margin-bottom: 60px;
-  540→  540→  540→  540→        }
-  541→  541→  541→  541→
-  542→  542→  542→  542→        .token-title {
-  543→  543→  543→  543→            font-size: 3rem;
-  544→  544→  544→  544→            color: #fff;
-  545→  545→  545→  545→            margin-bottom: 10px;
-  546→  546→  546→  546→            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-  547→  547→  547→  547→        }
-  548→  548→  548→  548→
-  549→  549→  549→  549→        .token-subtitle {
-  550→  550→  550→  550→            font-size: 1.2rem;
-  551→  551→  551→  551→            color: rgba(255, 255, 255, 0.9);
-  552→  552→  552→  552→        }
-  553→  553→  553→  553→
-  554→  554→  554→  554→        .token-card {
-  555→  555→  555→  555→
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ meta.title }}</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<!-- SEO Meta Tags -->
+<meta name="description" content="{{ meta.description }}">
+<meta name="keywords" content="{{ meta.keywords }}">
+<meta name="author" content="{{ meta.author }}">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://{{ domain }}/">
+<!-- Open Graph Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://{{ domain }}/">
+<meta property="og:title" content="Schwepe's Meme Dimension - 247420 Degen Energy & Meme Culture">
+<meta property="og:description" content="{{ meta.description }}">
+<meta property="og:image" content="https://{{ domain }}{{ meta.ogImage }}">
+<meta property="og:image:width" content="400">
+<meta property="og:image:height" content="400">
+<meta property="og:site_name" content="Schwepe's Meme Dimension">
+<meta property="og:locale" content="en_US">
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="{{ meta.twitter }}">
+<meta name="twitter:creator" content="{{ meta.twitter }}">
+<meta name="twitter:title" content="Schwepe's Meme Dimension - 247420 Degen Energy & Meme Culture">
+<meta name="twitter:description" content="{{ meta.description }}">
+<meta name="twitter:image" content="https://{{ domain }}{{ meta.ogImage }}">
+<!-- Additional SEO Tags -->
+<meta name="theme-color" content="{{ meta.themeColor }}">
+<meta name="msapplication-TileColor" content="{{ meta.themeColor }}">
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@type": "WebSite",
+"name": "Schwepe's Meme Dimension",
+"description": "{{ meta.description }}",
+"url": "https://{{ domain }}/",
+"image": "https://{{ domain }}{{ meta.ogImage }}",
+"author": {
+"@type": "Organization",
+"name": "{{ meta.author }}"
+},
+"potentialAction": {
+"@type": "SearchAction",
+"target": "https://{{ domain }}/search?q={search_term_string}",
+"query-input": "required name=search_term_string"
+},
+"sameAs": [
+"https://twitter.com/schwepe",
+]
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/site-assets/styles/navbar.css">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: 'Fredoka', sans-serif;
+background: linear-gradient(135deg, {{ meta.themeColor }} 0%, #34495e 100%);
+min-height: 100vh;
+overflow-x: hidden;
+position: relative;
+}
+.animated-bg {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: -1;
+background: linear-gradient(135deg, {{ meta.themeColor }} 0%, #34495e 100%);
+animation: bgShift 15s ease-in-out infinite;
+}
+@keyframes bgShift {
+%, 100% { background: linear-gradient(135deg, {{ meta.themeColor }} 0%, #34495e 100%); }
+% { background: linear-gradient(135deg, #16a085 0%, #27ae60 100%); }
+% { background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); }
+% { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); }
+}
+.floating-shapes {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: -1;
+pointer-events: none;
+}
+.shape {
+position: absolute;
+border-radius: 50%;
+animation: float 6s ease-in-out infinite;
+}
+.shape:nth-child(1) {
+width: 80px;
+height: 80px;
+background: rgba(255, 255, 255, 0.1);
+top: 10%;
+left: 10%;
+animation-delay: 0s;
+}
+.shape:nth-child(2) {
+width: 120px;
+height: 120px;
+background: rgba(255, 255, 255, 0.05);
+top: 60%;
+right: 10%;
+animation-delay: 2s;
+}
+.shape:nth-child(3) {
+width: 60px;
+height: 60px;
+background: rgba(255, 255, 255, 0.08);
+bottom: 20%;
+left: 20%;
+animation-delay: 4s;
+}
+@keyframes float {
+%, 100% { transform: translateY(0px) rotate(0deg); }
+% { transform: translateY(-20px) rotate(180deg); }
+}
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 20px;
+}
+header {
+text-align: center;
+padding: 40px 0;
+position: relative;
+z-index: 10;
+}
+.title {
+font-size: clamp(3rem, 8vw, 6rem);
+font-weight: 700;
+color: #ffffff;
+text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.2);
+margin-bottom: 20px;
+animation: bounce 2s ease-in-out infinite;
+}
+@keyframes bounce {
+%, 100% { transform: translateY(0px); }
+% { transform: translateY(-10px); }
+}
+.subtitle {
+font-size: clamp(1.2rem, 3vw, 1.8rem);
+color: rgba(255, 255, 255, 0.95);
+font-weight: 500;
+margin-bottom: 40px;
+text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.gallery {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 30px;
+margin-bottom: 60px;
+}
+.pepe-card {
+background: rgba(255, 255, 255, 0.15);
+backdrop-filter: blur(15px);
+border-radius: 20px;
+padding: 25px;
+text-align: center;
+transition: all 0.3s ease;
+border: 1px solid rgba(255, 255, 255, 0.3);
+animation: slideIn 0.6s ease-out;
+animation-fill-mode: both;
+}
+.pepe-card:nth-child(1) { animation-delay: 0.1s; }
+.pepe-card:nth-child(2) { animation-delay: 0.2s; }
+.pepe-card:nth-child(3) { animation-delay: 0.3s; }
+.pepe-card:nth-child(4) { animation-delay: 0.4s; }
+.pepe-card:nth-child(5) { animation-delay: 0.5s; }
+.pepe-card:nth-child(6) { animation-delay: 0.6s; }
+@keyframes slideIn {
+from {
+opacity: 0;
+transform: translateY(30px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+.pepe-card:hover {
+transform: translateY(-10px) scale(1.05);
+background: rgba(255, 255, 255, 0.2);
+box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+.pepe-image {
+width: 100%;
+height: 250px;
+object-fit: cover;
+border-radius: 15px;
+margin-bottom: 15px;
+transition: transform 0.3s ease;
+}
+.pepe-card:hover .pepe-image {
+transform: scale(1.1);
+}
+.pepe-title {
+color: #ffffff;
+font-size: 1.3rem;
+font-weight: 700;
+margin-bottom: 10px;
+text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.pepe-description {
+color: rgba(255, 255, 255, 0.9);
+font-size: 1rem;
+line-height: 1.5;
+text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+.featured-section {
+text-align: center;
+margin: 80px 0;
+padding: 40px 20px;
+background: rgba(255, 255, 255, 0.05);
+backdrop-filter: blur(10px);
+border-radius: 30px;
+border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.featured-title {
+font-size: 2.5rem;
+color: #fff;
+margin-bottom: 20px;
+font-weight: 700;
+}
+.featured-image {
+width: 100%;
+max-width: 500px;
+height: 400px;
+object-fit: cover;
+border-radius: 20px;
+margin: 20px auto;
+display: block;
+border: 3px solid rgba(255, 255, 255, 0.3);
+animation: glow 2s ease-in-out infinite alternate;
+}
+@keyframes glow {
+from { box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
+to { box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
+}
+.featured-description {
+color: rgba(255, 255, 255, 0.9);
+font-size: 1.2rem;
+margin-top: 20px;
+font-style: italic;
+text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+text-align: center;
+}
+.stats {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 30px;
+margin: 60px 0;
+}
+.stat-card {
+background: rgba(255, 255, 255, 0.1);
+backdrop-filter: blur(10px);
+border-radius: 20px;
+padding: 30px;
+text-align: center;
+border: 1px solid rgba(255, 255, 255, 0.2);
+transition: transform 0.3s ease;
+}
+.stat-card:hover {
+transform: translateY(-5px);
+}
+.stat-number {
+font-size: 2.2rem;
+font-weight: 700;
+color: #fff;
+margin-bottom: 10px;
+word-wrap: break-word;
+overflow-wrap: break-word;
+hyphens: auto;
+}
+.stat-label {
+font-size: 1.2rem;
+color: rgba(255, 255, 255, 0.8);
+}
+.cta-section {
+text-align: center;
+margin: 80px 0;
+padding: 60px 20px;
+background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+border-radius: 30px;
+backdrop-filter: blur(10px);
+}
+.cta-title {
+font-size: 2.5rem;
+color: #fff;
+margin-bottom: 20px;
+font-weight: 700;
+}
+.cta-description {
+font-size: 1.2rem;
+color: rgba(255, 255, 255, 0.9);
+margin-bottom: 40px;
+max-width: 600px;
+margin-left: auto;
+margin-right: auto;
+}
+.cta-button {
+display: inline-block;
+padding: 15px 40px;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: #fff;
+text-decoration: none;
+border-radius: 50px;
+font-size: 1.2rem;
+font-weight: 600;
+transition: all 0.3s ease;
+border: 2px solid rgba(255, 255, 255, 0.3);
+}
+.cta-button:hover {
+transform: translateY(-3px);
+box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+footer {
+text-align: center;
+padding: 40px 0;
+color: rgba(255, 255, 255, 0.8);
+font-size: 1rem;
+}
+.social-links {
+margin: 20px 0;
+}
+.social-links a {
+color: rgba(255, 255, 255, 0.8);
+font-size: 1.5rem;
+margin: 0 15px;
+transition: color 0.3s ease;
+}
+.social-links a:hover {
+color: #fff;
+}
+/* Meme Generator Styles */
+.meme-section {
+margin: 80px 0;
+padding: 40px 20px;
+background: rgba(255, 255, 255, 0.05);
+backdrop-filter: blur(15px);
+border-radius: 30px;
+border: 1px solid rgba(255, 255, 255, 0.1);
+text-align: center;
+}
+.meme-header {
+margin-bottom: 40px;
+}
+.meme-title {
+font-size: 2.5rem;
+color: #fff;
+margin-bottom: 15px;
+font-weight: 700;
+text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+.meme-subtitle {
+font-size: 1.2rem;
+color: rgba(255, 255, 255, 0.9);
+margin-bottom: 30px;
+}
+.meme-generator {
+margin-bottom: 40px;
+}
+.meme-btn {
+background: linear-gradient(135deg, #ff006e 0%, #8338ec 50%, #3a86ff 100%);
+color: white;
+border: none;
+padding: 20px 40px;
+font-size: 1.3rem;
+font-weight: 700;
+border-radius: 50px;
+cursor: pointer;
+transition: all 0.3s ease;
+box-shadow: 0 10px 30px rgba(255, 0, 110, 0.3);
+text-transform: uppercase;
+letter-spacing: 2px;
+margin-bottom: 30px;
+}
+.meme-btn:hover {
+transform: translateY(-5px) scale(1.05);
+box-shadow: 0 15px 40px rgba(255, 0, 110, 0.5);
+background: linear-gradient(135deg, #8338ec 0%, #3a86ff 50%, #ff006e 100%);
+}
+.meme-output {
+background: rgba(0, 0, 0, 0.3);
+border: 2px solid rgba(255, 255, 255, 0.2);
+border-radius: 20px;
+padding: 30px;
+margin: 20px auto;
+max-width: 800px;
+min-height: 100px;
+color: white;
+font-size: 1.2rem;
+line-height: 1.6;
+text-align: left;
+backdrop-filter: blur(10px);
+display: none;
+}
+.meme-output.show {
+display: block;
+animation: memeAppear 0.5s ease-out;
+}
+@keyframes memeAppear {
+from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+.meme-stats {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 20px;
+margin-top: 40px;
+}
+.meme-stat {
+background: rgba(255, 255, 255, 0.1);
+backdrop-filter: blur(10px);
+border-radius: 15px;
+padding: 20px;
+text-align: center;
+transition: all 0.3s ease;
+border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.meme-stat:hover {
+transform: translateY(-5px);
+background: rgba(255, 255, 255, 0.15);
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+.meme-emoji {
+font-size: 3rem;
+margin-bottom: 10px;
+animation: emojiFloat 2s ease-in-out infinite;
+}
+.meme-stat:nth-child(1) .meme-emoji { animation-delay: 0s; }
+.meme-stat:nth-child(2) .meme-emoji { animation-delay: 0.2s; }
+.meme-stat:nth-child(3) .meme-emoji { animation-delay: 0.4s; }
+.meme-stat:nth-child(4) .meme-emoji { animation-delay: 0.6s; }
+@keyframes emojiFloat {
+%, 100% { transform: translateY(0px); }
+% { transform: translateY(-10px); }
+}
+.meme-text {
+color: rgba(255, 255, 255, 0.9);
+font-size: 1rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 1px;
+}
+/* Token Information Styles */
+.token-info {
+padding: 80px 0;
+text-align: center;
+}
+.token-header {
+margin-bottom: 60px;
+}
+.token-title {
+font-size: 3rem;
+color: #fff;
+margin-bottom: 10px;
+text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+.token-subtitle {
+font-size: 1.2rem;
+color: rgba(255, 255, 255, 0.9);
+}
+.token-card {
