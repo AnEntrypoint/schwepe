@@ -55,24 +55,29 @@ Also restored complete templates for:
 - **gallery.html**: Content showcase (631 lines)
 - **lore.html**: Documentation and sacred texts (1188 lines)
 
-## Three-Layer Video Playback System (✅ OPERATIONAL WITH REAL CONTENT)
-**PlaybackHandler** implements continuous rotating playback with 478 real videos from public/videos.json:
-- **Layer 1 (Saved)**: 318 saved videos (2/3 of library) - ads/filler content
-- **Layer 2 (Scheduled)**: 160 scheduled videos (1/3 of library) - synced global content
-- All videos rotate every 5 seconds through entire library
+## Three-Layer Video Playback System (✅ FULLY OPERATIONAL WITH YEAR-LONG TV SCHEDULE)
+**PlaybackHandler** implements continuous rotating playback mixing 478 saved videos with 391 scheduled programs:
+- **Saved Videos**: 478 files from saved_videos/ directory (local content library)
+- **Scheduled Content**: 391 shows from year-long weekly schedule (weeks 1-78)
+- **Interleaving Ratio**: ~1 scheduled per 1.2 saved videos for balanced exposure
+- All rotate every 5 seconds through entire library
 
 Features:
-- Loads real video metadata from /public/videos.json (478 total videos)
-- Automatic rotation through all videos in sequence with modulo cycling
-- Color-coded display backgrounds: Cyan (#00ffff) saved, Yellow (#ffff00) scheduled
-- Videos display actual filenames from saved_videos/ directory
-- Console logging of each transition for debugging
-- Graceful fallback to default videos if JSON load fails
-- Tested and verified with Playwright MCP - colors and rotation confirmed
+- Loads saved videos from /public/videos.json
+- Loads weekly schedules from /public/schedule_weeks/week_N.json
+- Auto-detects current week and loads appropriate schedule
+- Interleaves both video types for continuous mixed playback
+- Color-coded display: Cyan (#00ffff) saved, Yellow (#ffff00) scheduled
+- Display format: Saved = "filename.mp4", Scheduled = "Show Name - Episode Title"
+- Console logging shows video type and title for debugging
+- Graceful fallback if scheduler unavailable
+- Tested with Playwright - both types cycling with proper colors confirmed
 
 Files:
-- **playback-handler.js**: PlaybackHandler class with video rotation logic
-- **public/videos.json**: 478 video entries from saved_videos/ directory (generated)
+- **playback-handler.js**: PlaybackHandler with interleaving logic
+- **tv-scheduler.js**: TVScheduler class loads weekly schedules dynamically
+- **public/videos.json**: 478 saved video metadata
+- **public/schedule_weeks/**: Year-long programming schedule (78 weeks)
 
 ## Implementation Notes
 - Each domain gets its own site directory with separate templates
