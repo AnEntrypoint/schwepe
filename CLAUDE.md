@@ -38,8 +38,27 @@
 - Server: Express.js with static file serving and domain-based routing
 - Container: Docker with nixpacks build
 
+## Schwelevision Restoration
+Complete Schwelevision broadcasting system restored with:
+- **videos-thread.html**: Full retro TV interface with real-time scheduler (612 lines)
+- **schwelevision.js**: Main entry point for broadcasting system
+- **lib/**: Complete module suite (13 modules)
+  - tv-core-*.js: Core broadcasting functionality
+  - tv-scheduler-*.js: Advanced scheduling system
+  - tv-utils-*.js: Utilities and analytics
+  - health-monitor.js: System health tracking
+  - recommendation-engine.js: Content recommendations
+  - transcoding-basic.js: Media transcoding
+
+Also restored complete templates for:
+- **images-thread.html**: Full image gallery with animations (708 lines)
+- **gallery.html**: Content showcase (631 lines)
+- **lore.html**: Documentation and sacred texts (1188 lines)
+
 ## Implementation Notes
 - Each domain gets its own site directory with separate templates
 - Build system renders templates with site-specific config
-- CSS-in-head approach for instant styling (no external stylesheets)
-- Clean, minimal HTML structure for fast rendering
+- schwelevision.js and lib/ are copied to dist root for ES module imports
+- All modules properly exported and available in broadcasting system
+- CSS-in-head approach for instant styling
+- Complete Schwelevision broadcasting network fully operational
