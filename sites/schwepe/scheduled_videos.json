@@ -1,0 +1,20 @@
+[
+  {
+    "id": "sched_1",
+    "title": "Main Content 1",
+    "scheduledTime": "2025-11-05T00:00:00Z",
+    "type": "scheduled"
+  },
+  {
+    "id": "sched_2",
+    "title": "Main Content 2",
+    "scheduledTime": "2025-11-05T06:00:00Z",
+    "type": "scheduled"
+  },
+  {
+    "id": "sched_3",
+    "title": "Main Content 3",
+    "scheduledTime": "2025-11-05T12:00:00Z",
+    "type": "scheduled"
+  }
+]

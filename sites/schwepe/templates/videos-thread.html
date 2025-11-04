@@ -571,6 +571,7 @@
   </div>
   <script type="module">
   import SchwelevisionSystem from './schwelevision.js';
+  import { PlaybackHandler } from './playback-handler.js';
   window.SchwelevisionSystem = SchwelevisionSystem;
   async function loadNavbar() {
   try {
@@ -605,6 +606,10 @@
   const tv = new SchwelevisionSystem();
   window.tv = tv;
   await tv.initialize();
+  const playback = new PlaybackHandler(tv);
+  window.playback = playback;
+  await playback.loadVideos();
+  playback.startPlayback();
   });
   </script>
   </body>
