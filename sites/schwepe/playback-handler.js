@@ -12,14 +12,11 @@ export class PlaybackHandler {
 
   async loadVideos() {
     try {
-      const [saved, scheduled] = await Promise.all([
-        fetch('saved_videos.json').then(r => r.json()),
-        fetch('scheduled_videos.json').then(r => r.json())
-      ]);
-      this.savedVideos = saved;
-      this.scheduledVideos = scheduled;
-      this.allVideos = [...this.savedVideos, ...this.scheduledVideos];
-      console.log('Videos loaded:', { saved: saved.length, scheduled: scheduled.length, total: this.allVideos.length });
+      const videos = await fetch('/public/videos.json').then(r => r.json());
+      this.savedVideos = videos.filter((v, idx) => idx % 3 !== 0);
+      this.scheduledVideos = videos.filter((v, idx) => idx % 3 === 0);
+      this.allVideos = videos;
+      console.log('Videos loaded:', { saved: this.savedVideos.length, scheduled: this.scheduledVideos.length, total: videos.length });
     } catch (e) {
       console.log('Video data loading info:', e.message);
       this.initializeDefault();
@@ -53,29 +50,25 @@ export class PlaybackHandler {
     if (this.allVideos.length === 0) return;
 
     const video = this.allVideos[this.currentIndex % this.allVideos.length];
-    let bgColor = '#00ff00';
-
-    if (video.type === 'static') {
-      bgColor = '#00ff00';
-    } else if (video.type === 'filler') {
-      bgColor = '#00ffff';
-    } else if (video.type === 'scheduled') {
-      bgColor = '#ffff00';
-    }
+    const savedIdx = this.currentIndex % this.allVideos.length;
+    const isScheduled = savedIdx % 3 === 0;
+    const bgColor = isScheduled ? '#ffff00' : '#00ffff';
+    const displayName = video.filename || video.title || 'Unknown';
 
     if (this.currentVideoEl) {
-      this.currentVideoEl.textContent = 'Now: ' + video.title + ' (' + video.type + ')';
+      this.currentVideoEl.textContent = 'Now: ' + displayName;
       this.currentVideoEl.style.display = 'block';
       this.currentVideoEl.style.backgroundColor = bgColor;
       this.currentVideoEl.style.color = '#000';
       this.currentVideoEl.style.padding = '20px';
       this.currentVideoEl.style.textAlign = 'center';
-      this.currentVideoEl.style.fontSize = '18px';
+      this.currentVideoEl.style.fontSize = '16px';
+      this.currentVideoEl.style.wordBreak = 'break-word';
     }
 
-    console.log('Playing: ' + video.title + ' (' + video.type + ')');
+    console.log('Playing: ' + displayName);
 
-    const duration = video.duration || 5000;
+    const duration = 5000;
     this.currentIndex++;
 
     setTimeout(() => {
