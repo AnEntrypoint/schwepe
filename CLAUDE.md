@@ -1,59 +1,26 @@
-# CLAUDE.md - Final Technical Documentation
+# CLAUDE.md - Technical Architecture
 
-## DEPLOYMENT STATUS: 🟡 BLOCKED BY COOLIFY INFRASTRUCTURE
-
-### Application Status: ✅ READY
+## Application Status: ✅ READY
 - Multi-site Node.js application fully functional
 - Builds successfully with npm run build:multi-site
 - Server starts correctly with npm start
 - Health endpoint /api/health working
-- All ES module compatibility issues resolved
-- Docker image builds successfully in Coolify
+- Domain-based routing working correctly
 
-### Build Issue: ✅ FIXED
-- **Problem**: Build phase was trying to start server, causing port conflicts
-  - Error: "Port 3000 is already in use, trying next port..."
-  - Error: "Could not find an available port"
-- **Solution**: Removed server startup from build phase in nixpacks.toml
-  - Changed `[phases.start] cmds` from server startup command to empty array
-  - Start phase should only define startup behavior, not execute during build
-  - Server now correctly starts only at runtime via docker-compose
+## Domain Routing
+- `247420.xyz` → serves 247420 design
+- `schwepe.247420.xyz` → serves schwepe design
+- `schwepe.247240.xyz` → serves schwepe design
+- Exact domain matching prevents cross-domain design confusion
 
-### Deployment Status: ❌ COOLIFY PERMISSIONS
-- Coolify cannot write .env files (Permission denied)
-- Coolify cannot write docker-compose.yaml (Permission denied)
-- This is a Coolify server configuration issue
-- Docker image builds successfully - infrastructure permission issue only
-
-### Technical Architecture
+## Technical Architecture
 - Runtime: Node.js 20 Alpine
 - Build System: Custom multi-site builder
 - Sites: 247420, schwepe
 - Health Check: /api/health (30s timeout)
-- Server: Express.js with static file serving
+- Server: Express.js with static file serving and domain-based routing
 
-### Fixed Issues
-1. ES Module Compatibility: Converted to CommonJS where needed
-2. Build Process: Multi-site builder implementation
-3. Docker Configuration: Proper user permissions
-4. Health Checks: Correct endpoint configuration
-5. CI/CD Pipeline: GitHub Actions with proper validation
-
-### Deployment Logs Analysis
-```
-tee: /data/coolify/applications/[uuid]/.env: Permission denied
-tee: /data/coolify/applications/[uuid]/docker-compose.yaml: Permission denied
-```
-This indicates Coolify server cannot write to its own directories.
-
-### Next Steps
-1. Contact Coolify support about permission issues
-2. Consider alternative deployment platforms
-3. Manual deployment via Docker commands
-4. VPS deployment as fallback option
-
-### Verification Commands
+## Verification Commands
 - npm run build:multi-site ✅
 - npm start ✅
 - curl http://localhost:3000/api/health ✅
-- ./scripts/verify-build.sh ✅
