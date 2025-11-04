@@ -5,7 +5,7 @@
  */
 
 import { BroadcastState, StreamManager, ContentValidator, utils, broadcastConfig } from './tv-core.js';
-import { AdvancedScheduler, ContentLibrary, PlayHistory } from './tv-scheduler.js';
+import { AdvancedScheduler, ContentLibrary, PlayHistory } from './tv-scheduler-basic.js';
 
 /**
  * Main Schwelevision broadcasting system
@@ -178,3 +178,25 @@ export class SchwelevisionSystem {
    */
   getStatus() {
     return {
+      isBroadcasting: this.state.isBroadcasting,
+      currentProgram: this.state.currentProgram,
+      startTime: this.state.startTime,
+      contentCount: this.contentLibrary.getContentCount(),
+      playHistoryCount: this.playHistory.entries.length,
+      isAutoMode: this.isAutoMode,
+      uptime: Date.now() - (this.state.startTime?.getTime() || Date.now())
+    };
+  }
+}
+
+export function createSchwelevisionSystem(options = {}) {
+  return new SchwelevisionSystem(options);
+}
+
+export async function quickSetup(options = {}) {
+  const system = new SchwelevisionSystem(options);
+  await system.initialize();
+  return system;
+}
+
+export default SchwelevisionSystem;

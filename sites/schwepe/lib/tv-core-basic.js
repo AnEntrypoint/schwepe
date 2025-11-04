@@ -4,12 +4,6 @@
  * Part of WFGY_Core_OneLine_v2.0 refactoring
  */
 
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 // Core broadcasting configuration
 export const broadcastConfig = {
   stationId: 'schwepe-tv',
@@ -196,5 +190,34 @@ export class ContentValidator {
   }
 }
 
-/**
- * Utility functions
+export const utils = {
+  generateBroadcastId() {
+    return `broadcast_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  },
+
+  formatDuration(ms) {
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+  },
+
+  validateStreamUrl(url) {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
+  getContentType(format) {
+    const contentTypes = {
+      'mp4': 'video/mp4',
+      'webm': 'video/webm',
+      'jpg': 'image/jpeg',
+      'png': 'image/png'
+    };
+    return contentTypes[format] || 'application/octet-stream';
+  }
+};

@@ -4,12 +4,6 @@
  * Part of WFGY_Core_OneLine_v2.0 refactoring
  */
 
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 /**
  * Content transcoding manager
  */
@@ -205,16 +199,7 @@ export class HealthMonitor {
    * Collect system metrics
    */
   async collectMetrics() {
-    try {
-      const { performance } = await import('perf_hooks');
-      const { freemem, totalmem } = await import('os');
-      
-      this.metrics.memoryUsage = ((totalmem() - freemem()) / totalmem()) * 100;
-      this.metrics.activeStreams = this.getActiveStreamCount();
-      
-    } catch (error) {
-      console.error('Failed to collect metrics:', error);
-    }
+    this.metrics.activeStreams = this.getActiveStreamCount();
   }
 
   /**

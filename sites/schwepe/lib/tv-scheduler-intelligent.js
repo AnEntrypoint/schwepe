@@ -147,3 +147,105 @@ export class RecommendationEngine {
     const daysSinceAdded = (Date.now() - content.addedAt.getTime()) / (1000 * 60 * 60 * 24);
     const recencyScore = Math.max(0, 100 - daysSinceAdded * 2);
     score += this.weights.recencyBias * recencyScore;
+
+    return score;
+  }
+
+  getScoreReasons(content, timeSlot, popularity) {
+    const reasons = [];
+
+    if (content.category === timeSlot.programType) {
+      reasons.push('Matches time slot programming');
+    }
+
+    if (popularity > 50) {
+      reasons.push('High popularity');
+    }
+
+    const daysSinceAdded = (Date.now() - content.addedAt.getTime()) / (1000 * 60 * 60 * 24);
+    if (daysSinceAdded < 7) {
+      reasons.push('Recently added');
+    }
+
+    return reasons;
+  }
+}
+
+export class ScheduleOptimizer {
+  constructor() {
+    this.optimizationStrategies = [
+      'peak_hours',
+      'content_diversity',
+      'popularity_based'
+    ];
+  }
+
+  optimize(params) {
+    const { currentSchedule, contentLibrary, viewershipData, popularityScores } = params;
+
+    const performance = this.analyzePerformance(currentSchedule, viewershipData);
+    const suggestions = this.generateSuggestions(
+      currentSchedule,
+      contentLibrary,
+      popularityScores,
+      performance
+    );
+
+    return {
+      currentPerformance: performance,
+      suggestions,
+      optimizedSchedule: this.applyOptimizations(currentSchedule, suggestions)
+    };
+  }
+
+  analyzePerformance(schedule, viewershipData) {
+    const totalPrograms = schedule.length;
+    let totalViewers = 0;
+    let programsWithData = 0;
+
+    schedule.forEach(program => {
+      const data = viewershipData.get(program.id);
+      if (data && data.length > 0) {
+        programsWithData++;
+        totalViewers += data.reduce((sum, d) => sum + d.viewers, 0) / data.length;
+      }
+    });
+
+    return {
+      totalPrograms,
+      programsWithData,
+      avgViewers: programsWithData > 0 ? totalViewers / programsWithData : 0,
+      dataCompleteness: totalPrograms > 0 ? (programsWithData / totalPrograms) * 100 : 0
+    };
+  }
+
+  generateSuggestions(schedule, contentLibrary, popularityScores, performance) {
+    const suggestions = [];
+
+    const sortedContent = Array.from(popularityScores.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+
+    sortedContent.forEach(([contentId, score]) => {
+      suggestions.push({
+        action: 'add_popular',
+        contentId,
+        reason: `High popularity score: ${score.toFixed(2)}`,
+        priority: score
+      });
+    });
+
+    return suggestions;
+  }
+
+  applyOptimizations(schedule, suggestions) {
+    const optimizedSchedule = [...schedule];
+
+    suggestions.forEach(suggestion => {
+      if (suggestion.action === 'add_popular') {
+      }
+    });
+
+    return optimizedSchedule;
+  }
+}

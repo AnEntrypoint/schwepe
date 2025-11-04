@@ -5,7 +5,7 @@
  */
 
 import { BroadcastState, StreamManager, ContentValidator, utils, broadcastConfig } from './tv-core.js';
-import { AdvancedScheduler, ContentLibrary, PlayHistory } from './tv-scheduler.js';
+import { AdvancedScheduler, ContentLibrary, PlayHistory } from './tv-scheduler-basic.js';
 
 /**
  * Main Schwelevision broadcasting system

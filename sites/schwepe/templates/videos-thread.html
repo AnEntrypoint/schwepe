@@ -570,14 +570,13 @@
   </div>
   </div>
   <script type="module">
-  // Import Schwelevision broadcasting system
-  import './schwelevision.js';
+  import SchwelevisionSystem from './schwelevision.js';
+  window.SchwelevisionSystem = SchwelevisionSystem;
   async function loadNavbar() {
   try {
   const response = await fetch('navbar.html');
   const navbarHTML = await response.text();
   document.getElementById('navbar-container').innerHTML = navbarHTML;
-  // Load navbar JavaScript
   const script = document.createElement('script');
   script.src = 'navbar.js';
   document.body.appendChild(script);
@@ -588,7 +587,7 @@
   }
   });
   } catch (error) {
-  console.error('❌ Error loading navbar:', error);
+  console.error('Error loading navbar:', error);
   }
   }
   function scaleToFit() {
@@ -603,9 +602,9 @@
   await loadNavbar();
   scaleToFit();
   window.addEventListener('resize', scaleToFit);
-  const tv = new Schwelevision();
-  window.tv = tv; // Expose globally for testing
-  await tv.init();
+  const tv = new SchwelevisionSystem();
+  window.tv = tv;
+  await tv.initialize();
   });
   </script>
   </body>

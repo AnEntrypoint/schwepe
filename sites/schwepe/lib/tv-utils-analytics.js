@@ -147,3 +147,112 @@ export class BroadcastingAutomation {
       triggerCount: 0,
       lastTriggered: null
     };
+
+    this.automationRules.push(ruleWithId);
+    return ruleWithId.id;
+  }
+
+  removeRule(ruleId) {
+    this.automationRules = this.automationRules.filter(rule => rule.id !== ruleId);
+  }
+
+  async processRules() {
+    if (!this.isEnabled) return;
+
+    const systemStatus = this.system.getStatus();
+
+    for (const rule of this.automationRules) {
+      if (this.evaluateRule(rule, systemStatus)) {
+        await this.executeRule(rule, systemStatus);
+        rule.triggerCount++;
+        rule.lastTriggered = new Date();
+      }
+    }
+  }
+
+  evaluateRule(rule, systemStatus) {
+    const { conditions } = rule;
+
+    return conditions.every(condition => {
+      const { metric, operator, value } = condition;
+      const currentValue = this.getMetricValue(metric, systemStatus);
+
+      switch (operator) {
+        case 'equals': return currentValue === value;
+        case 'greater_than': return currentValue > value;
+        case 'less_than': return currentValue < value;
+        case 'not_equals': return currentValue !== value;
+        default: return false;
+      }
+    });
+  }
+
+  async executeRule(rule, systemStatus) {
+    const { actions } = rule;
+
+    for (const action of actions) {
+      try {
+        await this.executeAction(action, systemStatus);
+      } catch (error) {
+        console.error('Failed to execute automation action:', error);
+      }
+    }
+  }
+
+  async executeAction(action, systemStatus) {
+    switch (action.type) {
+      case 'start_broadcast':
+        if (action.programId) {
+          await this.system.startBroadcast({ id: action.programId });
+        }
+        break;
+
+      case 'stop_broadcast':
+        this.system.stopBroadcast();
+        break;
+
+      case 'send_notification':
+        console.log('Notification:', action.message);
+        break;
+
+      case 'adjust_quality':
+        console.log('Adjusting quality:', action.quality);
+        break;
+
+      case 'log_event':
+        console.log('Automation event:', action.event);
+        break;
+
+      default:
+        console.warn('Unknown action type:', action.type);
+    }
+  }
+
+  getMetricValue(metric, systemStatus) {
+    const metricPath = metric.split('.');
+    let value = systemStatus;
+
+    for (const part of metricPath) {
+      value = value?.[part];
+    }
+
+    return value || 0;
+  }
+
+  setEnabled(enabled) {
+    this.isEnabled = enabled;
+  }
+
+  getStats() {
+    return {
+      totalRules: this.automationRules.length,
+      enabled: this.isEnabled,
+      rules: this.automationRules.map(rule => ({
+        id: rule.id,
+        name: rule.name,
+        triggerCount: rule.triggerCount,
+        lastTriggered: rule.lastTriggered
+      }))
+    };
+  }
+}

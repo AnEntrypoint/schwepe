@@ -118,3 +118,79 @@ export class ScheduleOptimizer {
       optimizedSchedule: this.applyOptimizations(currentSchedule, suggestions)
     };
   }
+
+  analyzePerformance(schedule, viewershipData) {
+    const totalPrograms = schedule.length;
+    let totalViewers = 0;
+    let programsWithData = 0;
+
+    schedule.forEach(program => {
+      const data = viewershipData.get(program.id);
+      if (data && data.length > 0) {
+        programsWithData++;
+        totalViewers += data.reduce((sum, d) => sum + d.viewers, 0) / data.length;
+      }
+    });
+
+    return {
+      totalPrograms,
+      programsWithData,
+      avgViewers: programsWithData > 0 ? totalViewers / programsWithData : 0,
+      dataCompleteness: totalPrograms > 0 ? (programsWithData / totalPrograms) * 100 : 0
+    };
+  }
+
+  generateSuggestions(schedule, contentLibrary, popularityScores, performance) {
+    const suggestions = [];
+
+    const sortedContent = Array.from(popularityScores.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10);
+
+    sortedContent.forEach(([contentId, score]) => {
+      const content = contentLibrary.content.get(contentId);
+      if (content) {
+        suggestions.push({
+          action: 'add_popular_content',
+          contentId,
+          content,
+          score,
+          reason: `High popularity score: ${score.toFixed(2)}`,
+          priority: score
+        });
+      }
+    });
+
+    if (performance.avgViewers < 100) {
+      suggestions.push({
+        action: 'increase_promotion',
+        reason: 'Low average viewership detected',
+        priority: 80
+      });
+    }
+
+    return suggestions.sort((a, b) => b.priority - a.priority);
+  }
+
+  applyOptimizations(schedule, suggestions) {
+    const optimizedSchedule = [...schedule];
+
+    suggestions.forEach(suggestion => {
+      if (suggestion.action === 'add_popular_content' && suggestion.content) {
+        const existingIndex = optimizedSchedule.findIndex(
+          item => item.id === suggestion.contentId
+        );
+
+        if (existingIndex === -1) {
+          optimizedSchedule.push({
+            ...suggestion.content,
+            optimized: true,
+            optimizationReason: suggestion.reason
+          });
+        }
+      }
+    });
+
+    return optimizedSchedule;
+  }
+}

@@ -178,3 +178,47 @@ export class ContentRecommendationService {
    * Get personalized recommendations
    */
   getPersonalizedRecommendations(userId, count = 10) {
+    const preferences = this.userPreferences.get(userId) || {};
+    const allContent = Array.from(this.contentLibrary.content.values());
+
+    const scored = allContent.map(content => {
+      let score = 0;
+
+      if (preferences.categories && preferences.categories.includes(content.category)) {
+        score += 50;
+      }
+
+      if (this.trendingContent.has(content.id)) {
+        score += this.trendingContent.get(content.id);
+      }
+
+      score += Math.random() * 10;
+
+      return { content, score };
+    });
+
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, count).map(item => item.content);
+  }
+
+  updateUserPreferences(userId, preferences) {
+    this.userPreferences.set(userId, {
+      ...this.userPreferences.get(userId),
+      ...preferences
+    });
+  }
+
+  updateTrending(contentId, score) {
+    this.trendingContent.set(contentId, score);
+  }
+
+  getTrendingContent(count = 10) {
+    const trending = Array.from(this.trendingContent.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, count)
+      .map(([contentId]) => this.contentLibrary.content.get(contentId))
+      .filter(Boolean);
+
+    return trending;
+  }
+}

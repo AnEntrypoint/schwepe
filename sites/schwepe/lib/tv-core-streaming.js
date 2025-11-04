@@ -4,12 +4,6 @@
  * Part of WFGY_Core_OneLine_v2.0 refactoring
  */
 
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 // Advanced broadcasting configuration
 export const advancedConfig = {
   adaptiveBitrate: true,
@@ -148,3 +142,58 @@ export class TranscodingManager {
       endTime: null,
       outputPath: null,
       error: null
+    };
+
+    this.activeJobs.set(jobId, job);
+    this.processQueue();
+
+    return jobId;
+  }
+
+  async processQueue() {
+    const queuedJobs = Array.from(this.activeJobs.values())
+      .filter(job => job.status === 'queued')
+      .slice(0, this.maxConcurrentJobs);
+
+    for (const job of queuedJobs) {
+      this.processTranscodeJob(job);
+    }
+  }
+
+  async processTranscodeJob(job) {
+    job.status = 'processing';
+    job.startTime = new Date();
+
+    try {
+      job.progress = 50;
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      job.progress = 100;
+      job.status = 'completed';
+      job.endTime = new Date();
+      job.outputPath = job.inputPath.replace(/\.[^.]+$/, '_transcoded.mp4');
+
+    } catch (error) {
+      job.status = 'failed';
+      job.error = error.message;
+      job.endTime = new Date();
+    }
+
+    this.completedJobs.push({ ...job });
+    this.activeJobs.delete(job.id);
+    this.processQueue();
+  }
+
+  getJobStatus(jobId) {
+    return this.activeJobs.get(jobId) ||
+           this.completedJobs.find(job => job.id === jobId) ||
+           null;
+  }
+
+  getStats() {
+    return {
+      activeJobs: this.activeJobs.size,
+      completedJobs: this.completedJobs.length
+    };
+  }
+}
