@@ -35,10 +35,10 @@ app.use((req, res, next) => {
   // Determine which site to serve based on domain
   let siteId = '247420'; // default
 
-  if (domain.includes('schwepe')) {
+  if (domain === 'schwepe.247420.xyz' || domain.startsWith('schwepe.')) {
     siteId = 'schwepe';
-  } else if (domain.includes('coolify')) {
-    siteId = '247420'; // coolify serves main site
+  } else if (domain === '247420.xyz' || domain === 'localhost' || domain.includes('coolify')) {
+    siteId = '247420';
   }
 
   console.log('Serving site:', siteId);
