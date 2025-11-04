@@ -12,15 +12,50 @@ export class PlaybackHandler {
 
   async loadVideos() {
     try {
-      const videos = await fetch('/public/videos.json').then(r => r.json());
-      this.savedVideos = videos.filter((v, idx) => idx % 3 !== 0);
-      this.scheduledVideos = videos.filter((v, idx) => idx % 3 === 0);
-      this.allVideos = videos;
-      console.log('Videos loaded:', { saved: this.savedVideos.length, scheduled: this.scheduledVideos.length, total: videos.length });
+      const [videoList, { TVScheduler }] = await Promise.all([
+        fetch('/public/videos.json').then(r => r.json()),
+        import('./tv-scheduler.js').catch(() => ({ TVScheduler: null }))
+      ]);
+
+      this.savedVideos = videoList;
+
+      if (TVScheduler) {
+        const scheduler = new TVScheduler();
+        this.scheduledVideos = await scheduler.getScheduleVideos();
+        console.log('Loaded from TV schedule:', { saved: this.savedVideos.length, scheduled: this.scheduledVideos.length });
+      } else {
+        this.scheduledVideos = [];
+        console.log('TV scheduler not available, using saved videos only');
+      }
+
+      this.allVideos = this.interleaveVideos(this.savedVideos, this.scheduledVideos);
+      console.log('Videos loaded:', { saved: this.savedVideos.length, scheduled: this.scheduledVideos.length, total: this.allVideos.length });
     } catch (e) {
       console.log('Video data loading info:', e.message);
       this.initializeDefault();
     }
+  }
+
+  interleaveVideos(saved, scheduled) {
+    if (scheduled.length === 0) return saved;
+    if (saved.length === 0) return scheduled;
+
+    const result = [];
+    const ratio = Math.ceil(saved.length / scheduled.length);
+
+    let savedIdx = 0;
+    let schedIdx = 0;
+
+    while (savedIdx < saved.length || schedIdx < scheduled.length) {
+      for (let i = 0; i < ratio && savedIdx < saved.length; i++) {
+        result.push(saved[savedIdx++]);
+      }
+      if (schedIdx < scheduled.length) {
+        result.push(scheduled[schedIdx++]);
+      }
+    }
+
+    return result;
   }
 
   initializeDefault() {
@@ -50,10 +85,15 @@ export class PlaybackHandler {
     if (this.allVideos.length === 0) return;
 
     const video = this.allVideos[this.currentIndex % this.allVideos.length];
-    const savedIdx = this.currentIndex % this.allVideos.length;
-    const isScheduled = savedIdx % 3 === 0;
+    const isScheduled = video.type === 'scheduled';
     const bgColor = isScheduled ? '#ffff00' : '#00ffff';
-    const displayName = video.filename || video.title || 'Unknown';
+
+    let displayName = 'Unknown';
+    if (isScheduled) {
+      displayName = video.show + ' - ' + video.episode;
+    } else {
+      displayName = video.filename || video.title || 'Unknown';
+    }
 
     if (this.currentVideoEl) {
       this.currentVideoEl.textContent = 'Now: ' + displayName;
@@ -62,11 +102,11 @@ export class PlaybackHandler {
       this.currentVideoEl.style.color = '#000';
       this.currentVideoEl.style.padding = '20px';
       this.currentVideoEl.style.textAlign = 'center';
-      this.currentVideoEl.style.fontSize = '16px';
+      this.currentVideoEl.style.fontSize = '14px';
       this.currentVideoEl.style.wordBreak = 'break-word';
     }
 
-    console.log('Playing: ' + displayName);
+    console.log('Playing [' + video.type + ']: ' + displayName);
 
     const duration = 5000;
     this.currentIndex++;
