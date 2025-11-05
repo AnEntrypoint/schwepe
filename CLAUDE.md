@@ -55,18 +55,19 @@ Also restored complete templates for:
 - **gallery.html**: Content showcase (631 lines)
 - **lore.html**: Documentation and sacred texts (1188 lines)
 
-## Video Playback System (✅ REAL STREAMING WITH ARCHIVE.ORG)
+## Video Playback System (✅ LIVE STREAMING OPERATIONAL)
 **PlaybackHandler** implements real HTML5 video playback streaming 478 saved videos + 391 scheduled shows:
 - **Saved Videos**: 478 MP4 files from /public/saved_videos/ (local library)
-- **Scheduled Content**: 391 shows streaming from archive.org URLs (weeks 1-78)
+- **Scheduled Content**: 391 shows streaming directly from archive.org (weeks 1-78)
 - **Interleaving Ratio**: ~1 scheduled per 1.2 saved videos for balanced exposure
 - **Video Queue**: 3-video rotation system with preloading for seamless playback
 
 Real Video Streaming:
-- HTML5 `<video>` elements with src URLs
+- HTML5 `<video>` elements with direct src URLs
 - Saved: `/public/saved_videos/[filename].mp4`
-- Scheduled: `https://archive.org/download/[item]/[file].mp4`
-- Auto-advance on video end
+- Scheduled: Direct archive.org URLs (already have CORS headers)
+- Auto-advance on video end with graceful error handling
+- Some archive.org videos may be unavailable (403) - system skips automatically
 - Preloads next video while current plays
 - CrossOrigin support for archive.org
 
