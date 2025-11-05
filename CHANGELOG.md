@@ -1,16 +1,29 @@
 # CHANGELOG.md
 
-## 2025-11-05 - LIVE VIDEO STREAMING & BUILD OPTIMIZATION
+## 2025-11-05 - SYNCHRONIZED GLOBAL PLAYBACK & INTERACTIVE FEATURES
 
-### Video Playback System ✅
-- Implemented real HTML5 video streaming with 3-video queue system
+### Global Synchronized Playback ✅
+- Implemented epoch-based synchronization (2025-11-05T00:00:00Z baseline)
+- All viewers worldwide see identical content at identical time
+- 5-second enforced playback duration for perfect global alignment
+- Automatic drift detection and resyncing every video transition
+- Synchronized index calculation based on elapsed time since epoch
+- Viewers joining at any time see current global playback position
+
+### Interactive TV Slapping Feature ✅
+- Click TV screen to "slap" with visual and audio feedback
+- Audio synthesis: static crackle (200ms) → thud (150ms) → whine (300ms)
+- Incrementing slap counter with animated pulse effect
+- Web Audio API for authentic retro TV sound effects
+
+### Enhanced Video Playback System ✅
+- Real HTML5 video streaming with 3-video queue system
 - Direct streaming from archive.org URLs (CORS headers already present)
 - Interleaved playback: 478 saved videos + 391 scheduled shows
 - Graceful error handling for unavailable archive.org content
 - Automatic preloading and seamless transitions
 - On-screen display with color-coded video titles (cyan: saved, yellow: scheduled)
-- Updated playback-handler.js to use direct URLs instead of proxy
-- Removed unnecessary proxy middleware (archive.org has native CORS support)
+- Comprehensive Playwright test suite with all evals passing
 
 ### Build System Optimization ✅
 - Fixed excessive file duplication in build output

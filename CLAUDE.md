@@ -62,20 +62,24 @@ Also restored complete templates for:
 - **Image Library**: 64MB
 - **Total Assets**: ~303MB in public/, minimal duplication in dist/
 
-## Video Playback System (✅ LIVE STREAMING OPERATIONAL)
-**PlaybackHandler** implements real HTML5 video playback streaming 478 saved videos + 391 scheduled shows:
+## Video Playback System (✅ SYNCHRONIZED GLOBAL PLAYBACK OPERATIONAL)
+**PlaybackHandler** implements globally synchronized HTML5 video playback:
 - **Saved Videos**: 478 MP4 files from /public/saved_videos/ (local library)
 - **Scheduled Content**: 391 shows streaming directly from archive.org (weeks 1-78)
 - **Interleaving Ratio**: ~1 scheduled per 1.2 saved videos for balanced exposure
 - **Video Queue**: 3-video rotation system with preloading for seamless playback
+- **Global Sync**: All viewers worldwide see identical content at identical time
+- **Sync Epoch**: 2025-11-05T00:00:00Z baseline for index calculation
+- **Enforced Duration**: 5-second playback limit per video for perfect synchronization
 
 Real Video Streaming:
 - HTML5 `<video>` elements with direct src URLs
 - Saved: `/public/saved_videos/[filename].mp4`
 - Scheduled: Direct archive.org URLs (already have CORS headers)
-- Auto-advance on video end with graceful error handling
+- Auto-advance after 5 seconds OR video end (whichever comes first)
 - Some archive.org videos may be unavailable (403) - system skips automatically
 - Preloads next video while current plays
+- Drift detection and automatic resyncing every transition
 
 On-Screen Display:
 - Real-time "Now Playing" overlay showing current video title
@@ -83,6 +87,7 @@ On-Screen Display:
 - Semi-transparent background for readability over video content
 - Truncates long titles with ellipsis
 - Smooth transitions between video changes
+- TV slapping feature: Click screen for audio feedback (static → thud → whine)
 
 Error Handling:
 - CORS errors: skip to next video
