@@ -32,7 +32,22 @@ async function buildSite(siteId) {
   const sitePath = path.join(projectRoot, 'sites', siteId);
   const siteDistPath = path.join(distPath, 'site-assets');
 
-  await execAsync('cp -r "' + sitePath + '" "' + siteDistPath + '"');
+  await fs.mkdir(siteDistPath, { recursive: true });
+
+  const itemsToCopy = ['config.json', 'templates', 'styles', 'scripts'];
+  for (const item of itemsToCopy) {
+    const source = path.join(sitePath, item);
+    const dest = path.join(siteDistPath, item);
+    try {
+      await fs.access(source);
+      if ((await fs.stat(source)).isDirectory()) {
+        await execAsync('cp -r "' + source + '" "' + dest + '"');
+      } else {
+        await execAsync('cp "' + source + '" "' + dest + '"');
+      }
+    } catch (err) {
+    }
+  }
 
   const faviconSource = path.join(sitePath, 'media', 'static', 'favicon.ico');
   const faviconDest = path.join(distPath, 'favicon.ico');
@@ -50,13 +65,16 @@ async function buildSite(siteId) {
   } catch (err) {
   }
 
-  // Copy schwelevision.js and lib to dist root for module imports
-  const schwelevisionSource = path.join(sitePath, 'schwelevision.js');
-  const schwelevisionDest = path.join(distPath, 'schwelevision.js');
-  try {
-    await fs.access(schwelevisionSource);
-    await execAsync('cp "' + schwelevisionSource + '" "' + schwelevisionDest + '"');
-  } catch (err) {
+  // Copy JavaScript modules and assets to dist root for module imports
+  const modulesToCopy = ['schwelevision.js', 'playback-handler.js', 'tv-scheduler.js', 'navbar.js', 'navbar.html', 'navbar.css'];
+  for (const module of modulesToCopy) {
+    const source = path.join(sitePath, module);
+    const dest = path.join(distPath, module);
+    try {
+      await fs.access(source);
+      await execAsync('cp "' + source + '" "' + dest + '"');
+    } catch (err) {
+    }
   }
 
   const libSource = path.join(sitePath, 'lib');

@@ -1,6 +1,6 @@
 # CHANGELOG.md
 
-## 2025-11-05 - LIVE VIDEO STREAMING FROM ARCHIVE.ORG
+## 2025-11-05 - LIVE VIDEO STREAMING & BUILD OPTIMIZATION
 
 ### Video Playback System ✅
 - Implemented real HTML5 video streaming with 3-video queue system
@@ -8,13 +8,23 @@
 - Interleaved playback: 478 saved videos + 391 scheduled shows
 - Graceful error handling for unavailable archive.org content
 - Automatic preloading and seamless transitions
+- On-screen display with color-coded video titles (cyan: saved, yellow: scheduled)
 - Updated playback-handler.js to use direct URLs instead of proxy
 - Removed unnecessary proxy middleware (archive.org has native CORS support)
 
+### Build System Optimization ✅
+- Fixed excessive file duplication in build output
+- Reduced dist size from 496MB to 305MB (38% reduction)
+- site-assets now only contains config, templates, styles, scripts (not media)
+- Media files (188MB) no longer duplicated across site builds
+- Selective file copying prevents unnecessary bloat
+
 ### Files Modified
-- sites/schwepe/playback-handler.js: Direct archive.org streaming
-- server.cjs: Added proxy endpoint (later removed - not needed)
-- CLAUDE.md: Updated video playback documentation
+- build-multi-site.js: Optimized file copying to prevent media duplication
+- sites/schwepe/playback-handler.js: Direct archive.org streaming + display
+- sites/schwepe/templates/videos-thread.html: Enhanced now-playing display
+- server.cjs: Removed proxy endpoint
+- CLAUDE.md: Updated documentation
 
 ## 2025-10-27 - COMPREHENSIVE CI/CD FIXES (BLOCKED BY COOLIFY)
 
