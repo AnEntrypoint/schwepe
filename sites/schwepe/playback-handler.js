@@ -126,6 +126,13 @@ export class PlaybackHandler {
 
     console.log('Playing [' + video.type + ']: ' + displayName);
 
+    const nowPlayingEl = document.getElementById('nowPlaying');
+    if (nowPlayingEl) {
+      nowPlayingEl.textContent = displayName;
+      nowPlayingEl.style.display = 'block';
+      nowPlayingEl.style.color = isScheduled ? '#ffff00' : '#00ffff';
+    }
+
     this.videoQueue.forEach((v, i) => {
       v.style.display = i === (this.queueIndex % 3) ? 'block' : 'none';
     });
