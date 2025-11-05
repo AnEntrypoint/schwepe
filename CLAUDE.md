@@ -81,7 +81,8 @@ Files:
 
 ## Automated Testing (✅ COMPREHENSIVE EVALS)
 **evals/eval.js** provides comprehensive automated testing:
-- Starts server on port 3100 automatically
+- Automatic port cleanup (kills servers on 3100-3109)
+- Starts server with dynamic port detection
 - Tests health endpoint functionality
 - Validates both site designs (247420, schwepe)
 - Tests all major pages (home, lore, gallery, images, videos)
@@ -91,6 +92,7 @@ Files:
 - Validates weekly schedule format (373+ programs per week)
 - Automatic server cleanup after tests
 - Color-coded output for easy debugging
+- Robust error handling for port conflicts
 
 Run: `node evals/eval.js`
 
