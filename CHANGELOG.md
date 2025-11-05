@@ -1,5 +1,21 @@
 # CHANGELOG.md
 
+## 2025-11-05 - LIVE VIDEO STREAMING FROM ARCHIVE.ORG
+
+### Video Playback System ✅
+- Implemented real HTML5 video streaming with 3-video queue system
+- Direct streaming from archive.org URLs (CORS headers already present)
+- Interleaved playback: 478 saved videos + 391 scheduled shows
+- Graceful error handling for unavailable archive.org content
+- Automatic preloading and seamless transitions
+- Updated playback-handler.js to use direct URLs instead of proxy
+- Removed unnecessary proxy middleware (archive.org has native CORS support)
+
+### Files Modified
+- sites/schwepe/playback-handler.js: Direct archive.org streaming
+- server.cjs: Added proxy endpoint (later removed - not needed)
+- CLAUDE.md: Updated video playback documentation
+
 ## 2025-10-27 - COMPREHENSIVE CI/CD FIXES (BLOCKED BY COOLIFY)
 
 ### Fixes Applied ✅

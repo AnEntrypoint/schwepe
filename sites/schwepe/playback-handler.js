@@ -132,7 +132,6 @@ export class PlaybackHandler {
 
     const videoUrl = this.getVideoUrl(video);
     if (videoUrl) {
-      currentVideoEl.crossOrigin = 'anonymous';
       currentVideoEl.src = videoUrl;
       currentVideoEl.load();
 
