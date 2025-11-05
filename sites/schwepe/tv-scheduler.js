@@ -39,7 +39,7 @@ export class TVScheduler {
       show: entry.show,
       episode: entry.episode,
       desc: entry.desc,
-      url: entry.u,
+      u: entry.u,
       type: 'scheduled'
     }));
   }

@@ -8,6 +8,8 @@ export class PlaybackHandler {
     this.scheduledVideos = [];
     this.allVideos = [];
     this.currentIndex = 0;
+    this.videoQueue = [this.currentVideoEl, this.nextVideoEl, this.thirdVideoEl];
+    this.queueIndex = 0;
   }
 
   async loadVideos() {
@@ -78,15 +80,42 @@ export class PlaybackHandler {
 
     if (this.allVideos.length > 0) {
       this.playNextVideo();
+      this.preloadNext();
     }
+  }
+
+  preloadNext() {
+    const nextIndex = (this.currentIndex + 1) % this.allVideos.length;
+    const video = this.allVideos[nextIndex];
+    const nextVideoEl = this.videoQueue[(this.queueIndex + 1) % 3];
+
+    if (video && nextVideoEl) {
+      const videoUrl = this.getVideoUrl(video);
+      if (videoUrl) {
+        nextVideoEl.src = videoUrl;
+        nextVideoEl.load();
+      }
+    }
+  }
+
+  getVideoUrl(video) {
+    if (video.type === 'scheduled' && video.u) {
+      return video.u;
+    } else if (video.path) {
+      return '/public/' + video.path;
+    } else if (video.filename) {
+      return '/public/saved_videos/' + video.filename;
+    }
+    return null;
   }
 
   playNextVideo() {
     if (this.allVideos.length === 0) return;
 
     const video = this.allVideos[this.currentIndex % this.allVideos.length];
+    const currentVideoEl = this.videoQueue[this.queueIndex % 3];
+
     const isScheduled = video.type === 'scheduled';
-    const bgColor = isScheduled ? '#ffff00' : '#00ffff';
 
     let displayName = 'Unknown';
     if (isScheduled) {
@@ -95,24 +124,49 @@ export class PlaybackHandler {
       displayName = video.filename || video.title || 'Unknown';
     }
 
-    if (this.currentVideoEl) {
-      this.currentVideoEl.textContent = 'Now: ' + displayName;
-      this.currentVideoEl.style.display = 'block';
-      this.currentVideoEl.style.backgroundColor = bgColor;
-      this.currentVideoEl.style.color = '#000';
-      this.currentVideoEl.style.padding = '20px';
-      this.currentVideoEl.style.textAlign = 'center';
-      this.currentVideoEl.style.fontSize = '14px';
-      this.currentVideoEl.style.wordBreak = 'break-word';
-    }
-
     console.log('Playing [' + video.type + ']: ' + displayName);
 
-    const duration = 5000;
-    this.currentIndex++;
+    this.videoQueue.forEach((v, i) => {
+      v.style.display = i === (this.queueIndex % 3) ? 'block' : 'none';
+    });
 
-    setTimeout(() => {
-      this.playNextVideo();
-    }, duration);
+    const videoUrl = this.getVideoUrl(video);
+    if (videoUrl) {
+      currentVideoEl.crossOrigin = 'anonymous';
+      currentVideoEl.src = videoUrl;
+      currentVideoEl.load();
+
+      currentVideoEl.onloadeddata = () => {
+        currentVideoEl.play().catch(e => {
+          console.log('Autoplay blocked or error:', e.message);
+          currentVideoEl.muted = true;
+          currentVideoEl.play().catch(err => {
+            console.log('Play failed even muted, skipping:', err.message);
+            this.skipToNext();
+          });
+        });
+      };
+
+      currentVideoEl.onended = () => {
+        this.currentIndex++;
+        this.queueIndex++;
+        this.playNextVideo();
+        this.preloadNext();
+      };
+
+      currentVideoEl.onerror = (e) => {
+        console.log('Video load error:', currentVideoEl.error ? currentVideoEl.error.message : 'unknown', 'skipping to next');
+        this.skipToNext();
+      };
+    } else {
+      console.log('No URL for video, skipping');
+      this.skipToNext();
+    }
+  }
+
+  skipToNext() {
+    this.currentIndex++;
+    this.queueIndex++;
+    setTimeout(() => this.playNextVideo(), 1000);
   }
 }
