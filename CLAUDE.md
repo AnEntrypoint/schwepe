@@ -55,6 +55,13 @@ Also restored complete templates for:
 - **gallery.html**: Content showcase (631 lines)
 - **lore.html**: Documentation and sacred texts (1188 lines)
 
+## Performance Metrics
+- **Build Size**: 305MB (reduced from 496MB - 38% optimization)
+- **Video Library**: 478 saved videos (144MB)
+- **Scheduled Content**: 391 shows across 78 weeks (25MB schedules)
+- **Image Library**: 64MB
+- **Total Assets**: ~303MB in public/, minimal duplication in dist/
+
 ## Video Playback System (✅ LIVE STREAMING OPERATIONAL)
 **PlaybackHandler** implements real HTML5 video playback streaming 478 saved videos + 391 scheduled shows:
 - **Saved Videos**: 478 MP4 files from /public/saved_videos/ (local library)
@@ -69,7 +76,13 @@ Real Video Streaming:
 - Auto-advance on video end with graceful error handling
 - Some archive.org videos may be unavailable (403) - system skips automatically
 - Preloads next video while current plays
-- CrossOrigin support for archive.org
+
+On-Screen Display:
+- Real-time "Now Playing" overlay showing current video title
+- Color-coded: Cyan (#00ffff) for saved videos, Yellow (#ffff00) for scheduled
+- Semi-transparent background for readability over video content
+- Truncates long titles with ellipsis
+- Smooth transitions between video changes
 
 Error Handling:
 - CORS errors: skip to next video
