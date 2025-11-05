@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let server;
+let serverPort = null;
 
 const COLORS = {
   RESET: '\x1b[0m',
@@ -22,6 +23,8 @@ async function startServer() {
   return new Promise((resolve, reject) => {
     log('Starting server...', COLORS.BLUE);
     const projectRoot = path.join(__dirname, '..');
+    let resolved = false;
+
     server = spawn('npm', ['start'], {
       cwd: projectRoot,
       env: { ...process.env, PORT: '3100' },
@@ -29,21 +32,39 @@ async function startServer() {
     });
 
     let output = '';
+    let errOutput = '';
+
     server.stdout.on('data', (data) => {
       output += data.toString();
-      if (output.includes('Server running on')) {
-        setTimeout(() => resolve(), 2000);
+      if (!resolved && output.includes('Server running on')) {
+        const match = output.match(/http:\/\/0\.0\.0\.0:(\d+)/);
+        if (match) {
+          serverPort = parseInt(match[1]);
+          log(`Server started on port ${serverPort}`, COLORS.BLUE);
+          resolved = true;
+          setTimeout(() => resolve(), 2000);
+        }
       }
     });
 
     server.stderr.on('data', (data) => {
       const msg = data.toString();
-      if (!msg.includes('DeprecationWarning')) {
+      errOutput += msg;
+      if (!msg.includes('DeprecationWarning') && !msg.includes('ExperimentalWarning')) {
         console.error(msg);
+      }
+      if (!resolved && errOutput.includes('Could not find an available port')) {
+        resolved = true;
+        reject(new Error('No available ports'));
       }
     });
 
-    setTimeout(() => reject(new Error('Server timeout')), 15000);
+    setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        reject(new Error('Server timeout - no port detected'));
+      }
+    }, 20000);
   });
 }
 
@@ -69,42 +90,44 @@ async function testWithFetch(url, description) {
 }
 
 async function runBasicTests() {
+  const baseUrl = `http://localhost:${serverPort}`;
+
   log('Testing health endpoint...', COLORS.YELLOW);
-  const health = await testWithFetch('http://localhost:3100/api/health', 'Health endpoint');
+  const health = await testWithFetch(`${baseUrl}/api/health`, 'Health endpoint');
   const healthJson = JSON.parse(health);
   if (healthJson.status !== 'ok') throw new Error('Health status not ok');
 
   log('Testing schwepe site...', COLORS.YELLOW);
-  const schwepe = await testWithFetch('http://localhost:3100/', 'Schwepe homepage');
+  const schwepe = await testWithFetch(`${baseUrl}/`, 'Schwepe homepage');
   if (!schwepe.includes('schwepe')) throw new Error('Schwepe content missing');
 
   log('Testing Schwelevision page...', COLORS.YELLOW);
-  const videos = await testWithFetch('http://localhost:3100/videos-thread.html', 'Schwelevision page');
+  const videos = await testWithFetch(`${baseUrl}/videos-thread.html`, 'Schwelevision page');
   if (!videos.includes('BROADCASTING')) throw new Error('Schwelevision content missing');
 
   log('Testing lore page...', COLORS.YELLOW);
-  await testWithFetch('http://localhost:3100/lore.html', 'Lore page');
+  await testWithFetch(`${baseUrl}/lore.html`, 'Lore page');
 
   log('Testing gallery page...', COLORS.YELLOW);
-  await testWithFetch('http://localhost:3100/gallery.html', 'Gallery page');
+  await testWithFetch(`${baseUrl}/gallery.html`, 'Gallery page');
 
   log('Testing images page...', COLORS.YELLOW);
-  await testWithFetch('http://localhost:3100/images-thread.html', 'Images page');
+  await testWithFetch(`${baseUrl}/images-thread.html`, 'Images page');
 
   log('Testing navigation CSS...', COLORS.YELLOW);
-  const css = await testWithFetch('http://localhost:3100/navbar.css', 'Navbar CSS');
+  const css = await testWithFetch(`${baseUrl}/navbar.css`, 'Navbar CSS');
   if (!css.includes('nav') && !css.includes('color')) throw new Error('Invalid CSS content');
 
   log('Testing playback handler...', COLORS.YELLOW);
-  const handler = await testWithFetch('http://localhost:3100/playback-handler.js', 'Playback handler');
+  const handler = await testWithFetch(`${baseUrl}/playback-handler.js`, 'Playback handler');
   if (!handler.includes('PlaybackHandler')) throw new Error('Invalid playback handler');
 
   log('Testing TV scheduler...', COLORS.YELLOW);
-  const scheduler = await testWithFetch('http://localhost:3100/tv-scheduler.js', 'TV scheduler');
+  const scheduler = await testWithFetch(`${baseUrl}/tv-scheduler.js`, 'TV scheduler');
   if (!scheduler.includes('TVScheduler')) throw new Error('Invalid TV scheduler');
 
   log('Testing videos.json...', COLORS.YELLOW);
-  const videosJson = await testWithFetch('http://localhost:3100/public/videos.json', 'Videos JSON');
+  const videosJson = await testWithFetch(`${baseUrl}/public/videos.json`, 'Videos JSON');
   const videos_data = JSON.parse(videosJson);
   if (!Array.isArray(videos_data) || videos_data.length < 400) {
     throw new Error('Invalid videos.json');
@@ -112,7 +135,7 @@ async function runBasicTests() {
   log(`  Found ${videos_data.length} saved videos`, COLORS.BLUE);
 
   log('Testing schedule week 1...', COLORS.YELLOW);
-  const week1 = await testWithFetch('http://localhost:3100/public/schedule_weeks/week_1.json', 'Week 1 schedule');
+  const week1 = await testWithFetch(`${baseUrl}/public/schedule_weeks/week_1.json`, 'Week 1 schedule');
   const week1_data = JSON.parse(week1);
   if (!week1_data.v || typeof week1_data.v !== 'object') {
     throw new Error('Invalid week schedule format');
