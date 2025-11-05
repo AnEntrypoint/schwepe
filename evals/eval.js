@@ -19,7 +19,31 @@ function log(message, color = COLORS.RESET) {
   console.log(`${color}${message}${COLORS.RESET}`);
 }
 
+async function cleanupPorts() {
+  return new Promise((resolve) => {
+    const cleanup = spawn('sh', ['-c', 'lsof -ti:3100,3101,3102,3103,3104,3105,3106,3107,3108,3109 2>/dev/null | xargs -r kill -9 2>/dev/null || true']);
+    let resolved = false;
+
+    cleanup.on('close', () => {
+      if (!resolved) {
+        resolved = true;
+        setTimeout(resolve, 1500);
+      }
+    });
+
+    setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        resolve();
+      }
+    }, 4000);
+  });
+}
+
 async function startServer() {
+  log('Cleaning up ports...', COLORS.BLUE);
+  await cleanupPorts();
+
   return new Promise((resolve, reject) => {
     log('Starting server...', COLORS.BLUE);
     const projectRoot = path.join(__dirname, '..');
@@ -55,16 +79,16 @@ async function startServer() {
       }
       if (!resolved && errOutput.includes('Could not find an available port')) {
         resolved = true;
-        reject(new Error('No available ports'));
+        reject(new Error('All ports 3100-3109 in use. Clean up running servers first.'));
       }
     });
 
     setTimeout(() => {
       if (!resolved) {
         resolved = true;
-        reject(new Error('Server timeout - no port detected'));
+        reject(new Error('Server timeout - no port detected after 25s'));
       }
-    }, 20000);
+    }, 25000);
   });
 }
 
