@@ -55,29 +55,41 @@ Also restored complete templates for:
 - **gallery.html**: Content showcase (631 lines)
 - **lore.html**: Documentation and sacred texts (1188 lines)
 
-## Three-Layer Video Playback System (✅ FULLY OPERATIONAL WITH YEAR-LONG TV SCHEDULE)
-**PlaybackHandler** implements continuous rotating playback mixing 478 saved videos with 391 scheduled programs:
-- **Saved Videos**: 478 files from saved_videos/ directory (local content library)
-- **Scheduled Content**: 391 shows from year-long weekly schedule (weeks 1-78)
+## Video Playback System (✅ REAL STREAMING WITH ARCHIVE.ORG)
+**PlaybackHandler** implements real HTML5 video playback streaming 478 saved videos + 391 scheduled shows:
+- **Saved Videos**: 478 MP4 files from /public/saved_videos/ (local library)
+- **Scheduled Content**: 391 shows streaming from archive.org URLs (weeks 1-78)
 - **Interleaving Ratio**: ~1 scheduled per 1.2 saved videos for balanced exposure
-- All rotate every 5 seconds through entire library
+- **Video Queue**: 3-video rotation system with preloading for seamless playback
+
+Real Video Streaming:
+- HTML5 `<video>` elements with src URLs
+- Saved: `/public/saved_videos/[filename].mp4`
+- Scheduled: `https://archive.org/download/[item]/[file].mp4`
+- Auto-advance on video end
+- Preloads next video while current plays
+- CrossOrigin support for archive.org
+
+Error Handling:
+- CORS errors: skip to next video
+- Format errors: skip to next video
+- Missing URLs: skip to next video
+- Autoplay blocked: fallback to muted, then skip
+- Console logs all transitions and errors
 
 Features:
 - Loads saved videos from /public/videos.json
 - Loads weekly schedules from /public/schedule_weeks/week_N.json
-- Auto-detects current week and loads appropriate schedule
+- Auto-detects current week (1-78) and loads appropriate schedule
 - Interleaves both video types for continuous mixed playback
-- Color-coded display: Cyan (#00ffff) saved, Yellow (#ffff00) scheduled
-- Display format: Saved = "filename.mp4", Scheduled = "Show Name - Episode Title"
 - Console logging shows video type and title for debugging
-- Graceful fallback if scheduler unavailable
-- Tested with Playwright - both types cycling with proper colors confirmed
+- Tested with Playwright - both types streaming correctly
 
 Files:
-- **playback-handler.js**: PlaybackHandler with interleaving logic
-- **tv-scheduler.js**: TVScheduler class loads weekly schedules dynamically
+- **playback-handler.js**: Real video playback with 3-video queue
+- **tv-scheduler.js**: Weekly schedule loader with archive.org URLs
 - **public/videos.json**: 478 saved video metadata
-- **public/schedule_weeks/**: Year-long programming schedule (78 weeks)
+- **public/schedule_weeks/**: Year-long TV schedule (78 weeks, 391 programs)
 
 ## Automated Testing (✅ COMPREHENSIVE EVALS)
 
