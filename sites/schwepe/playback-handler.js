@@ -10,6 +10,16 @@ export class PlaybackHandler {
     this.currentIndex = 0;
     this.videoQueue = [this.currentVideoEl, this.nextVideoEl, this.thirdVideoEl];
     this.queueIndex = 0;
+    this.videoDuration = 5000;
+    this.syncEpoch = new Date('2025-11-05T00:00:00Z').getTime();
+    this.currentTimeout = null;
+  }
+
+  getSynchronizedIndex() {
+    const now = Date.now();
+    const elapsed = now - this.syncEpoch;
+    const videosSinceEpoch = Math.floor(elapsed / this.videoDuration);
+    return videosSinceEpoch % this.allVideos.length;
   }
 
   async loadVideos() {
@@ -79,6 +89,8 @@ export class PlaybackHandler {
     console.log('Layer 3 (Scheduled): ' + this.scheduledVideos.length);
 
     if (this.allVideos.length > 0) {
+      this.currentIndex = this.getSynchronizedIndex();
+      console.log('Synchronized playback: Starting at index ' + this.currentIndex + ' (global sync)');
       this.playNextVideo();
       this.preloadNext();
     }
@@ -111,6 +123,11 @@ export class PlaybackHandler {
 
   playNextVideo() {
     if (this.allVideos.length === 0) return;
+
+    if (this.currentTimeout) {
+      clearTimeout(this.currentTimeout);
+      this.currentTimeout = null;
+    }
 
     const video = this.allVideos[this.currentIndex % this.allVideos.length];
     const currentVideoEl = this.videoQueue[this.queueIndex % 3];
@@ -151,16 +168,24 @@ export class PlaybackHandler {
             this.skipToNext();
           });
         });
+        this.currentTimeout = setTimeout(() => {
+          this.moveToNext();
+        }, this.videoDuration);
       };
 
       currentVideoEl.onended = () => {
-        this.currentIndex++;
-        this.queueIndex++;
-        this.playNextVideo();
-        this.preloadNext();
+        if (this.currentTimeout) {
+          clearTimeout(this.currentTimeout);
+          this.currentTimeout = null;
+        }
+        this.moveToNext();
       };
 
       currentVideoEl.onerror = (e) => {
+        if (this.currentTimeout) {
+          clearTimeout(this.currentTimeout);
+          this.currentTimeout = null;
+        }
         console.log('Video load error:', currentVideoEl.error ? currentVideoEl.error.message : 'unknown', 'skipping to next');
         this.skipToNext();
       };
@@ -168,6 +193,19 @@ export class PlaybackHandler {
       console.log('No URL for video, skipping');
       this.skipToNext();
     }
+  }
+
+  moveToNext() {
+    const syncedIndex = this.getSynchronizedIndex();
+    if (Math.abs(syncedIndex - this.currentIndex) > 2) {
+      console.log('Sync drift detected. Resyncing from index ' + this.currentIndex + ' to ' + syncedIndex);
+      this.currentIndex = syncedIndex;
+    } else {
+      this.currentIndex++;
+    }
+    this.queueIndex++;
+    this.playNextVideo();
+    this.preloadNext();
   }
 
   skipToNext() {
