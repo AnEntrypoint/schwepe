@@ -79,6 +79,23 @@ Files:
 - **public/videos.json**: 478 saved video metadata
 - **public/schedule_weeks/**: Year-long programming schedule (78 weeks)
 
+## Automated Testing (✅ COMPREHENSIVE EVALS)
+**evals/eval.js** provides comprehensive automated testing:
+- Starts server on port 3100 automatically
+- Tests health endpoint functionality
+- Validates both site designs (247420, schwepe)
+- Tests all major pages (home, lore, gallery, images, videos)
+- Verifies static asset serving and MIME types
+- Validates JavaScript modules (playback-handler, tv-scheduler)
+- Checks videos.json library (478 videos)
+- Validates weekly schedule format (373+ programs per week)
+- Automatic server cleanup after tests
+- Color-coded output for easy debugging
+
+Run: `node evals/eval.js`
+
+Note: For UI-level testing including video playback rotation, color cycling, and user interactions, use Playwright MCP browser tests.
+
 ## Implementation Notes
 - Each domain gets its own site directory with separate templates
 - Build system renders templates with site-specific config
