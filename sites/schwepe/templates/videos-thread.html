@@ -228,16 +228,21 @@
   position: absolute;
   top: 20px;
   left: 20px;
-  background: none; /* Remove background */
-  padding: 5px;
-  border-radius: 0;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 15px;
+  border-radius: 5px;
   font-family: 'VT323', monospace;
-  font-size: 2.1rem;
-  color: #ffffff;
-  z-index: 1; /* Below static and scanlines */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Add shadow for readability */
-  transition: opacity 0.5s ease;
-  filter: blur(1px); /* Add blur to match TV aesthetic */
+  font-size: 1.8rem;
+  color: #00ffff;
+  z-index: 1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  transition: all 0.3s ease;
+  filter: blur(1px);
+  max-width: calc(100% - 40px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   }
   .logo-overlay {
   position: absolute;
