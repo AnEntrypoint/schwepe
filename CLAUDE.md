@@ -80,7 +80,9 @@ Files:
 - **public/schedule_weeks/**: Year-long programming schedule (78 weeks)
 
 ## Automated Testing (✅ COMPREHENSIVE EVALS)
-**evals/eval.js** provides comprehensive automated testing:
+
+### Basic Tests - evals/eval.js
+Fast integration tests using fetch:
 - Automatic port cleanup (kills servers on 3100-3109)
 - Starts server with dynamic port detection
 - Tests health endpoint functionality
@@ -94,9 +96,22 @@ Files:
 - Color-coded output for easy debugging
 - Robust error handling for port conflicts
 
-Run: `node evals/eval.js`
+Run: `node evals/eval.js` (~15 seconds)
 
-Note: For UI-level testing including video playback rotation, color cycling, and user interactions, use Playwright MCP browser tests.
+### Schwelevision Tests - evals/eval-tv.js
+Comprehensive Playwright browser tests for video playback:
+- **Initialization**: Verifies Schwelevision system starts correctly
+- **Library Loading**: Confirms 478 saved + 391 scheduled videos load
+- **Video Rotation**: Validates continuous playback with multiple transitions
+- **Type Interleaving**: Ensures both saved and scheduled videos appear
+- **Color Coding**: Verifies cyan (#00ffff) for saved, yellow (#ffff00) for scheduled
+- **Display Updates**: Checks DOM updates with correct video names
+- **Content Format**: Validates scheduled shows use "Show - Episode" format
+- **Playback Timing**: Confirms ~5 second rotation intervals
+
+Run: `node evals/eval-tv.js` (~80 seconds)
+
+All 16 tests passing ✅
 
 ## Implementation Notes
 - Each domain gets its own site directory with separate templates
