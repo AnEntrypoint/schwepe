@@ -4,6 +4,7 @@ export class PlaybackHandler {
     this.currentVideoEl = document.getElementById('currentVideo');
     this.nextVideoEl = document.getElementById('nextVideo');
     this.thirdVideoEl = document.getElementById('thirdVideo');
+    this.staticEl = document.getElementById('static');
     this.savedVideos = [];
     this.scheduledVideos = [];
     this.allVideos = [];
@@ -13,6 +14,42 @@ export class PlaybackHandler {
     this.videoDuration = 5000;
     this.syncEpoch = new Date('2025-11-05T00:00:00Z').getTime();
     this.currentTimeout = null;
+    this.showingStatic = false;
+    this.staticCanvas = document.getElementById('noiseCanvas');
+    this.initStaticCanvas();
+  }
+
+  initStaticCanvas() {
+    if (this.staticCanvas) {
+      const ctx = this.staticCanvas.getContext('2d');
+      this.staticCanvas.width = 640;
+      this.staticCanvas.height = 480;
+      this.renderStatic(ctx);
+      setInterval(() => this.renderStatic(ctx), 50);
+    }
+  }
+
+  renderStatic(ctx) {
+    const imageData = ctx.createImageData(this.staticCanvas.width, this.staticCanvas.height);
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      const color = Math.random() * 255;
+      imageData.data[i] = color;
+      imageData.data[i + 1] = color;
+      imageData.data[i + 2] = color;
+      imageData.data[i + 3] = 255;
+    }
+    ctx.putImageData(imageData, 0, 0);
+  }
+
+  showStatic(duration = 1000) {
+    if (this.staticEl) {
+      this.staticEl.classList.add('active');
+      this.showingStatic = true;
+      setTimeout(() => {
+        this.staticEl.classList.remove('active');
+        this.showingStatic = false;
+      }, duration);
+    }
   }
 
   getSynchronizedIndex() {
@@ -24,26 +61,57 @@ export class PlaybackHandler {
 
   async loadVideos() {
     try {
-      const [videoList, { TVScheduler }] = await Promise.all([
-        fetch('/public/videos.json').then(r => r.json()),
-        import('./tv-scheduler.js').catch(() => ({ TVScheduler: null }))
-      ]);
-
-      this.savedVideos = videoList;
+      // Load TV scheduler (primary content source for production)
+      const { TVScheduler } = await import('./tv-scheduler.js').catch(() => ({ TVScheduler: null }));
 
       if (TVScheduler) {
         const scheduler = new TVScheduler();
         this.scheduledVideos = await scheduler.getScheduleVideos();
-        console.log('Loaded from TV schedule:', { saved: this.savedVideos.length, scheduled: this.scheduledVideos.length });
+        console.log('✓ Loaded scheduled content:', this.scheduledVideos.length, 'shows');
       } else {
         this.scheduledVideos = [];
-        console.log('TV scheduler not available, using saved videos only');
+        console.log('⚠ TV scheduler not available');
       }
 
-      this.allVideos = this.interleaveVideos(this.savedVideos, this.scheduledVideos);
-      console.log('Videos loaded:', { saved: this.savedVideos.length, scheduled: this.scheduledVideos.length, total: this.allVideos.length });
+      // Try to load saved videos (may not exist in production)
+      try {
+        const videoList = await fetch('/public/videos.json').then(r => r.json());
+        // Verify saved videos directory exists by testing one video
+        if (videoList.length > 0) {
+          const testVideo = videoList[0];
+          const testUrl = '/public/' + (testVideo.path || 'saved_videos/' + testVideo.filename);
+          const testResponse = await fetch(testUrl, { method: 'HEAD' }).catch(() => null);
+          if (testResponse && testResponse.ok) {
+            this.savedVideos = videoList;
+            console.log('✓ Loaded saved videos:', this.savedVideos.length, 'files');
+          } else {
+            console.log('⚠ Saved videos directory not available (expected in production)');
+            this.savedVideos = [];
+          }
+        }
+      } catch (e) {
+        console.log('⚠ Saved videos not available:', e.message);
+        this.savedVideos = [];
+      }
+
+      // Use scheduled content if saved videos aren't available
+      if (this.savedVideos.length === 0 && this.scheduledVideos.length > 0) {
+        this.allVideos = this.scheduledVideos;
+        console.log('📺 Using scheduled content only (production mode)');
+      } else if (this.savedVideos.length > 0 && this.scheduledVideos.length === 0) {
+        this.allVideos = this.savedVideos;
+        console.log('📺 Using saved videos only');
+      } else if (this.savedVideos.length > 0 && this.scheduledVideos.length > 0) {
+        this.allVideos = this.interleaveVideos(this.savedVideos, this.scheduledVideos);
+        console.log('📺 Using mixed content (saved + scheduled)');
+      } else {
+        console.log('❌ No content available, using fallback');
+        this.initializeDefault();
+      }
+
+      console.log('Total videos in queue:', this.allVideos.length);
     } catch (e) {
-      console.log('Video data loading info:', e.message);
+      console.log('Video data loading error:', e.message);
       this.initializeDefault();
     }
   }
@@ -122,12 +190,19 @@ export class PlaybackHandler {
   }
 
   playNextVideo() {
-    if (this.allVideos.length === 0) return;
+    if (this.allVideos.length === 0) {
+      console.log('No videos available, showing static');
+      this.showStatic(10000);
+      return;
+    }
 
     if (this.currentTimeout) {
       clearTimeout(this.currentTimeout);
       this.currentTimeout = null;
     }
+
+    // Show brief static during transition
+    this.showStatic(300);
 
     const video = this.allVideos[this.currentIndex % this.allVideos.length];
     const currentVideoEl = this.videoQueue[this.queueIndex % 3];
@@ -159,7 +234,14 @@ export class PlaybackHandler {
       currentVideoEl.src = videoUrl;
       currentVideoEl.load();
 
+      // Timeout for loading - if video doesn't load in 10 seconds, skip
+      const loadTimeout = setTimeout(() => {
+        console.log('Video load timeout, skipping');
+        this.skipToNext();
+      }, 10000);
+
       currentVideoEl.onloadeddata = () => {
+        clearTimeout(loadTimeout);
         currentVideoEl.play().catch(e => {
           console.log('Autoplay blocked or error:', e.message);
           currentVideoEl.muted = true;
@@ -174,6 +256,7 @@ export class PlaybackHandler {
       };
 
       currentVideoEl.onended = () => {
+        clearTimeout(loadTimeout);
         if (this.currentTimeout) {
           clearTimeout(this.currentTimeout);
           this.currentTimeout = null;
@@ -182,11 +265,13 @@ export class PlaybackHandler {
       };
 
       currentVideoEl.onerror = (e) => {
+        clearTimeout(loadTimeout);
         if (this.currentTimeout) {
           clearTimeout(this.currentTimeout);
           this.currentTimeout = null;
         }
-        console.log('Video load error:', currentVideoEl.error ? currentVideoEl.error.message : 'unknown', 'skipping to next');
+        const errorType = currentVideoEl.error ? currentVideoEl.error.code : 'unknown';
+        console.log('Video error (code ' + errorType + '):', displayName, '- skipping');
         this.skipToNext();
       };
     } else {
@@ -209,6 +294,8 @@ export class PlaybackHandler {
   }
 
   skipToNext() {
+    // Show static when skipping broken videos
+    this.showStatic(500);
     this.currentIndex++;
     this.queueIndex++;
     setTimeout(() => this.playNextVideo(), 1000);
