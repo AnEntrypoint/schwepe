@@ -62,53 +62,79 @@ Also restored complete templates for:
 - **Image Library**: 64MB
 - **Total Assets**: ~303MB in public/, minimal duplication in dist/
 
-## Video Playback System (✅ SYNCHRONIZED GLOBAL PLAYBACK OPERATIONAL)
-**PlaybackHandler** implements globally synchronized HTML5 video playback:
-- **Saved Videos**: 478 MP4 files from /public/saved_videos/ (local library)
-- **Scheduled Content**: 391 shows streaming directly from archive.org (weeks 1-78)
-- **Interleaving Ratio**: ~1 scheduled per 1.2 saved videos for balanced exposure
+## Video Playback System (✅ PRODUCTION-READY WITH FALLBACKS)
+**PlaybackHandler** implements globally synchronized HTML5 video playback with intelligent fallback handling:
+
+### Content Sources (Priority Order)
+1. **Scheduled Content** (Primary - Archive.org): 391 shows streaming from archive.org (weeks 1-78)
+2. **Saved Videos** (Optional - Local): 478 MP4 files from /public/saved_videos/ (gitignored, dev-only)
+3. **Static Fallback**: Animated TV static canvas for transitions and errors
+
+### Production Deployment Strategy
+- **Primary Mode**: Scheduled content from archive.org (always available)
+- **Hybrid Mode**: Mixed saved + scheduled (when saved_videos/ exists locally)
+- **Graceful Degradation**: Auto-detects missing saved_videos and continues with scheduled only
+- **Static Display**: Shows TV static during video transitions and loading states
+
+### Playback Features
 - **Video Queue**: 3-video rotation system with preloading for seamless playback
 - **Global Sync**: All viewers worldwide see identical content at identical time
 - **Sync Epoch**: 2025-11-05T00:00:00Z baseline for index calculation
-- **Enforced Duration**: 5-second playback limit per video for perfect synchronization
+- **Duration**: 5-second playback limit per video for perfect synchronization
+- **Load Timeout**: 10-second timeout for unresponsive videos
 
-Real Video Streaming:
+### Real Video Streaming
 - HTML5 `<video>` elements with direct src URLs
-- Saved: `/public/saved_videos/[filename].mp4`
-- Scheduled: Direct archive.org URLs (already have CORS headers)
+- Saved (optional): `/public/saved_videos/[filename].mp4`
+- Scheduled: Direct archive.org URLs (CORS-enabled)
 - Auto-advance after 5 seconds OR video end (whichever comes first)
-- Some archive.org videos may be unavailable (403) - system skips automatically
+- Unavailable videos (403/404) skipped automatically
 - Preloads next video while current plays
 - Drift detection and automatic resyncing every transition
 
-On-Screen Display:
+### On-Screen Display
 - Real-time "Now Playing" overlay showing current video title
 - Color-coded: Cyan (#00ffff) for saved videos, Yellow (#ffff00) for scheduled
-- Semi-transparent background for readability over video content
+- Semi-transparent background for readability
 - Truncates long titles with ellipsis
 - Smooth transitions between video changes
 - TV slapping feature: Click screen for audio feedback (static → thud → whine)
 
-Error Handling:
-- CORS errors: skip to next video
-- Format errors: skip to next video
-- Missing URLs: skip to next video
-- Autoplay blocked: fallback to muted, then skip
-- Console logs all transitions and errors
+### Static Fallback System
+- **Canvas-Based Static**: Animated TV static using HTML5 canvas
+- **Automatic Rendering**: Updates at 50ms intervals for realistic effect
+- **Transition Static**: 300ms flash between videos
+- **Error Static**: 500ms display when videos fail to load
+- **Loading Static**: 10s display when no content available
 
-Features:
-- Loads saved videos from /public/videos.json
-- Loads weekly schedules from /public/schedule_weeks/week_N.json
+### Error Handling (Production-Hardened)
+- **Missing Saved Videos**: Gracefully falls back to scheduled content only
+- **CORS Errors**: Skip to next video with static transition
+- **404/403 Errors**: Skip unavailable archive.org content automatically
+- **Load Timeout**: Skip videos that don't load within 10 seconds
+- **Autoplay Blocked**: Fallback to muted playback, then skip
+- **Network Errors**: Continue playback with available content
+- **Console Logging**: Detailed logs for debugging (✓/⚠/❌ indicators)
+
+### Content Loading
+- Loads saved videos from /public/videos.json (optional)
+- Loads weekly schedules from /public/schedule_weeks/week_N.json (required)
 - Auto-detects current week (1-78) and loads appropriate schedule
-- Interleaves both video types for continuous mixed playback
-- Console logging shows video type and title for debugging
-- Tested with Playwright - both types streaming correctly
+- Interleaves both video types when both available
+- HEAD request verification for saved_videos availability
+- Console logging shows video type and source for debugging
 
-Files:
-- **playback-handler.js**: Real video playback with 3-video queue
+### Files
+- **playback-handler.js**: Enhanced video playback with production fallbacks
 - **tv-scheduler.js**: Weekly schedule loader with archive.org URLs
-- **public/videos.json**: 478 saved video metadata
+- **public/videos.json**: 478 saved video metadata (gitignored in production)
 - **public/schedule_weeks/**: Year-long TV schedule (78 weeks, 391 programs)
+
+### Testing
+- Tested with Playwright - both saved and scheduled streaming
+- Local development: Full hybrid mode with saved + scheduled
+- Production deployment: Scheduled-only mode (expected behavior)
+- Static fallback verified for error states
 
 ## Automated Testing (✅ COMPREHENSIVE EVALS)
 
