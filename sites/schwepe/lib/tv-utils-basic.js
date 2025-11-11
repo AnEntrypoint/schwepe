@@ -4,7 +4,7 @@
  * Part of WFGY_Core_OneLine_v2.0 refactoring
  */
 
-import { BroadcastState, StreamManager, ContentValidator, utils, broadcastConfig } from './tv-core.js';
+import { BroadcastState, StreamManager, ContentValidator, utils, broadcastConfig } from './tv-core-basic.js';
 import { AdvancedScheduler, ContentLibrary, PlayHistory } from './tv-scheduler-basic.js';
 
 /**
