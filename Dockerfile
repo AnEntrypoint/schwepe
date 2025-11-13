@@ -12,7 +12,7 @@ RUN npm ci --only=production
 COPY . .
 
 # Build the application
-RUN npm run build:multi-site
+RUN npm run build
 
 # Expose port
 EXPOSE 3000
