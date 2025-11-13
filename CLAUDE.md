@@ -1,15 +1,20 @@
 # CLAUDE.md - Technical Architecture
 
-## Deployment Status: ✅ LIVE & VERIFIED
+## Deployment Status: ⚠️ PARTIAL - BUILD INVESTIGATION NEEDED
 - Deployed to Coolify on 2025-11-04
 - Both domains live with completely distinct designs
 - Domain routing verified working correctly
+- **ISSUE**: Schwelevision playback-handler.js and tv-scheduler.js not deploying (returning HTML instead of JS)
+- **CAUSE**: Build process on Coolify may not be copying JS modules from sites/schwepe/ to dist/schwepe/
+- **VERIFIED**: Local build works correctly - files present in dist/schwepe/ after npm run build
+- **ACTION NEEDED**: Check Coolify build logs or verify build-multi-site.js copies modules correctly in Docker
 
-## Application Status: ✅ PRODUCTION
-- Multi-site Node.js application fully functional
-- Builds successfully with npm run build:multi-site
+## Application Status: ⚠️ PARTIAL FUNCTIONALITY
+- Multi-site Node.js application functional
+- Builds successfully locally with npm run build
 - Server runs with exact domain-based routing
 - Health endpoint /api/health working
+- **BLOCKED**: Schwelevision video playback broken due to missing JS modules
 
 ## Domain Routing & Designs (✅ VERIFIED LIVE)
 - `247420.xyz` → **247420 Digital Stoner Den** (VT323 monospace, dark theme, age verification overlay)
