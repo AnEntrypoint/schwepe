@@ -1,13 +1,47 @@
 # CLAUDE.md - Technical Architecture
 
-## Deployment Status: ⚠️ PARTIAL - BUILD INVESTIGATION NEEDED
-- Deployed to Coolify on 2025-11-04
+## Deployment Status: ⚠️ COOLIFY REBUILD REQUIRED
+- Original deployment: 2025-11-04 (last-modified: Tue, 04 Nov 2025 19:11:27 GMT)
 - Both domains live with completely distinct designs
 - Domain routing verified working correctly
-- **ISSUE**: Schwelevision playback-handler.js and tv-scheduler.js not deploying (returning HTML instead of JS)
-- **CAUSE**: Build process on Coolify may not be copying JS modules from sites/schwepe/ to dist/schwepe/
-- **VERIFIED**: Local build works correctly - files present in dist/schwepe/ after npm run build
-- **ACTION NEEDED**: Check Coolify build logs or verify build-multi-site.js copies modules correctly in Docker
+- **CRITICAL ISSUE**: Deployment has NOT updated despite multiple git pushes
+
+### Problem Summary
+Schwelevision video playback broken - playback-handler.js and tv-scheduler.js return HTML (homepage) instead of JavaScript.
+
+### Root Cause Analysis ✅ COMPLETE
+1. **Build script is CORRECT** ✅
+   - build-multi-site.js properly copies all modules (lines 69-90)
+   - Local testing: `npm run build` successfully copies all files to dist/schwepe/
+   - Verified with detailed logging: all files copy correctly locally
+
+2. **Local server works PERFECTLY** ✅
+   - Test: `NODE_ENV=development node server.cjs`
+   - playback-handler.js serves as application/javascript
+   - tv-scheduler.js serves as application/javascript
+   - All MIME types correct
+
+3. **Coolify is NOT rebuilding** ❌
+   - Multiple commits pushed (Dockerfile fix, timestamp updates, logging improvements)
+   - Last-modified header still shows Nov 4, 2025
+   - etag unchanged: W/"24eb-19a5047ff7f"
+   - Deployment stuck on original build
+
+### Required Action
+**MANUAL COOLIFY INTERVENTION NEEDED:**
+- Check Coolify dashboard for failed builds or webhook issues
+- Manually trigger rebuild in Coolify
+- OR check webhook configuration for GitHub → Coolify
+- Verify Coolify has access to latest commits
+
+### What to Verify After Rebuild
+```bash
+curl https://schwepe.247420.xyz/playback-handler.js | head -5
+# Should return: export class PlaybackHandler {
+
+curl -I https://schwepe.247420.xyz/playback-handler.js | grep content-type
+# Should return: content-type: application/javascript
+```
 
 ## Application Status: ⚠️ PARTIAL FUNCTIONALITY
 - Multi-site Node.js application functional
