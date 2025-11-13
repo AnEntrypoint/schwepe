@@ -160,20 +160,13 @@ Fast integration tests using fetch:
 
 Run: `node evals/eval.js` (~15 seconds)
 
-### Schwelevision Tests - evals/eval-tv.js
-Comprehensive Playwright browser tests for video playback:
-- **Initialization**: Verifies Schwelevision system starts correctly
-- **Library Loading**: Confirms 478 saved + 391 scheduled videos load
-- **Video Rotation**: Validates continuous playback with multiple transitions
-- **Type Interleaving**: Ensures both saved and scheduled videos appear
-- **Color Coding**: Verifies cyan (#00ffff) for saved, yellow (#ffff00) for scheduled
-- **Display Updates**: Checks DOM updates with correct video names
-- **Content Format**: Validates scheduled shows use "Show - Episode" format
-- **Playback Timing**: Confirms ~5 second rotation intervals
-
-Run: `node evals/eval-tv.js` (~80 seconds)
-
-All 16 tests passing ✅
+### Browser Testing
+For comprehensive Schwelevision testing including video playback, use Playwright MCP:
+- Navigate to videos-thread.html
+- Check window.playback and window.tv objects
+- Monitor console for playback logs
+- Verify video element src changes
+- Confirm color-coded "Now Playing" display
 
 ## Implementation Notes
 - Each domain gets its own site directory with separate templates
