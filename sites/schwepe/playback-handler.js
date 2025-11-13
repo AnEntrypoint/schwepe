@@ -11,9 +11,8 @@ export class PlaybackHandler {
     this.currentIndex = 0;
     this.videoQueue = [this.currentVideoEl, this.nextVideoEl, this.thirdVideoEl];
     this.queueIndex = 0;
-    this.videoDuration = 5000;
-    this.syncEpoch = new Date('2025-11-05T00:00:00Z').getTime();
     this.currentTimeout = null;
+    this.loadTimeout = null;
     this.showingStatic = false;
     this.staticCanvas = document.getElementById('noiseCanvas');
     this.initStaticCanvas();
@@ -52,12 +51,6 @@ export class PlaybackHandler {
     }
   }
 
-  getSynchronizedIndex() {
-    const now = Date.now();
-    const elapsed = now - this.syncEpoch;
-    const videosSinceEpoch = Math.floor(elapsed / this.videoDuration);
-    return videosSinceEpoch % this.allVideos.length;
-  }
 
   async loadVideos() {
     try {
@@ -94,16 +87,13 @@ export class PlaybackHandler {
         this.savedVideos = [];
       }
 
-      // Use scheduled content if saved videos aren't available
-      if (this.savedVideos.length === 0 && this.scheduledVideos.length > 0) {
+      // Use scheduled content as primary, saved videos only if no schedule
+      if (this.scheduledVideos.length > 0) {
         this.allVideos = this.scheduledVideos;
-        console.log('📺 Using scheduled content only (production mode)');
-      } else if (this.savedVideos.length > 0 && this.scheduledVideos.length === 0) {
+        console.log('📺 Using scheduled content:', this.scheduledVideos.length, 'videos');
+      } else if (this.savedVideos.length > 0) {
         this.allVideos = this.savedVideos;
         console.log('📺 Using saved videos only');
-      } else if (this.savedVideos.length > 0 && this.scheduledVideos.length > 0) {
-        this.allVideos = this.interleaveVideos(this.savedVideos, this.scheduledVideos);
-        console.log('📺 Using mixed content (saved + scheduled)');
       } else {
         console.log('❌ No content available, using fallback');
         this.initializeDefault();
@@ -116,27 +106,6 @@ export class PlaybackHandler {
     }
   }
 
-  interleaveVideos(saved, scheduled) {
-    if (scheduled.length === 0) return saved;
-    if (saved.length === 0) return scheduled;
-
-    const result = [];
-    const ratio = Math.ceil(saved.length / scheduled.length);
-
-    let savedIdx = 0;
-    let schedIdx = 0;
-
-    while (savedIdx < saved.length || schedIdx < scheduled.length) {
-      for (let i = 0; i < ratio && savedIdx < saved.length; i++) {
-        result.push(saved[savedIdx++]);
-      }
-      if (schedIdx < scheduled.length) {
-        result.push(scheduled[schedIdx++]);
-      }
-    }
-
-    return result;
-  }
 
   initializeDefault() {
     this.savedVideos = [
@@ -151,14 +120,12 @@ export class PlaybackHandler {
   }
 
   startPlayback() {
-    console.log('Three-layer playback initialized');
-    console.log('Layer 1 (Static): ' + this.savedVideos.filter(v => v.type === 'static').length);
-    console.log('Layer 2 (Saved Videos): ' + this.savedVideos.filter(v => v.type === 'filler').length);
-    console.log('Layer 3 (Scheduled): ' + this.scheduledVideos.length);
+    console.log('📺 Schwelevision playback initialized');
+    console.log('Total videos in rotation:', this.allVideos.length);
 
     if (this.allVideos.length > 0) {
-      this.currentIndex = this.getSynchronizedIndex();
-      console.log('Synchronized playback: Starting at index ' + this.currentIndex + ' (global sync)');
+      this.currentIndex = 0;
+      console.log('Starting playback at beginning of schedule');
       this.playNextVideo();
       this.preloadNext();
     }
@@ -234,44 +201,46 @@ export class PlaybackHandler {
       currentVideoEl.src = videoUrl;
       currentVideoEl.load();
 
-      // Timeout for loading - if video doesn't load in 10 seconds, skip
-      const loadTimeout = setTimeout(() => {
-        console.log('Video load timeout, skipping');
+      if (this.loadTimeout) {
+        clearTimeout(this.loadTimeout);
+      }
+
+      this.loadTimeout = setTimeout(() => {
+        console.log('⚠ Video load timeout after 15s, skipping:', displayName);
         this.skipToNext();
-      }, 10000);
+      }, 15000);
 
       currentVideoEl.onloadeddata = () => {
-        clearTimeout(loadTimeout);
+        if (this.loadTimeout) {
+          clearTimeout(this.loadTimeout);
+          this.loadTimeout = null;
+        }
         currentVideoEl.play().catch(e => {
-          console.log('Autoplay blocked or error:', e.message);
+          console.log('⚠ Autoplay blocked, trying muted:', e.message);
           currentVideoEl.muted = true;
           currentVideoEl.play().catch(err => {
-            console.log('Play failed even muted, skipping:', err.message);
+            console.log('❌ Play failed even muted, skipping:', err.message);
             this.skipToNext();
           });
         });
-        this.currentTimeout = setTimeout(() => {
-          this.moveToNext();
-        }, this.videoDuration);
       };
 
       currentVideoEl.onended = () => {
-        clearTimeout(loadTimeout);
-        if (this.currentTimeout) {
-          clearTimeout(this.currentTimeout);
-          this.currentTimeout = null;
+        if (this.loadTimeout) {
+          clearTimeout(this.loadTimeout);
+          this.loadTimeout = null;
         }
+        console.log('✓ Video completed:', displayName);
         this.moveToNext();
       };
 
       currentVideoEl.onerror = (e) => {
-        clearTimeout(loadTimeout);
-        if (this.currentTimeout) {
-          clearTimeout(this.currentTimeout);
-          this.currentTimeout = null;
+        if (this.loadTimeout) {
+          clearTimeout(this.loadTimeout);
+          this.loadTimeout = null;
         }
         const errorType = currentVideoEl.error ? currentVideoEl.error.code : 'unknown';
-        console.log('Video error (code ' + errorType + '):', displayName, '- skipping');
+        console.log('❌ Video error (code ' + errorType + '):', displayName, '- skipping');
         this.skipToNext();
       };
     } else {
@@ -281,14 +250,9 @@ export class PlaybackHandler {
   }
 
   moveToNext() {
-    const syncedIndex = this.getSynchronizedIndex();
-    if (Math.abs(syncedIndex - this.currentIndex) > 2) {
-      console.log('Sync drift detected. Resyncing from index ' + this.currentIndex + ' to ' + syncedIndex);
-      this.currentIndex = syncedIndex;
-    } else {
-      this.currentIndex++;
-    }
+    this.currentIndex = (this.currentIndex + 1) % this.allVideos.length;
     this.queueIndex++;
+    this.showStatic(300);
     this.playNextVideo();
     this.preloadNext();
   }
