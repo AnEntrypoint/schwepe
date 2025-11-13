@@ -1,5 +1,34 @@
 # CHANGELOG.md
 
+## 2025-11-13 - DEPLOYMENT ISSUE INVESTIGATION ⚠️
+
+### Issue
+Schwelevision video playback broken on live site (schwepe.247420.xyz) - playback-handler.js and tv-scheduler.js return HTML instead of JavaScript, preventing video playback initialization.
+
+### Root Cause Analysis Completed
+1. **Build system verified working** ✅ - Local `npm run build` successfully copies all required files to dist/schwepe/
+2. **Server verified working** ✅ - Local server correctly serves .js files with application/javascript MIME type
+3. **All source files present** ✅ - playback-handler.js (10KB, 303 lines) and tv-scheduler.js (1.2KB) exist in sites/schwepe/
+4. **Coolify deployment NOT updating** ❌ - Last deployment: Nov 4, 2025 19:11:27 GMT despite multiple git pushes
+
+### Actions Taken
+- Fixed Dockerfile build command (line 15: `npm run build`)
+- Added detailed logging to build-multi-site.js showing file copy operations
+- Removed eval-tv.js requiring playwright package
+- Added timestamp comment to Dockerfile to force Docker layer rebuild
+- Pushed 8+ commits attempting to trigger Coolify webhook
+
+### Current Status
+Deployment stuck on November 4th build. Requires manual Coolify dashboard intervention.
+
+### Manual Resolution Steps
+1. Access Coolify dashboard
+2. Navigate to schwepe project/service
+3. Check webhook configuration (GitHub → Coolify)
+4. Manually trigger rebuild
+5. Verify build logs show: "✓ Copied playback-handler.js" and "✓ Copied tv-scheduler.js"
+6. After deployment, verify: `curl https://schwepe.247420.xyz/playback-handler.js` returns JavaScript
+
 ## 2025-11-05 - SYNCHRONIZED GLOBAL PLAYBACK & INTERACTIVE FEATURES
 
 ### Global Synchronized Playback ✅
