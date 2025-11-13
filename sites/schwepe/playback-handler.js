@@ -7,12 +7,12 @@ export class PlaybackHandler {
     this.staticEl = document.getElementById('static');
     this.savedVideos = [];
     this.scheduledVideos = [];
-    this.allVideos = [];
-    this.currentIndex = 0;
+    this.scheduleIndex = 0;
+    this.fillerIndex = 0;
     this.videoQueue = [this.currentVideoEl, this.nextVideoEl, this.thirdVideoEl];
     this.queueIndex = 0;
-    this.currentTimeout = null;
     this.loadTimeout = null;
+    this.playingScheduled = false;
     this.showingStatic = false;
     this.staticCanvas = document.getElementById('noiseCanvas');
     this.initStaticCanvas();
@@ -87,19 +87,14 @@ export class PlaybackHandler {
         this.savedVideos = [];
       }
 
-      // Use scheduled content as primary, saved videos only if no schedule
-      if (this.scheduledVideos.length > 0) {
-        this.allVideos = this.scheduledVideos;
-        console.log('📺 Using scheduled content:', this.scheduledVideos.length, 'videos');
-      } else if (this.savedVideos.length > 0) {
-        this.allVideos = this.savedVideos;
-        console.log('📺 Using saved videos only');
-      } else {
+      if (this.scheduledVideos.length === 0 && this.savedVideos.length === 0) {
         console.log('❌ No content available, using fallback');
         this.initializeDefault();
+      } else {
+        console.log('📺 TV Station Mode:');
+        console.log('  - Schedule (programming):', this.scheduledVideos.length, 'videos');
+        console.log('  - Filler (ads):', this.savedVideos.length, 'videos');
       }
-
-      console.log('Total videos in queue:', this.allVideos.length);
     } catch (e) {
       console.log('Video data loading error:', e.message);
       this.initializeDefault();
@@ -109,39 +104,25 @@ export class PlaybackHandler {
 
   initializeDefault() {
     this.savedVideos = [
-      { id: 'static_1', title: 'Static', type: 'static', duration: 10000 },
-      { id: 'static_2', title: 'Ambient', type: 'filler', duration: 5000 }
+      { id: 'static_1', title: 'Static Filler', type: 'filler', duration: 10000 }
     ];
     this.scheduledVideos = [
-      { id: 'sched_1', title: 'Scheduled Content 1', type: 'scheduled' },
-      { id: 'sched_2', title: 'Scheduled Content 2', type: 'scheduled' }
+      { id: 'sched_1', title: 'Scheduled Content 1', type: 'scheduled' }
     ];
-    this.allVideos = [...this.savedVideos, ...this.scheduledVideos];
   }
 
   startPlayback() {
-    console.log('📺 Schwelevision playback initialized');
-    console.log('Total videos in rotation:', this.allVideos.length);
-
-    if (this.allVideos.length > 0) {
-      this.currentIndex = 0;
-      console.log('Starting playback at beginning of schedule');
-      this.playNextVideo();
-      this.preloadNext();
-    }
-  }
-
-  preloadNext() {
-    const nextIndex = (this.currentIndex + 1) % this.allVideos.length;
-    const video = this.allVideos[nextIndex];
-    const nextVideoEl = this.videoQueue[(this.queueIndex + 1) % 3];
-
-    if (video && nextVideoEl) {
-      const videoUrl = this.getVideoUrl(video);
-      if (videoUrl) {
-        nextVideoEl.src = videoUrl;
-        nextVideoEl.load();
-      }
+    console.log('📺 Schwelevision TV station initialized');
+    if (this.scheduledVideos.length > 0) {
+      this.scheduleIndex = 0;
+      console.log('Starting weekly schedule from beginning');
+      this.playNextScheduled();
+    } else if (this.savedVideos.length > 0) {
+      console.log('No schedule available, playing filler content only');
+      this.playFiller();
+    } else {
+      console.log('❌ No content available');
+      this.showStatic(10000);
     }
   }
 
@@ -156,40 +137,46 @@ export class PlaybackHandler {
     return null;
   }
 
-  playNextVideo() {
-    if (this.allVideos.length === 0) {
-      console.log('No videos available, showing static');
-      this.showStatic(10000);
+  playNextScheduled() {
+    if (this.scheduledVideos.length === 0) {
+      console.log('No scheduled content, playing filler');
+      this.playFiller();
       return;
     }
 
-    if (this.currentTimeout) {
-      clearTimeout(this.currentTimeout);
-      this.currentTimeout = null;
+    const video = this.scheduledVideos[this.scheduleIndex % this.scheduledVideos.length];
+    const displayName = video.show + ' - ' + video.episode;
+
+    console.log('📺 [SCHEDULE]: ' + displayName);
+    this.playingScheduled = true;
+    this.loadAndPlay(video, displayName, '#ffff00', () => this.onScheduledComplete(), () => this.onScheduledFailed());
+  }
+
+  playFiller() {
+    if (this.savedVideos.length === 0) {
+      console.log('No filler content available, retrying schedule');
+      setTimeout(() => this.playNextScheduled(), 2000);
+      return;
     }
 
-    // Show brief static during transition
-    this.showStatic(300);
+    const video = this.savedVideos[this.fillerIndex % this.savedVideos.length];
+    const displayName = video.filename || video.title || 'Filler';
 
-    const video = this.allVideos[this.currentIndex % this.allVideos.length];
+    console.log('📺 [AD BREAK]: ' + displayName);
+    this.playingScheduled = false;
+    this.loadAndPlay(video, displayName, '#00ffff', () => this.onFillerComplete(), () => this.onFillerComplete());
+  }
+
+  loadAndPlay(video, displayName, color, onComplete, onFailed) {
     const currentVideoEl = this.videoQueue[this.queueIndex % 3];
 
-    const isScheduled = video.type === 'scheduled';
-
-    let displayName = 'Unknown';
-    if (isScheduled) {
-      displayName = video.show + ' - ' + video.episode;
-    } else {
-      displayName = video.filename || video.title || 'Unknown';
-    }
-
-    console.log('Playing [' + video.type + ']: ' + displayName);
+    this.showStatic(300);
 
     const nowPlayingEl = document.getElementById('nowPlaying');
     if (nowPlayingEl) {
       nowPlayingEl.textContent = displayName;
       nowPlayingEl.style.display = 'block';
-      nowPlayingEl.style.color = isScheduled ? '#ffff00' : '#00ffff';
+      nowPlayingEl.style.color = color;
     }
 
     this.videoQueue.forEach((v, i) => {
@@ -197,71 +184,76 @@ export class PlaybackHandler {
     });
 
     const videoUrl = this.getVideoUrl(video);
-    if (videoUrl) {
-      currentVideoEl.src = videoUrl;
-      currentVideoEl.load();
+    if (!videoUrl) {
+      console.log('❌ No URL for video');
+      onFailed();
+      return;
+    }
 
+    currentVideoEl.src = videoUrl;
+    currentVideoEl.load();
+
+    if (this.loadTimeout) {
+      clearTimeout(this.loadTimeout);
+    }
+
+    this.loadTimeout = setTimeout(() => {
+      console.log('⚠ Load timeout (15s), switching to filler');
+      onFailed();
+    }, 15000);
+
+    currentVideoEl.onloadeddata = () => {
       if (this.loadTimeout) {
         clearTimeout(this.loadTimeout);
+        this.loadTimeout = null;
       }
-
-      this.loadTimeout = setTimeout(() => {
-        console.log('⚠ Video load timeout after 15s, skipping:', displayName);
-        this.skipToNext();
-      }, 15000);
-
-      currentVideoEl.onloadeddata = () => {
-        if (this.loadTimeout) {
-          clearTimeout(this.loadTimeout);
-          this.loadTimeout = null;
-        }
-        currentVideoEl.play().catch(e => {
-          console.log('⚠ Autoplay blocked, trying muted:', e.message);
-          currentVideoEl.muted = true;
-          currentVideoEl.play().catch(err => {
-            console.log('❌ Play failed even muted, skipping:', err.message);
-            this.skipToNext();
-          });
+      currentVideoEl.play().catch(e => {
+        console.log('⚠ Autoplay blocked, trying muted');
+        currentVideoEl.muted = true;
+        currentVideoEl.play().catch(() => {
+          console.log('❌ Play failed, switching content');
+          onFailed();
         });
-      };
+      });
+    };
 
-      currentVideoEl.onended = () => {
-        if (this.loadTimeout) {
-          clearTimeout(this.loadTimeout);
-          this.loadTimeout = null;
-        }
-        console.log('✓ Video completed:', displayName);
-        this.moveToNext();
-      };
+    currentVideoEl.onended = () => {
+      if (this.loadTimeout) {
+        clearTimeout(this.loadTimeout);
+        this.loadTimeout = null;
+      }
+      console.log('✓ Completed: ' + displayName);
+      onComplete();
+    };
 
-      currentVideoEl.onerror = (e) => {
-        if (this.loadTimeout) {
-          clearTimeout(this.loadTimeout);
-          this.loadTimeout = null;
-        }
-        const errorType = currentVideoEl.error ? currentVideoEl.error.code : 'unknown';
-        console.log('❌ Video error (code ' + errorType + '):', displayName, '- skipping');
-        this.skipToNext();
-      };
-    } else {
-      console.log('No URL for video, skipping');
-      this.skipToNext();
-    }
+    currentVideoEl.onerror = () => {
+      if (this.loadTimeout) {
+        clearTimeout(this.loadTimeout);
+        this.loadTimeout = null;
+      }
+      const errorType = currentVideoEl.error ? currentVideoEl.error.code : 'unknown';
+      console.log('❌ Video error (' + errorType + '): ' + displayName);
+      onFailed();
+    };
   }
 
-  moveToNext() {
-    this.currentIndex = (this.currentIndex + 1) % this.allVideos.length;
+  onScheduledComplete() {
+    this.scheduleIndex = (this.scheduleIndex + 1) % this.scheduledVideos.length;
     this.queueIndex++;
     this.showStatic(300);
-    this.playNextVideo();
-    this.preloadNext();
+    setTimeout(() => this.playNextScheduled(), 500);
   }
 
-  skipToNext() {
-    // Show static when skipping broken videos
-    this.showStatic(500);
-    this.currentIndex++;
+  onScheduledFailed() {
     this.queueIndex++;
-    setTimeout(() => this.playNextVideo(), 1000);
+    this.showStatic(500);
+    setTimeout(() => this.playFiller(), 500);
+  }
+
+  onFillerComplete() {
+    this.fillerIndex = (this.fillerIndex + 1) % this.savedVideos.length;
+    this.queueIndex++;
+    this.showStatic(300);
+    setTimeout(() => this.playNextScheduled(), 500);
   }
 }
