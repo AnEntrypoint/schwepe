@@ -1,5 +1,45 @@
 # CHANGELOG.md
 
+## 2025-11-13 - TV STATION ARCHITECTURE IMPLEMENTED ✅
+
+### Concept
+Reimplemented Schwelevision as a real TV station:
+- **Weekly Schedule**: 380 videos from archive.org play sequentially in order
+- **Commercial Breaks**: 478 saved videos serve as filler during loading/errors
+- **Immutable Schedule**: All viewers see same scheduled content in same position
+- **Seamless Experience**: Never shows loading screens - switches to filler instead
+
+### Implementation Changes (playback-handler.js)
+- Replaced `allVideos` array with separate `scheduledVideos` and `savedVideos` arrays
+- Removed broken sync logic (`getSynchronizedIndex()`, `syncEpoch`)
+- Removed 5-second video duration limit
+- Added `scheduleIndex` and `fillerIndex` for independent tracking
+- Added `playingScheduled` flag to track current mode
+- New functions: `playNextScheduled()`, `playFiller()`, `loadAndPlay()`
+- Callbacks: `onScheduledComplete()`, `onScheduledFailed()`, `onFillerComplete()`
+
+### Playback Flow
+1. **Start**: Plays scheduled video at index 0
+2. **Schedule Complete**: Advances to next scheduled video (index++)
+3. **Schedule Fails**: Switches to filler video (ad break)
+4. **Filler Complete**: Returns to scheduled programming
+5. **15s Timeout**: Prevents infinite loading by switching to filler
+
+### Console Output
+- `📺 [SCHEDULE]: Show Name - Episode Title` (yellow)
+- `📺 [AD BREAK]: filename.mp4` (cyan)
+- `✓ Completed: ...` on natural completion
+- `❌ Video error: ...` on failures
+- `⚠ Load timeout (15s), switching to filler`
+
+### Verified Behavior
+- Schedule plays sequentially from beginning
+- Videos play to full completion (no premature cuts)
+- Failed scheduled videos trigger filler playback
+- Filler videos return to scheduled content
+- Schedule index advances only on successful completion
+- All 380 scheduled + 478 filler videos available
+
 ## 2025-11-13 - DEPLOYMENT ISSUE RESOLVED ✅
 
 ### Issue (RESOLVED)
