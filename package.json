@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "build": "node build-multi-site.js",
+    "build:multi-site": "node build-multi-site.js",
     "start": "NODE_ENV=production node server.cjs",
     "start:dev": "NODE_ENV=development node server.cjs",
     "deploy": "npm run build && git add . && git commit -m 'build: deployment build' && git push"
