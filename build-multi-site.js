@@ -73,7 +73,9 @@ async function buildSite(siteId) {
     try {
       await fs.access(source);
       await execAsync('cp "' + source + '" "' + dest + '"');
+      console.log('  ✓ Copied ' + module);
     } catch (err) {
+      console.log('  ⚠ Skipped ' + module + ' (not found)');
     }
   }
 
@@ -82,7 +84,9 @@ async function buildSite(siteId) {
   try {
     await fs.access(libSource);
     await execAsync('cp -r "' + libSource + '" "' + libDest + '"');
+    console.log('  ✓ Copied lib/ directory');
   } catch (err) {
+    console.log('  ⚠ Skipped lib/ directory (not found)');
   }
 
   console.log('✓ Built ' + siteId);
