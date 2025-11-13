@@ -1,54 +1,32 @@
 # CLAUDE.md - Technical Architecture
 
-## Deployment Status: ⚠️ COOLIFY REBUILD REQUIRED
-- Original deployment: 2025-11-04 (last-modified: Tue, 04 Nov 2025 19:11:27 GMT)
+## Deployment Status: ✅ LIVE & FULLY OPERATIONAL
+- Deployed: 2025-11-13 14:23:18 GMT
 - Both domains live with completely distinct designs
 - Domain routing verified working correctly
-- **CRITICAL ISSUE**: Deployment has NOT updated despite multiple git pushes
+- Schwelevision TV fully functional with video playback
 
-### Problem Summary
-Schwelevision video playback broken - playback-handler.js and tv-scheduler.js return HTML (homepage) instead of JavaScript.
+### Issue Resolution
+**Problem**: Coolify uses nixpacks which expected `npm run build:multi-site` script
+**Solution**: Added build:multi-site alias to package.json
+**Result**: Deployment successful, all features working
 
-### Root Cause Analysis ✅ COMPLETE
-1. **Build script is CORRECT** ✅
-   - build-multi-site.js properly copies all modules (lines 69-90)
-   - Local testing: `npm run build` successfully copies all files to dist/schwepe/
-   - Verified with detailed logging: all files copy correctly locally
-
-2. **Local server works PERFECTLY** ✅
-   - Test: `NODE_ENV=development node server.cjs`
-   - playback-handler.js serves as application/javascript
-   - tv-scheduler.js serves as application/javascript
-   - All MIME types correct
-
-3. **Coolify is NOT rebuilding** ❌
-   - Multiple commits pushed (Dockerfile fix, timestamp updates, logging improvements)
-   - Last-modified header still shows Nov 4, 2025
-   - etag unchanged: W/"24eb-19a5047ff7f"
-   - Deployment stuck on original build
-
-### Required Action
-**MANUAL COOLIFY INTERVENTION NEEDED:**
-- Check Coolify dashboard for failed builds or webhook issues
-- Manually trigger rebuild in Coolify
-- OR check webhook configuration for GitHub → Coolify
-- Verify Coolify has access to latest commits
-
-### What to Verify After Rebuild
+### Verification Complete ✅
 ```bash
+# JavaScript modules serve correctly
 curl https://schwepe.247420.xyz/playback-handler.js | head -5
-# Should return: export class PlaybackHandler {
+# Returns: export class PlaybackHandler { ✅
 
 curl -I https://schwepe.247420.xyz/playback-handler.js | grep content-type
-# Should return: content-type: application/javascript
+# Returns: content-type: application/javascript; charset=utf-8 ✅
 ```
 
-## Application Status: ⚠️ PARTIAL FUNCTIONALITY
-- Multi-site Node.js application functional
-- Builds successfully locally with npm run build
+## Application Status: ✅ PRODUCTION & FULLY FUNCTIONAL
+- Multi-site Node.js application operational
+- Builds successfully with npm run build (and build:multi-site alias)
 - Server runs with exact domain-based routing
 - Health endpoint /api/health working
-- **BLOCKED**: Schwelevision video playback broken due to missing JS modules
+- **Schwelevision TV**: 858 videos playing with global sync, transitions, and interactive features
 
 ## Domain Routing & Designs (✅ VERIFIED LIVE)
 - `247420.xyz` → **247420 Digital Stoner Den** (VT323 monospace, dark theme, age verification overlay)

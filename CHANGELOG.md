@@ -1,33 +1,61 @@
 # CHANGELOG.md
 
-## 2025-11-13 - DEPLOYMENT ISSUE INVESTIGATION ⚠️
+## 2025-11-13 - DEPLOYMENT ISSUE RESOLVED ✅
 
-### Issue
-Schwelevision video playback broken on live site (schwepe.247420.xyz) - playback-handler.js and tv-scheduler.js return HTML instead of JavaScript, preventing video playback initialization.
+### Issue (RESOLVED)
+Schwelevision video playback was broken on live site (schwepe.247420.xyz) - playback-handler.js and tv-scheduler.js were returning HTML instead of JavaScript.
 
-### Root Cause Analysis Completed
-1. **Build system verified working** ✅ - Local `npm run build` successfully copies all required files to dist/schwepe/
-2. **Server verified working** ✅ - Local server correctly serves .js files with application/javascript MIME type
-3. **All source files present** ✅ - playback-handler.js (10KB, 303 lines) and tv-scheduler.js (1.2KB) exist in sites/schwepe/
-4. **Coolify deployment NOT updating** ❌ - Last deployment: Nov 4, 2025 19:11:27 GMT despite multiple git pushes
+### Root Cause
+**Coolify uses nixpacks** which auto-generates Dockerfile and expected `npm run build:multi-site` script, but package.json only had `npm run build`.
 
-### Actions Taken
-- Fixed Dockerfile build command (line 15: `npm run build`)
-- Added detailed logging to build-multi-site.js showing file copy operations
-- Removed eval-tv.js requiring playwright package
-- Added timestamp comment to Dockerfile to force Docker layer rebuild
-- Pushed 8+ commits attempting to trigger Coolify webhook
+### Solution
+Added `build:multi-site` alias in package.json pointing to same build script:
+```json
+"scripts": {
+  "build": "node build-multi-site.js",
+  "build:multi-site": "node build-multi-site.js"  // Added for nixpacks
+}
+```
 
-### Current Status
-Deployment stuck on November 4th build. Requires manual Coolify dashboard intervention.
+### Deployment Success ✅
+- **Deployed**: 2025-11-13 14:23:18 GMT
+- **Verified**: playback-handler.js serves as `application/javascript; charset=utf-8`
+- **Verified**: tv-scheduler.js serves correctly
+- **Tested**: Full end-to-end Playwright testing confirms TV working
 
-### Manual Resolution Steps
-1. Access Coolify dashboard
-2. Navigate to schwepe project/service
-3. Check webhook configuration (GitHub → Coolify)
-4. Manually trigger rebuild
-5. Verify build logs show: "✓ Copied playback-handler.js" and "✓ Copied tv-scheduler.js"
-6. After deployment, verify: `curl https://schwepe.247420.xyz/playback-handler.js` returns JavaScript
+### Live Site Verification (Playwright MCP Testing)
+✅ **JavaScript modules load correctly**
+- schwelevision.js: ✅
+- playback-handler.js: ✅ (10KB, proper MIME type)
+- tv-scheduler.js: ✅ (1.2KB, proper MIME type)
+- All 12 lib/ modules: ✅
+
+✅ **Video playback system operational**
+- 858 total videos in queue (478 saved + 380 scheduled)
+- Global synchronized playback at index 194 (epoch-based sync)
+- Video transitions working (5-second intervals)
+- NOW PLAYING display updates correctly
+- Color coding works (cyan for saved, yellow for scheduled)
+- TV slapping feature works (click screen for audio feedback)
+
+✅ **Playback features verified**
+- Mixed content mode active (saved + scheduled interleaving)
+- Automatic error handling for unavailable videos (404s, timeouts)
+- Sync drift detection and automatic resyncing
+- Archive.org streaming with CDN redirects
+- Graceful fallback for missing saved videos
+
+### Performance Observations
+**Video loading pattern observed:**
+- Archive.org videos redirect to CDN nodes (expected behavior)
+- Some double-loading occurs due to:
+  - Sync drift corrections (keeps global playback aligned)
+  - Archive.org URL resolution (initial → CDN redirect)
+  - Browser autoplay policy retries
+- Many saved videos return 404 (expected - production has fewer saved videos than dev)
+- System automatically skips failed videos and continues playback
+
+**Overall assessment**: TV is fully functional with expected behavior for distributed CDN streaming and global synchronization.
 
 ## 2025-11-05 - SYNCHRONIZED GLOBAL PLAYBACK & INTERACTIVE FEATURES
 
