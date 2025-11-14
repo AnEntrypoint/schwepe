@@ -16,6 +16,13 @@ export class PlaybackHandler {
     this.staticCanvas = document.getElementById('noiseCanvas');
     this.scheduleEpoch = new Date('2025-11-14T00:00:00Z').getTime();
     this.durationCache = this.loadDurationCache();
+    this.DEFAULT_SLOT_DURATION = 1800000;
+    this.currentSlotStartTime = 0;
+    this.currentSlotDuration = 0;
+    this.slotAdsQueue = [];
+    this.playingSlotAd = false;
+    this.scheduledVideoEnded = false;
+    this.preloadedAds = new Map();
     this.initStaticCanvas();
   }
 
@@ -134,58 +141,131 @@ export class PlaybackHandler {
     this.saveDurationCache();
   }
 
+  getSlotDuration(video) {
+    return video.slotDuration || this.DEFAULT_SLOT_DURATION;
+  }
+
+  isVideoBuffered(videoEl, requiredSeconds = 30) {
+    if (!videoEl || !videoEl.buffered || videoEl.buffered.length === 0) {
+      return false;
+    }
+    const bufferedEnd = videoEl.buffered.end(videoEl.buffered.length - 1);
+    const currentTime = videoEl.currentTime || 0;
+    return (bufferedEnd - currentTime) >= requiredSeconds;
+  }
+
+  preloadAd(video) {
+    return new Promise((resolve, reject) => {
+      const videoId = video.filename || video.id;
+      if (this.preloadedAds.has(videoId)) {
+        resolve(this.preloadedAds.get(videoId));
+        return;
+      }
+
+      const preloadEl = document.createElement('video');
+      preloadEl.preload = 'auto';
+      preloadEl.src = this.getVideoUrl(video);
+
+      const checkFullyLoaded = () => {
+        if (preloadEl.readyState === 4) {
+          this.preloadedAds.set(videoId, { element: preloadEl, video: video });
+          resolve({ element: preloadEl, video: video });
+        }
+      };
+
+      preloadEl.addEventListener('canplaythrough', checkFullyLoaded);
+      preloadEl.addEventListener('error', () => reject(new Error('Failed to preload ad')));
+      preloadEl.load();
+    });
+  }
+
+  async startBackgroundPreloading() {
+    if (this.savedVideos.length > 0) {
+      const adsToPreload = this.savedVideos.slice(0, 5);
+      for (const ad of adsToPreload) {
+        try {
+          await this.preloadAd(ad);
+          console.log('✓ Preloaded ad:', ad.filename);
+        } catch (e) {
+          console.log('⚠ Failed to preload ad:', ad.filename);
+        }
+      }
+    }
+  }
+
   calculateSchedulePosition() {
     const now = Date.now();
     const elapsed = now - this.scheduleEpoch;
-    const DEFAULT_DURATION = 1800000;
     let totalDuration = 0;
     let targetIndex = 0;
-    let seekTime = 0;
+    let slotPosition = 0;
+    let slotDuration = 0;
 
     for (let i = 0; i < this.scheduledVideos.length; i++) {
       const video = this.scheduledVideos[i];
-      const videoId = video.id || video.u;
-      const cachedDuration = this.durationCache[videoId] || DEFAULT_DURATION;
+      const currentSlotDuration = this.getSlotDuration(video);
 
-      if (totalDuration + cachedDuration > elapsed) {
+      if (totalDuration + currentSlotDuration > elapsed) {
         targetIndex = i;
-        seekTime = elapsed - totalDuration;
+        slotPosition = elapsed - totalDuration;
+        slotDuration = currentSlotDuration;
         break;
       }
 
-      totalDuration += cachedDuration;
+      totalDuration += currentSlotDuration;
     }
 
-    if (targetIndex === 0 && seekTime === 0 && totalDuration > 0) {
+    if (targetIndex === 0 && slotPosition === 0 && totalDuration > 0) {
       const cyclePosition = elapsed % totalDuration;
       totalDuration = 0;
       for (let i = 0; i < this.scheduledVideos.length; i++) {
         const video = this.scheduledVideos[i];
-        const videoId = video.id || video.u;
-        const cachedDuration = this.durationCache[videoId] || DEFAULT_DURATION;
+        const currentSlotDuration = this.getSlotDuration(video);
 
-        if (totalDuration + cachedDuration > cyclePosition) {
+        if (totalDuration + currentSlotDuration > cyclePosition) {
           targetIndex = i;
-          seekTime = cyclePosition - totalDuration;
+          slotPosition = cyclePosition - totalDuration;
+          slotDuration = currentSlotDuration;
           break;
         }
-        totalDuration += cachedDuration;
+        totalDuration += currentSlotDuration;
       }
     }
 
-    return { index: targetIndex, seekTime: seekTime };
+    return {
+      index: targetIndex,
+      slotPosition: slotPosition,
+      slotDuration: slotDuration,
+      slotStartTime: now - slotPosition
+    };
   }
 
-  startPlayback() {
+  async startPlayback() {
     console.log('📺 Schwelevision TV station initialized');
+
+    this.startBackgroundPreloading();
+
     if (this.scheduledVideos.length > 0) {
-      const cachedCount = Object.keys(this.durationCache).length;
-      const totalVideos = this.scheduledVideos.length;
-      console.log('📊 Duration cache: ' + cachedCount + '/' + totalVideos + ' videos cached');
       const syncPos = this.calculateSchedulePosition();
       this.scheduleIndex = syncPos.index;
-      console.log('⏱ Syncing to schedule position: video ' + syncPos.index + ', offset ' + Math.floor(syncPos.seekTime / 1000) + 's');
-      this.playNextScheduled(syncPos.seekTime / 1000);
+      this.currentSlotStartTime = syncPos.slotStartTime;
+      this.currentSlotDuration = syncPos.slotDuration;
+
+      const slotMinutes = Math.floor(syncPos.slotDuration / 60000);
+      const positionMinutes = Math.floor(syncPos.slotPosition / 60000);
+      console.log('⏱ Syncing to slot ' + syncPos.index + ' (' + slotMinutes + 'min slot, ' + positionMinutes + 'min in)');
+
+      const video = this.scheduledVideos[this.scheduleIndex];
+      const videoId = video.id || video.u;
+      const videoDuration = this.durationCache[videoId] || 0;
+
+      if (syncPos.slotPosition < videoDuration) {
+        console.log('📺 Playing scheduled content');
+        this.playNextScheduled(syncPos.slotPosition / 1000);
+      } else {
+        console.log('📺 Slot filling with ads (scheduled content ended)');
+        this.playSlotFiller();
+      }
     } else if (this.savedVideos.length > 0) {
       console.log('No schedule available, playing filler content only');
       this.playFiller();
@@ -234,6 +314,40 @@ export class PlaybackHandler {
     console.log('📺 [AD BREAK]: ' + displayName);
     this.playingScheduled = false;
     this.loadAndPlay(video, displayName, '#00ffff', 0, () => this.onFillerComplete(), () => this.onFillerComplete());
+  }
+
+  playSlotFiller() {
+    if (this.savedVideos.length === 0) {
+      console.log('No ads available for slot filling, moving to next slot');
+      this.moveToNextSlot();
+      return;
+    }
+
+    const video = this.savedVideos[this.fillerIndex % this.savedVideos.length];
+    const displayName = video.filename || video.title || 'Slot Filler';
+
+    console.log('📺 [SLOT AD]: ' + displayName);
+    this.playingSlotAd = true;
+    this.playingScheduled = false;
+    this.loadAndPlay(video, displayName, '#00ffff', 0, () => this.onSlotFillerComplete(), () => this.onSlotFillerComplete());
+  }
+
+  getRemainingSlotTime() {
+    const now = Date.now();
+    const elapsedInSlot = now - this.currentSlotStartTime;
+    return this.currentSlotDuration - elapsedInSlot;
+  }
+
+  moveToNextSlot() {
+    this.scheduleIndex = (this.scheduleIndex + 1) % this.scheduledVideos.length;
+    this.scheduledVideoEnded = false;
+    this.playingSlotAd = false;
+    const syncPos = this.calculateSchedulePosition();
+    this.currentSlotStartTime = syncPos.slotStartTime;
+    this.currentSlotDuration = syncPos.slotDuration;
+    this.queueIndex++;
+    this.showStatic(300);
+    setTimeout(() => this.playNextScheduled(), 500);
   }
 
   loadAndPlay(video, displayName, color, seekTime, onComplete, onFailed) {
@@ -320,13 +434,23 @@ export class PlaybackHandler {
   }
 
   onScheduledComplete() {
-    this.scheduleIndex = (this.scheduleIndex + 1) % this.scheduledVideos.length;
-    this.queueIndex++;
-    this.showStatic(300);
-    setTimeout(() => this.playNextScheduled(), 500);
+    console.log('✓ Scheduled content completed');
+    this.scheduledVideoEnded = true;
+
+    const remainingTime = this.getRemainingSlotTime();
+    console.log('⏱ Slot has ' + Math.floor(remainingTime / 1000) + 's remaining');
+
+    if (remainingTime > 5000) {
+      this.queueIndex++;
+      this.showStatic(300);
+      setTimeout(() => this.playSlotFiller(), 500);
+    } else {
+      this.moveToNextSlot();
+    }
   }
 
   onScheduledFailed() {
+    console.log('❌ Scheduled content failed');
     this.queueIndex++;
     this.showStatic(500);
     setTimeout(() => this.playFiller(), 500);
@@ -337,5 +461,21 @@ export class PlaybackHandler {
     this.queueIndex++;
     this.showStatic(300);
     setTimeout(() => this.playNextScheduled(), 500);
+  }
+
+  onSlotFillerComplete() {
+    console.log('✓ Slot ad completed');
+    this.fillerIndex = (this.fillerIndex + 1) % this.savedVideos.length;
+
+    const remainingTime = this.getRemainingSlotTime();
+    console.log('⏱ Slot has ' + Math.floor(remainingTime / 1000) + 's remaining after ad');
+
+    if (remainingTime > 5000) {
+      this.queueIndex++;
+      this.showStatic(300);
+      setTimeout(() => this.playSlotFiller(), 500);
+    } else {
+      this.moveToNextSlot();
+    }
   }
 }
