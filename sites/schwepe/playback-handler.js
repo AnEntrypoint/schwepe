@@ -19,6 +19,8 @@ export class PlaybackHandler {
     this.DEFAULT_SLOT_DURATION = 1800000;
     this.currentSlotStartTime = 0;
     this.currentSlotDuration = 0;
+    this.currentSlotBreaks = [];
+    this.currentBreakIndex = 0;
     this.scheduledVideoEnded = false;
     this.commercialBreakAds = [];
     this.commercialBreakIndex = 0;
@@ -142,17 +144,60 @@ export class PlaybackHandler {
     this.saveDurationCache();
   }
 
-  pickCommercialBreak() {
-    const breakLength = Math.floor(Math.random() * 6) + 1;
+  seededRandom(seed) {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  }
+
+  pickCommercialBreak(slotIndex, breakIndex) {
+    const seed = slotIndex * 1000 + breakIndex;
+    const breakLength = Math.floor(this.seededRandom(seed) * 6) + 1;
     const ads = [];
+
     for (let i = 0; i < breakLength; i++) {
       if (this.savedVideos.length > 0) {
-        const ad = this.savedVideos[this.fillerIndex % this.savedVideos.length];
-        ads.push(ad);
-        this.fillerIndex++;
+        const adSeed = seed * 100 + i;
+        const adIndex = Math.floor(this.seededRandom(adSeed) * this.savedVideos.length);
+        ads.push(this.savedVideos[adIndex]);
       }
     }
     return ads;
+  }
+
+  calculateSlotCommercialBreaks(slotIndex, videoDuration, slotDuration) {
+    const breaks = [];
+    const remainingTime = slotDuration - videoDuration;
+
+    if (remainingTime < 5000) {
+      return breaks;
+    }
+
+    const seed = slotIndex * 7919;
+    const breakCount = Math.floor(this.seededRandom(seed) * 3) + 1;
+
+    let totalBreakTime = 0;
+    for (let i = 0; i < breakCount; i++) {
+      const ads = this.pickCommercialBreak(slotIndex, i);
+      let breakDuration = 0;
+      ads.forEach(ad => {
+        const adDuration = this.durationCache[ad.filename || ad.id] || 15000;
+        breakDuration += adDuration;
+      });
+
+      breaks.push({
+        index: i,
+        ads: ads,
+        duration: breakDuration
+      });
+
+      totalBreakTime += breakDuration;
+
+      if (totalBreakTime >= remainingTime) {
+        break;
+      }
+    }
+
+    return breaks;
   }
 
   isVideoBuffered(videoEl, requiredSeconds = 30) {
@@ -209,50 +254,19 @@ export class PlaybackHandler {
     let totalDuration = 0;
     let targetIndex = 0;
     let inCommercialBreak = false;
+    let breakIndex = 0;
     let seekTime = 0;
     let slotStartTime = 0;
     let slotDuration = this.DEFAULT_SLOT_DURATION;
+    let slotBreaks = [];
 
-    for (let i = 0; i < this.scheduledVideos.length; i++) {
-      const video = this.scheduledVideos[i];
-      const videoId = video.id || video.u;
-      const videoDuration = this.durationCache[videoId] || 0;
-
-      const currentSlotDuration = this.DEFAULT_SLOT_DURATION;
-      const commercialBreakDuration = videoDuration < currentSlotDuration ?
-        (currentSlotDuration - videoDuration) : 0;
-
-      if (totalDuration + currentSlotDuration > elapsed) {
-        targetIndex = i;
-        slotStartTime = totalDuration;
-        slotDuration = currentSlotDuration;
-        const positionInSlot = elapsed - totalDuration;
-
-        if (positionInSlot < videoDuration) {
-          inCommercialBreak = false;
-          seekTime = positionInSlot;
-        } else {
-          inCommercialBreak = true;
-          seekTime = positionInSlot - videoDuration;
-        }
-        break;
-      }
-
-      totalDuration += currentSlotDuration;
-    }
-
-    if (targetIndex === 0 && seekTime === 0 && totalDuration > 0) {
-      const cyclePosition = elapsed % totalDuration;
+    const findPosition = (cyclePosition) => {
       totalDuration = 0;
-
       for (let i = 0; i < this.scheduledVideos.length; i++) {
         const video = this.scheduledVideos[i];
         const videoId = video.id || video.u;
         const videoDuration = this.durationCache[videoId] || 0;
-
         const currentSlotDuration = this.DEFAULT_SLOT_DURATION;
-        const commercialBreakDuration = videoDuration < currentSlotDuration ?
-          (currentSlotDuration - videoDuration) : 0;
 
         if (totalDuration + currentSlotDuration > cyclePosition) {
           targetIndex = i;
@@ -260,25 +274,47 @@ export class PlaybackHandler {
           slotDuration = currentSlotDuration;
           const positionInSlot = cyclePosition - totalDuration;
 
+          slotBreaks = this.calculateSlotCommercialBreaks(i, videoDuration, currentSlotDuration);
+
           if (positionInSlot < videoDuration) {
             inCommercialBreak = false;
             seekTime = positionInSlot;
+            breakIndex = 0;
           } else {
             inCommercialBreak = true;
-            seekTime = positionInSlot - videoDuration;
+            let breakPosition = positionInSlot - videoDuration;
+            let accumulatedBreakTime = 0;
+
+            for (let b = 0; b < slotBreaks.length; b++) {
+              if (accumulatedBreakTime + slotBreaks[b].duration > breakPosition) {
+                breakIndex = b;
+                seekTime = breakPosition - accumulatedBreakTime;
+                break;
+              }
+              accumulatedBreakTime += slotBreaks[b].duration;
+            }
           }
-          break;
+          return true;
         }
+
         totalDuration += currentSlotDuration;
       }
+      return false;
+    };
+
+    if (!findPosition(elapsed)) {
+      const cyclePosition = elapsed % totalDuration;
+      findPosition(cyclePosition);
     }
 
     return {
       index: targetIndex,
       inCommercialBreak: inCommercialBreak,
+      breakIndex: breakIndex,
       seekTime: seekTime / 1000,
       slotStartTime: slotStartTime,
-      slotDuration: slotDuration
+      slotDuration: slotDuration,
+      slotBreaks: slotBreaks
     };
   }
 
@@ -292,16 +328,22 @@ export class PlaybackHandler {
       this.scheduleIndex = syncPos.index;
       this.currentSlotStartTime = syncPos.slotStartTime;
       this.currentSlotDuration = syncPos.slotDuration;
+      this.currentSlotBreaks = syncPos.slotBreaks;
+      this.currentBreakIndex = syncPos.breakIndex;
 
       console.log('⏱ Syncing to slot ' + syncPos.index + ' (' +
         Math.floor(syncPos.slotDuration / 60000) + 'min slot, ' +
         Math.floor((Date.now() - this.scheduleEpoch - syncPos.slotStartTime) / 60000) + 'min in)');
 
+      if (this.currentSlotBreaks.length > 0) {
+        console.log('📺 Slot has ' + this.currentSlotBreaks.length + ' commercial break(s)');
+      }
+
       if (!syncPos.inCommercialBreak) {
         console.log('📺 Playing scheduled content');
         this.playNextScheduled(syncPos.seekTime);
       } else {
-        console.log('📺 Commercial break in progress');
+        console.log('📺 Commercial break ' + (syncPos.breakIndex + 1) + '/' + this.currentSlotBreaks.length + ' in progress');
         this.playCommercialBreak();
       }
     } else if (this.savedVideos.length > 0) {
@@ -340,20 +382,24 @@ export class PlaybackHandler {
   }
 
   playCommercialBreak() {
+    if (this.currentBreakIndex >= this.currentSlotBreaks.length) {
+      console.log('✓ All commercial breaks completed, moving to next slot');
+      this.moveToNextSlot();
+      return;
+    }
+
     if (this.savedVideos.length === 0) {
-      console.log('No ads available, continuing to next show');
-      this.scheduleIndex = (this.scheduleIndex + 1) % this.scheduledVideos.length;
-      this.queueIndex++;
-      this.showStatic(300);
-      setTimeout(() => this.playNextScheduled(), 500);
+      console.log('No ads available, moving to next slot');
+      this.moveToNextSlot();
       return;
     }
 
     this.inCommercialBreak = true;
-    this.commercialBreakAds = this.pickCommercialBreak();
+    const currentBreak = this.currentSlotBreaks[this.currentBreakIndex];
+    this.commercialBreakAds = currentBreak.ads;
     this.commercialBreakIndex = 0;
 
-    console.log('📺 Commercial break (' + this.commercialBreakAds.length + ' ads)');
+    console.log('📺 Commercial break ' + (this.currentBreakIndex + 1) + '/' + this.currentSlotBreaks.length + ' (' + this.commercialBreakAds.length + ' ads)');
     this.playNextCommercial();
   }
 
@@ -483,6 +529,13 @@ export class PlaybackHandler {
     this.currentSlotStartTime += this.currentSlotDuration;
     this.currentSlotDuration = this.DEFAULT_SLOT_DURATION;
     this.scheduledVideoEnded = false;
+
+    const video = this.scheduledVideos[this.scheduleIndex];
+    const videoId = video.id || video.u;
+    const videoDuration = this.durationCache[videoId] || 0;
+    this.currentSlotBreaks = this.calculateSlotCommercialBreaks(this.scheduleIndex, videoDuration, this.currentSlotDuration);
+    this.currentBreakIndex = 0;
+
     this.queueIndex++;
     this.showStatic(300);
     setTimeout(() => this.playNextScheduled(), 500);
@@ -492,10 +545,8 @@ export class PlaybackHandler {
     console.log('✓ Scheduled content completed');
     this.scheduledVideoEnded = true;
 
-    const remainingTime = this.getRemainingSlotTime();
-    console.log('⏱ Slot has ' + Math.floor(remainingTime / 1000) + 's remaining');
-
-    if (remainingTime > 5000) {
+    if (this.currentSlotBreaks.length > 0) {
+      this.currentBreakIndex = 0;
       this.queueIndex++;
       this.showStatic(300);
       setTimeout(() => this.playCommercialBreak(), 500);
@@ -527,13 +578,12 @@ export class PlaybackHandler {
   }
 
   onCommercialBreakComplete() {
-    console.log('✓ Commercial break completed');
+    console.log('✓ Commercial break ' + (this.currentBreakIndex + 1) + '/' + this.currentSlotBreaks.length + ' completed');
     this.inCommercialBreak = false;
+    this.currentBreakIndex++;
 
-    const remainingTime = this.getRemainingSlotTime();
-    console.log('⏱ Slot has ' + Math.floor(remainingTime / 1000) + 's remaining after commercial break');
-
-    if (remainingTime > 5000) {
+    if (this.currentBreakIndex < this.currentSlotBreaks.length) {
+      console.log('📺 Next commercial break in slot');
       this.queueIndex++;
       this.showStatic(300);
       setTimeout(() => this.playCommercialBreak(), 500);
