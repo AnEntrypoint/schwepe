@@ -1,5 +1,21 @@
 # CHANGELOG.md
 
+## 2025-11-14 - IMMUTABLE SCHEDULE SYNCHRONIZATION FIX ✅
+
+### Schedule Synchronization Improvement
+Fixed video playback to maintain immutable schedule position across page refreshes:
+- **Default Duration Fallback**: 30-minute (1800000ms) fallback for uncached video durations
+- **Prevents Reset**: Schedule no longer resets to video 0 when durations aren't cached
+- **Cache Logging**: Added visibility into duration cache status (cached/total videos)
+- **Verified Sync**: Confirmed schedule maintains correct time-based position on refresh
+
+**Before**: Page refresh would reset to schedule index 0 if any video duration was missing from cache
+**After**: Uses default duration estimate for uncached videos, maintaining accurate schedule position
+
+**Testing Results**:
+- First load: video 18, offset 618s (10m 18s into video)
+- Refresh: video 19, offset 418s (6m 58s into video) - correct progression
+
 ## 2025-11-14 - UNIFIED SITE DESIGN ✅
 
 ### Design System Unification
