@@ -14,7 +14,7 @@ export class PlaybackHandler {
     this.playingScheduled = false;
     this.showingStatic = false;
     this.staticCanvas = document.getElementById('noiseCanvas');
-    this.scheduleEpoch = new Date('2025-11-13T00:00:00Z').getTime();
+    this.scheduleEpoch = new Date('2025-11-14T00:00:00Z').getTime();
     this.durationCache = this.loadDurationCache();
     this.initStaticCanvas();
   }

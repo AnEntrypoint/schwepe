@@ -95,7 +95,7 @@ Like a real TV station:
 3. **TV Static**: Canvas-based static for transitions
 
 ### Playback Flow
-1. **Start**: Calculates position from epoch time (2025-11-13T00:00:00Z)
+1. **Start**: Calculates position from epoch time (2025-11-14T00:00:00Z)
 2. **Time Sync**: Seeks to correct position based on elapsed time since epoch
 3. **Playing Schedule**: Video plays to completion
 4. **On Completion**: Advances to next scheduled video (index++)
@@ -103,7 +103,7 @@ Like a real TV station:
 6. **After Filler**: Returns to scheduled content
 
 ### Time Synchronization System
-- **Schedule Epoch**: 2025-11-13T00:00:00Z baseline for all sync calculations
+- **Schedule Epoch**: 2025-11-14T00:00:00Z baseline for all sync calculations
 - **Duration Cache**: localStorage stores video durations as they load
 - **Position Calculation**: elapsed_time % total_schedule_duration = current position
 - **Seek on Load**: Automatically seeks to correct timestamp in current video
@@ -127,7 +127,7 @@ Like a real TV station:
 - Videos play to natural completion (onended event)
 - Separate indices: scheduleIndex, fillerIndex
 - playingScheduled flag tracks current mode
-- scheduleEpoch (2025-11-13T00:00:00Z) for time calculations
+- scheduleEpoch (2025-11-14T00:00:00Z) for time calculations
 - durationCache object synced to localStorage
 - calculateSchedulePosition() determines video + seek time
 - onloadedmetadata caches duration automatically
