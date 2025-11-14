@@ -1,5 +1,33 @@
 # CHANGELOG.md
 
+## 2025-11-14 - VIDEO MIME TYPE FIX ✅
+
+### Saved Videos Not Loading Issue Resolved
+Fixed critical bug where saved videos were returning HTML instead of video files:
+
+**Problem**:
+- All saved videos failing with error code 4 (MEDIA_ERR_SRC_NOT_SUPPORTED)
+- Server returning `content-type: text/html; charset=utf-8` for `.mp4` files
+- Production site showing continuous error loop
+
+**Root Cause**:
+- server.cjs missing video MIME type mappings
+- Video requests falling through to catch-all route serving index.html
+
+**Solution**:
+- Added video MIME types to server.cjs (lines 70-86, 106-122):
+  - `.mp4`: `video/mp4`
+  - `.webm`: `video/webm`
+  - `.ogv`: `video/ogg`
+  - `.mov`: `video/quicktime`
+  - `.avi`: `video/x-msvideo`
+
+**Verification**:
+- Local testing: Videos load with correct `content-type: video/mp4` header
+- Slot-based playback working: ad chaining, timing, transitions
+- Console logs show successful video completion
+- No errors, readyState: 4 (fully loaded)
+
 ## 2025-11-14 - SLOT-BASED TV STATION WITH AD INSERTION ✅
 
 ### Professional TV Station Architecture
