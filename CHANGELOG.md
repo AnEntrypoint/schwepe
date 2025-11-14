@@ -1,5 +1,41 @@
 # CHANGELOG.md
 
+## 2025-11-14 - UNIFIED SITE DESIGN ✅
+
+### Design System Unification
+Unified all schwepe.247420.xyz pages with clean videos-thread.html design language:
+- **CSS Variables**: --primary (#00f5ff), --secondary (#ff006e), --accent (#ffbe0b), --bg-dark (#0a0a0a)
+- **Typography**: Fredoka font family with clean sans-serif styling
+- **Dark Theme**: Simple dark background without complex gradients or overlays
+- **Navbar Integration**: All pages now use shared navbar.html component
+
+### Changes Applied
+**index.html** (280→195 lines):
+- Removed animated gradient backgrounds and floating shape animations
+- Added navbar integration with active state detection
+- Simplified feature cards with clean cyan accent colors
+
+**gallery.html**:
+- Updated CSS variables from dive bar theme to videos-thread.html theme
+- Simplified body styling from complex gradients to clean dark background
+
+**images-thread.html**:
+- Updated CSS variables to match unified design
+- Removed dive bar specific styling
+
+**lore.html** (1188 lines):
+- Complete redesign removing all dive bar elements
+- Removed beer drip animations
+- Simplified navbar, buttons, cards, and UI elements
+- Updated age verification modal with clean design
+- Changed from VT323 monospace to Fredoka sans-serif
+- Removed glitch animations and complex text effects
+
+### Code Reduction
+- Net reduction: 607 lines removed (825 deletions, 218 insertions)
+- Removed complex animations, gradients, and dive bar theming
+- Cleaner, more maintainable codebase
+
 ## 2025-11-14 - SCHEDULE EPOCH UPDATE ✅
 
 ### Year-Long Schedule Start Date
