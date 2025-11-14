@@ -244,27 +244,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   }
-  .slap-counter {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.8);
-  color: #00ff00;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-family: 'VT323', monospace;
-  font-size: 1.2rem;
-  z-index: 100;
-  pointer-events: none;
-  text-shadow: 0 0 10px #00ff00;
-  animation: pulse 0.5s ease-in-out;
-  }
-  @keyframes pulse {
-  0% { opacity: 0.8; transform: translateX(-50%) scale(1); }
-  50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
-  100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
-  }
   .logo-overlay {
   position: absolute;
   bottom: 20px;
@@ -564,9 +543,6 @@
   <div class="now-playing" id="nowPlaying" style="display: none;">
   <i class="fas fa-broadcast-tower"></i> NOW PLAYING: schwepevision
   </div>
-  <div class="slap-counter" id="slapCounter" style="display: none;">
-  🖐️ TV slap #1
-  </div>
   <div class="url-display">
   schwepe.schwepe.xyz
   </div>
@@ -599,9 +575,7 @@
   </div>
   </div>
   <script type="module">
-  import SchwelevisionSystem from './schwelevision.js';
   import { PlaybackHandler } from './playback-handler.js';
-  window.SchwelevisionSystem = SchwelevisionSystem;
   async function loadNavbar() {
   try {
   const response = await fetch('navbar.html');
@@ -628,12 +602,13 @@
   container.style.transform = `scale(${scale})`;
   container.style.transformOrigin = 'top center';
   }
-  let tvSlapCount = 0;
   function slapTV() {
-  tvSlapCount++;
-  const slapCounter = document.getElementById('slapCounter');
-  slapCounter.textContent = `🖐️ TV slap #${tvSlapCount}`;
-  slapCounter.style.display = 'block';
+  const videos = [document.getElementById('currentVideo'), document.getElementById('nextVideo'), document.getElementById('thirdVideo')];
+  videos.forEach(video => {
+  if (video) {
+  video.volume = Math.random();
+  }
+  });
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const staticDuration = 0.2;
   const thudTime = staticDuration;
@@ -684,18 +659,12 @@
   createNoise(staticDuration, 0);
   createThud(thudTime);
   createWhine(whineTime);
-  setTimeout(() => {
-  slapCounter.style.display = 'none';
-  }, 1500);
   }
   document.addEventListener('DOMContentLoaded', async () => {
   await loadNavbar();
   scaleToFit();
   window.addEventListener('resize', scaleToFit);
-  const tv = new SchwelevisionSystem();
-  window.tv = tv;
-  await tv.initialize();
-  const playback = new PlaybackHandler(tv);
+  const playback = new PlaybackHandler();
   window.playback = playback;
   await playback.loadVideos();
   playback.startPlayback();

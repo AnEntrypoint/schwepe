@@ -95,11 +95,20 @@ Like a real TV station:
 3. **TV Static**: Canvas-based static for transitions
 
 ### Playback Flow
-1. **Start**: Begins at schedule index 0
-2. **Playing Schedule**: Video plays to completion
-3. **On Completion**: Advances to next scheduled video (index++)
-4. **On Failure**: Switches to filler video (ad break)
-5. **After Filler**: Returns to scheduled content
+1. **Start**: Calculates position from epoch time (2025-11-13T00:00:00Z)
+2. **Time Sync**: Seeks to correct position based on elapsed time since epoch
+3. **Playing Schedule**: Video plays to completion
+4. **On Completion**: Advances to next scheduled video (index++)
+5. **On Failure**: Switches to filler video (ad break)
+6. **After Filler**: Returns to scheduled content
+
+### Time Synchronization System
+- **Schedule Epoch**: 2025-11-13T00:00:00Z baseline for all sync calculations
+- **Duration Cache**: localStorage stores video durations as they load
+- **Position Calculation**: elapsed_time % total_schedule_duration = current position
+- **Seek on Load**: Automatically seeks to correct timestamp in current video
+- **Cache Building**: Durations cached progressively as videos play
+- **Fallback**: If durations not cached, starts from beginning and builds cache
 
 ### Smart Fallback System
 - **Schedule Loads**: Plays scheduled video to completion
@@ -111,15 +120,20 @@ Like a real TV station:
 - Real-time "Now Playing" showing current content
 - Color-coded: Yellow (#ffff00) for schedule, Cyan (#00ffff) for filler
 - Console logs show [SCHEDULE] or [AD BREAK] prefix
-- TV slapping feature: Click screen for audio feedback
+- TV slapping: Click screen to randomize all video volumes (like slapping old TV)
 
 ### Technical Implementation
 - 3-video rotation queue for smooth transitions
 - Videos play to natural completion (onended event)
 - Separate indices: scheduleIndex, fillerIndex
 - playingScheduled flag tracks current mode
+- scheduleEpoch (2025-11-13T00:00:00Z) for time calculations
+- durationCache object synced to localStorage
+- calculateSchedulePosition() determines video + seek time
+- onloadedmetadata caches duration automatically
 - 300ms static flash between videos
 - 500ms static flash on errors
+- No SchwelevisionSystem dependency (removed)
 - **CORS Errors**: Skip to next video with static transition
 - **404/403 Errors**: Skip unavailable archive.org content automatically
 - **Load Timeout**: Skip videos that don't load within 10 seconds

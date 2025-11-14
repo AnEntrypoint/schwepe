@@ -1,6 +1,5 @@
 export class PlaybackHandler {
-  constructor(tv) {
-    this.tv = tv;
+  constructor() {
     this.currentVideoEl = document.getElementById('currentVideo');
     this.nextVideoEl = document.getElementById('nextVideo');
     this.thirdVideoEl = document.getElementById('thirdVideo');
@@ -15,6 +14,8 @@ export class PlaybackHandler {
     this.playingScheduled = false;
     this.showingStatic = false;
     this.staticCanvas = document.getElementById('noiseCanvas');
+    this.scheduleEpoch = new Date('2025-11-13T00:00:00Z').getTime();
+    this.durationCache = this.loadDurationCache();
     this.initStaticCanvas();
   }
 
@@ -111,12 +112,81 @@ export class PlaybackHandler {
     ];
   }
 
+  loadDurationCache() {
+    try {
+      const cached = localStorage.getItem('schwepe_durations');
+      return cached ? JSON.parse(cached) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  saveDurationCache() {
+    try {
+      localStorage.setItem('schwepe_durations', JSON.stringify(this.durationCache));
+    } catch (e) {
+      console.log('⚠ Failed to save duration cache');
+    }
+  }
+
+  cacheDuration(videoId, duration) {
+    this.durationCache[videoId] = duration;
+    this.saveDurationCache();
+  }
+
+  calculateSchedulePosition() {
+    const now = Date.now();
+    const elapsed = now - this.scheduleEpoch;
+    let totalDuration = 0;
+    let targetIndex = 0;
+    let seekTime = 0;
+
+    for (let i = 0; i < this.scheduledVideos.length; i++) {
+      const video = this.scheduledVideos[i];
+      const videoId = video.id || video.u;
+      const cachedDuration = this.durationCache[videoId];
+
+      if (!cachedDuration) {
+        console.log('⏱ No duration cached for video ' + i + ', starting from beginning');
+        return { index: 0, seekTime: 0 };
+      }
+
+      if (totalDuration + cachedDuration > elapsed) {
+        targetIndex = i;
+        seekTime = elapsed - totalDuration;
+        break;
+      }
+
+      totalDuration += cachedDuration;
+    }
+
+    if (targetIndex === 0 && seekTime === 0 && totalDuration > 0) {
+      const cyclePosition = elapsed % totalDuration;
+      totalDuration = 0;
+      for (let i = 0; i < this.scheduledVideos.length; i++) {
+        const video = this.scheduledVideos[i];
+        const videoId = video.id || video.u;
+        const cachedDuration = this.durationCache[videoId];
+
+        if (totalDuration + cachedDuration > cyclePosition) {
+          targetIndex = i;
+          seekTime = cyclePosition - totalDuration;
+          break;
+        }
+        totalDuration += cachedDuration;
+      }
+    }
+
+    return { index: targetIndex, seekTime: seekTime };
+  }
+
   startPlayback() {
     console.log('📺 Schwelevision TV station initialized');
     if (this.scheduledVideos.length > 0) {
-      this.scheduleIndex = 0;
-      console.log('Starting weekly schedule from beginning');
-      this.playNextScheduled();
+      const syncPos = this.calculateSchedulePosition();
+      this.scheduleIndex = syncPos.index;
+      console.log('⏱ Syncing to schedule position: video ' + syncPos.index + ', offset ' + Math.floor(syncPos.seekTime / 1000) + 's');
+      this.playNextScheduled(syncPos.seekTime / 1000);
     } else if (this.savedVideos.length > 0) {
       console.log('No schedule available, playing filler content only');
       this.playFiller();
@@ -137,7 +207,7 @@ export class PlaybackHandler {
     return null;
   }
 
-  playNextScheduled() {
+  playNextScheduled(seekTime = 0) {
     if (this.scheduledVideos.length === 0) {
       console.log('No scheduled content, playing filler');
       this.playFiller();
@@ -149,7 +219,7 @@ export class PlaybackHandler {
 
     console.log('📺 [SCHEDULE]: ' + displayName);
     this.playingScheduled = true;
-    this.loadAndPlay(video, displayName, '#ffff00', () => this.onScheduledComplete(), () => this.onScheduledFailed());
+    this.loadAndPlay(video, displayName, '#ffff00', seekTime, () => this.onScheduledComplete(), () => this.onScheduledFailed());
   }
 
   playFiller() {
@@ -164,10 +234,10 @@ export class PlaybackHandler {
 
     console.log('📺 [AD BREAK]: ' + displayName);
     this.playingScheduled = false;
-    this.loadAndPlay(video, displayName, '#00ffff', () => this.onFillerComplete(), () => this.onFillerComplete());
+    this.loadAndPlay(video, displayName, '#00ffff', 0, () => this.onFillerComplete(), () => this.onFillerComplete());
   }
 
-  loadAndPlay(video, displayName, color, onComplete, onFailed) {
+  loadAndPlay(video, displayName, color, seekTime, onComplete, onFailed) {
     const currentVideoEl = this.videoQueue[this.queueIndex % 3];
 
     this.showStatic(300);
@@ -202,11 +272,24 @@ export class PlaybackHandler {
       onFailed();
     }, 15000);
 
+    currentVideoEl.onloadedmetadata = () => {
+      const videoId = video.id || video.u;
+      if (currentVideoEl.duration && !isNaN(currentVideoEl.duration)) {
+        this.cacheDuration(videoId, currentVideoEl.duration * 1000);
+      }
+    };
+
     currentVideoEl.onloadeddata = () => {
       if (this.loadTimeout) {
         clearTimeout(this.loadTimeout);
         this.loadTimeout = null;
       }
+
+      if (seekTime > 0 && currentVideoEl.duration && seekTime < currentVideoEl.duration) {
+        currentVideoEl.currentTime = seekTime;
+        console.log('⏩ Seeking to ' + Math.floor(seekTime) + 's');
+      }
+
       currentVideoEl.play().catch(e => {
         console.log('⚠ Autoplay blocked, trying muted');
         currentVideoEl.muted = true;
