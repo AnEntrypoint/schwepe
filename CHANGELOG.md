@@ -1,5 +1,42 @@
 # CHANGELOG.md
 
+## 2025-11-14 - SLOT-BASED COMMERCIAL BREAKS (1-6 ADS) ✅
+
+### Real TV Station Commercial Break Architecture
+Redesigned ad insertion to match professional broadcast TV behavior:
+
+**Architecture**:
+- **Fixed 30-minute time slots** for each scheduled show
+- **Commercial breaks with 1-6 ads** per cluster (random length)
+- **Multiple breaks chain together** until slot time expires
+- **Global synchronization** via epoch-based positioning
+- **Separate filler system** for buffering (not part of schedule)
+
+**Implementation**:
+- `pickCommercialBreak()`: Generates random 1-6 ad clusters
+- `calculateSchedulePosition()`: Returns slot metadata with `inCommercialBreak` flag
+- `onScheduledComplete()`: Checks remaining slot time, triggers commercial break if >5s
+- `onCommercialBreakComplete()`: Chains more commercials if slot time remains
+- `getRemainingSlotTime()`: Calculates slot time remaining
+- `moveToNextSlot()`: Advances to next scheduled show
+
+**Testing Results**:
+```
+⏱ Syncing to slot 24 (30min slot, 7min in)
+📺 Commercial break (6 ads)
+✓ Commercial break completed
+⏱ Slot has 1264s remaining after commercial break
+📺 Commercial break (3 ads)
+✓ Commercial break completed
+⏱ Slot has 1248s remaining after commercial break
+📺 Commercial break (3 ads)
+```
+
+**Deployment**:
+- Deployed: 2025-11-14 12:05:14 GMT
+- Verified on production with 6-ad, 3-ad, 3-ad commercial break chaining
+- All viewers globally synchronized to same commercial breaks
+
 ## 2025-11-14 - VIDEO MIME TYPE FIX ✅
 
 ### Saved Videos Not Loading Issue Resolved
