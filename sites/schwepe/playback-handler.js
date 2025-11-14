@@ -137,6 +137,7 @@ export class PlaybackHandler {
   calculateSchedulePosition() {
     const now = Date.now();
     const elapsed = now - this.scheduleEpoch;
+    const DEFAULT_DURATION = 1800000;
     let totalDuration = 0;
     let targetIndex = 0;
     let seekTime = 0;
@@ -144,12 +145,7 @@ export class PlaybackHandler {
     for (let i = 0; i < this.scheduledVideos.length; i++) {
       const video = this.scheduledVideos[i];
       const videoId = video.id || video.u;
-      const cachedDuration = this.durationCache[videoId];
-
-      if (!cachedDuration) {
-        console.log('⏱ No duration cached for video ' + i + ', starting from beginning');
-        return { index: 0, seekTime: 0 };
-      }
+      const cachedDuration = this.durationCache[videoId] || DEFAULT_DURATION;
 
       if (totalDuration + cachedDuration > elapsed) {
         targetIndex = i;
@@ -166,7 +162,7 @@ export class PlaybackHandler {
       for (let i = 0; i < this.scheduledVideos.length; i++) {
         const video = this.scheduledVideos[i];
         const videoId = video.id || video.u;
-        const cachedDuration = this.durationCache[videoId];
+        const cachedDuration = this.durationCache[videoId] || DEFAULT_DURATION;
 
         if (totalDuration + cachedDuration > cyclePosition) {
           targetIndex = i;
@@ -183,6 +179,9 @@ export class PlaybackHandler {
   startPlayback() {
     console.log('📺 Schwelevision TV station initialized');
     if (this.scheduledVideos.length > 0) {
+      const cachedCount = Object.keys(this.durationCache).length;
+      const totalVideos = this.scheduledVideos.length;
+      console.log('📊 Duration cache: ' + cachedCount + '/' + totalVideos + ' videos cached');
       const syncPos = this.calculateSchedulePosition();
       this.scheduleIndex = syncPos.index;
       console.log('⏱ Syncing to schedule position: video ' + syncPos.index + ', offset ' + Math.floor(syncPos.seekTime / 1000) + 's');
