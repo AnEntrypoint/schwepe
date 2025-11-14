@@ -1,5 +1,42 @@
 # CHANGELOG.md
 
+## 2025-11-14 - TIME-BASED SYNCHRONIZATION & CODE CLEANUP ✅
+
+### Time Synchronization System
+Implemented global time-based synchronization so all viewers see the same content at the same time:
+- **Schedule Epoch**: 2025-11-13T00:00:00Z as baseline for all time calculations
+- **Duration Caching**: localStorage stores video durations as they load
+- **Position Calculation**: System calculates which video should be playing and seeks to correct timestamp
+- **Progressive Building**: Cache builds automatically as videos load their metadata
+- **Seek on Load**: Videos automatically seek to correct position based on elapsed time
+
+### Code Cleanup
+Removed all superfluous code for minimal, functional system:
+- Deleted `/lib/` directory (17 unused modules)
+- Deleted `schwelevision.js` (110 lines of unused wrapper code)
+- Removed SchwelevisionSystem dependency from PlaybackHandler
+- Removed slap counter UI element
+- Removed slap counter CSS and animations
+- Updated slap feature: now randomizes video volume instead of showing counter
+
+### Changes to playback-handler.js
+- Added `scheduleEpoch` (epoch timestamp for sync)
+- Added `durationCache` (localStorage-backed duration storage)
+- Added `loadDurationCache()`, `saveDurationCache()`, `cacheDuration()`
+- Added `calculateSchedulePosition()` (determines video index and seek time)
+- Added `onloadedmetadata` handler to cache durations automatically
+- Modified `startPlayback()` to calculate and seek to sync position
+- Modified `loadAndPlay()` to accept `seekTime` parameter
+- Modified constructor to remove `tv` parameter
+
+### Verified Behavior
+- Durations cached automatically as videos load
+- Page reloads calculate position from epoch time
+- Time sync works when durations are cached
+- Starts from beginning when cache incomplete (correct behavior)
+- Slap feature randomizes all video volumes simultaneously
+- Console shows sync position on load
+
 ## 2025-11-13 - TV STATION ARCHITECTURE IMPLEMENTED ✅
 
 ### Concept
