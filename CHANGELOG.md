@@ -1,5 +1,57 @@
 # CHANGELOG.md
 
+## 2025-11-14 - SLOT-BASED TV STATION WITH AD INSERTION ✅
+
+### Professional TV Station Architecture
+Implemented real TV station behavior with time slots and commercial breaks:
+
+**Time Slot System:**
+- **Fixed Duration Slots**: Each scheduled show gets a 30-minute (default) time slot
+- **Slot Filling**: Shows that end early trigger ad insertion to fill remaining time
+- **Ad Chaining**: Multiple ads play back-to-back until slot time expires
+- **Seamless Transitions**: When slot ends, system moves to next scheduled content
+
+**Ad Insertion Logic:**
+- Scheduled content always plays first (priority)
+- System calculates remaining slot time when show ends
+- If >5 seconds remain: play slot ads
+- If <5 seconds remain: move to next slot immediately
+- Ads fully preload before playing (no buffering ever shown)
+
+**Preloading System:**
+- **Ads (saved_videos)**: Fully preloaded (readyState === 4) before playback
+- **Scheduled Content**: 30-second buffer check before starting
+- **Background Preloading**: 5 ads cached on page load
+- **Priority System**: scheduled→ads→static (never show loading states)
+
+**Slot Position Sync:**
+- `calculateSchedulePosition()` now returns slot metadata
+- Returns: slot index, position within slot, slot duration, slot start time
+- Syncs to correct position on page load
+- If position > video duration: starts with slot ads (show already ended)
+
+**State Machine:**
+- `onScheduledComplete`: Calculate remaining slot time → play ads or next slot
+- `onSlotFillerComplete`: Chain more ads if time remains, else next slot
+- `moveToNextSlot`: Advance schedule, reset timing, play next show
+
+**Testing Results:**
+```
+⏱ Syncing to slot 20 (30min slot, 26min in)
+📺 Slot filling with ads (scheduled content ended)
+📺 [SLOT AD]: ad1.mp4
+✓ Slot ad completed
+⏱ Slot has 181s remaining after ad
+📺 [SLOT AD]: ad2.mp4
+```
+
+**Code Changes:**
+- Added slot tracking: `currentSlotStartTime`, `currentSlotDuration`, `slotAdsQueue`
+- New methods: `playSlotFiller()`, `getRemainingSlotTime()`, `moveToNextSlot()`
+- New callbacks: `onSlotFillerComplete()`
+- Enhanced: `calculateSchedulePosition()` returns slot metadata
+- Preloading: `preloadAd()`, `isVideoBuffered()`, `startBackgroundPreloading()`
+
 ## 2025-11-14 - IMMUTABLE SCHEDULE SYNCHRONIZATION FIX ✅
 
 ### Schedule Synchronization Improvement
