@@ -66,7 +66,6 @@ cornermen-backup/
 original-images/
 # Claude Code settings (project-specific, not to be committed)
 .claude/
-public/saved_videos/
 .vexify.db
 .claude-flow/
 .playwright-mcp/
