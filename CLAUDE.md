@@ -6,10 +6,18 @@
 - Domain routing verified working correctly
 - Schwelevision TV fully functional with video playback
 
-### Issue Resolution
-**Problem**: Coolify uses nixpacks which expected `npm run build:multi-site` script
-**Solution**: Added build:multi-site alias to package.json
-**Result**: Deployment successful, all features working
+### Issue Resolutions
+
+**2025-11-14 - Video MIME Types**:
+- **Problem**: Saved videos returning HTML instead of video files (error code 4)
+- **Root Cause**: server.cjs missing video MIME type mappings (.mp4, .webm, etc.)
+- **Solution**: Added video MIME types to server.cjs static file handlers
+- **Result**: Videos now serve correctly with proper `content-type: video/mp4` headers
+
+**2025-11-13 - Nixpacks Build**:
+- **Problem**: Coolify uses nixpacks which expected `npm run build:multi-site` script
+- **Solution**: Added build:multi-site alias to package.json
+- **Result**: Deployment successful, all features working
 
 ### Verification Complete ✅
 ```bash
@@ -54,6 +62,7 @@ curl -I https://schwepe.247420.xyz/playback-handler.js | grep content-type
 - Sites: 247420, schwepe
 - Server: Express.js with static file serving and domain-based routing
 - Container: Docker with nixpacks build
+- MIME Types: HTML, CSS, JS, JSON, images, **videos** (.mp4, .webm, .ogv, .mov, .avi)
 
 ## Schwelevision Restoration
 Complete Schwelevision broadcasting system restored with:

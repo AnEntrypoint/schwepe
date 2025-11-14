@@ -77,7 +77,12 @@ app.use((req, res, next) => {
         '.jpg': 'image/jpeg',
         '.jpeg': 'image/jpeg',
         '.svg': 'image/svg+xml',
-        '.webp': 'image/webp'
+        '.webp': 'image/webp',
+        '.mp4': 'video/mp4',
+        '.webm': 'video/webm',
+        '.ogv': 'video/ogg',
+        '.mov': 'video/quicktime',
+        '.avi': 'video/x-msvideo'
       };
       const ext = path.extname(filePath).toLowerCase();
       if (mimeTypes[ext]) {
@@ -108,7 +113,12 @@ app.get('*', (req, res) => {
     '.jpg': 'image/jpeg',
     '.jpeg': 'image/jpeg',
     '.svg': 'image/svg+xml',
-    '.webp': 'image/webp'
+    '.webp': 'image/webp',
+    '.mp4': 'video/mp4',
+    '.webm': 'video/webm',
+    '.ogv': 'video/ogg',
+    '.mov': 'video/quicktime',
+    '.avi': 'video/x-msvideo'
   };
 
   const filePath = path.join(req.siteRoot, req.path);
