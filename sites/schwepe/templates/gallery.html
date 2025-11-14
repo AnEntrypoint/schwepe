@@ -28,26 +28,14 @@
    <!-- 420kit Shared Library -->
    <!-- Note: phrase-system now loaded from @420kit/shared npm package -->
    <style>
-   /* Import Dive Bar Fonts */
-   @import url('https://fonts.googleapis.com/css2?family=VT323:wght@400;700&family=Share+Tech+Mono&family=Press+Start+2P&display=swap');
-   /* Digital Dive Bar Theme Variables */
    :root {
-   --dive-bar-bg: #1a1a1a;
-   --dive-bar-dark: #0d0d0d;
-   --beer-foam: #f5e6d3;
-   --dirty-wall: #2d2d2d;
-   --neon-sign: #ff6b35;
-   --neon-blue: #00d4ff;
-   --spilled-beer: #8b6914;
-   --graffiti-red: #ff1744;
-   --terminal-green: #00ff41;
-   --urine-stain: #c4b000;
-   --rust-metal: #8b4513;
-   --bar-stool: #4a3c28;
-   --vomit-green: #7a8c3a;
-   --dark-wood: #3e2723;
-   --smoke-haze: rgba(255, 255, 255, 0.05);
-   --beer-glass: rgba(255, 250, 240, 0.1);
+   --primary: #00f5ff;
+   --secondary: #ff006e;
+   --accent: #ffbe0b;
+   --bg-dark: #0a0a0a;
+   --tv-bezel: #2a2a2a;
+   --tv-screen: #1a1a1a;
+   --text: #ffffff;
    }
    * {
    margin: 0;
@@ -55,48 +43,12 @@
    box-sizing: border-box;
    }
    body {
-   font-family: 'VT323', 'Share Tech Mono', 'Press Start 2P', monospace;
-   background:
-   radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
-   radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
-   radial-gradient(circle at 40% 40%, rgba(139, 105, 20, 0.08) 0%, transparent 50%),
-   linear-gradient(135deg, var(--dive-bar-bg) 0%, var(--dive-bar-dark) 100%);
+   font-family: 'Fredoka', sans-serif;
+   background: var(--bg-dark);
+   color: var(--text);
    min-height: 100vh;
    overflow-x: hidden;
-   position: relative;
-   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
    }
-   /* Beer Stain Overlay */
-   body::before {
-   content: '';
-   position: fixed;
-   top: 0;
-   left: 0;
-   width: 100%;
-   height: 100%;
-   background:
-   radial-gradient(ellipse at 10% 20%, rgba(139, 105, 20, 0.12) 0%, transparent 40%),
-   radial-gradient(ellipse at 90% 80%, rgba(196, 0, 0, 0.08) 0%, transparent 30%),
-   radial-gradient(ellipse at 50% 50%, rgba(255, 107, 53, 0.05) 0%, transparent 60%);
-   pointer-events: none;
-   z-index: 1;
-   }
-   .animated-bg {
-   position: fixed;
-   top: 0;
-   left: 0;
-   width: 100%;
-   height: 100%;
-   z-index: -1;
-   background: linear-gradient(135deg, var(--dive-bar-bg) 0%, var(--dive-bar-dark) 100%);
-  animation: barShift 15s ease-in-out infinite;
-  }
-  @keyframes barShift {
-  0%, 100% { background: linear-gradient(135deg, var(--dive-bar-bg) 0%, var(--dive-bar-dark) 100%); }
-  25% { background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, var(--dive-bar-dark) 100%); }
-  50% { background: linear-gradient(135deg, var(--dive-bar-bg) 0%, rgba(0, 212, 255, 0.1) 100%); }
-  75% { background: linear-gradient(135deg, rgba(139, 105, 20, 0.1) 0%, var(--dive-bar-dark) 100%); }
-  }
   /* Terminal Scanlines */
   .terminal-scanlines {
   position: fixed;
