@@ -1,10 +1,21 @@
 # CHANGELOG.md
 
+## 2025-11-14 - SCHEDULE EPOCH UPDATE ✅
+
+### Year-Long Schedule Start Date
+Updated schedule epoch to lock in current viewing position:
+- **New Epoch**: 2025-11-14T00:00:00Z (today at midnight UTC)
+- **Purpose**: Ensures schedule index 0 plays at this time, year-long schedule runs forward from here
+- **Duration**: 78 weeks of scheduled programming (380 videos)
+- **Previous Epoch**: 2025-11-13T00:00:00Z (moved forward by 1 day)
+
+This change ensures all viewers start from the same synchronized position in the year-long schedule.
+
 ## 2025-11-14 - TIME-BASED SYNCHRONIZATION & CODE CLEANUP ✅
 
 ### Time Synchronization System
 Implemented global time-based synchronization so all viewers see the same content at the same time:
-- **Schedule Epoch**: 2025-11-13T00:00:00Z as baseline for all time calculations
+- **Schedule Epoch**: 2025-11-14T00:00:00Z as baseline for all time calculations
 - **Duration Caching**: localStorage stores video durations as they load
 - **Position Calculation**: System calculates which video should be playing and seeks to correct timestamp
 - **Progressive Building**: Cache builds automatically as videos load their metadata
