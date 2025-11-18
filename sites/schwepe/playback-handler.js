@@ -26,6 +26,8 @@ export class PlaybackHandler {
     this.commercialBreakIndex = 0;
     this.inCommercialBreak = false;
     this.preloadedAds = new Map();
+    this.preloadedScheduledVideo = null;
+    this.isPreloadingScheduled = false;
     this.initStaticCanvas();
   }
 
@@ -248,6 +250,85 @@ export class PlaybackHandler {
     }
   }
 
+  async preloadScheduledVideo(videoIndex) {
+    if (this.isPreloadingScheduled) {
+      console.log('⚠ Already preloading scheduled video');
+      return;
+    }
+
+    if (this.scheduledVideos.length === 0) {
+      console.log('⚠ No scheduled videos to preload');
+      return;
+    }
+
+    this.isPreloadingScheduled = true;
+    const video = this.scheduledVideos[videoIndex % this.scheduledVideos.length];
+    const displayName = video.show + ' - ' + video.episode;
+
+    console.log('📺 Pre-caching scheduled content: ' + displayName);
+
+    return new Promise((resolve, reject) => {
+      const preloadEl = document.createElement('video');
+      preloadEl.preload = 'auto';
+      preloadEl.src = this.getVideoUrl(video);
+
+      let bufferCheckInterval = null;
+      let loadTimeout = null;
+
+      const cleanup = () => {
+        if (bufferCheckInterval) clearInterval(bufferCheckInterval);
+        if (loadTimeout) clearTimeout(loadTimeout);
+      };
+
+      const checkBuffered = () => {
+        if (this.isVideoBuffered(preloadEl, 30)) {
+          cleanup();
+          const bufferedSeconds = preloadEl.buffered.end(preloadEl.buffered.length - 1);
+          console.log('✓ Pre-cached ' + Math.floor(bufferedSeconds) + 's of scheduled content');
+          this.preloadedScheduledVideo = {
+            element: preloadEl,
+            video: video,
+            index: videoIndex
+          };
+          this.isPreloadingScheduled = false;
+          resolve(this.preloadedScheduledVideo);
+        }
+      };
+
+      preloadEl.addEventListener('loadedmetadata', () => {
+        const videoId = video.id || video.u;
+        if (preloadEl.duration && !isNaN(preloadEl.duration)) {
+          this.cacheDuration(videoId, preloadEl.duration * 1000);
+        }
+      });
+
+      preloadEl.addEventListener('progress', checkBuffered);
+      preloadEl.addEventListener('canplaythrough', checkBuffered);
+
+      preloadEl.addEventListener('error', (e) => {
+        cleanup();
+        console.log('⚠ Failed to pre-cache scheduled content: ' + displayName);
+        this.preloadedScheduledVideo = null;
+        this.isPreloadingScheduled = false;
+        reject(new Error('Failed to preload scheduled video'));
+      });
+
+      // Timeout after 60 seconds
+      loadTimeout = setTimeout(() => {
+        cleanup();
+        console.log('⚠ Pre-cache timeout for: ' + displayName);
+        this.preloadedScheduledVideo = null;
+        this.isPreloadingScheduled = false;
+        reject(new Error('Preload timeout'));
+      }, 60000);
+
+      // Check buffer every 500ms
+      bufferCheckInterval = setInterval(checkBuffered, 500);
+
+      preloadEl.load();
+    });
+  }
+
   calculateSchedulePosition() {
     const now = Date.now();
     const elapsed = now - this.scheduleEpoch;
@@ -378,7 +459,82 @@ export class PlaybackHandler {
 
     console.log('📺 [SCHEDULE]: ' + displayName);
     this.playingScheduled = true;
-    this.loadAndPlay(video, displayName, '#ffff00', seekTime, () => this.onScheduledComplete(), () => this.onScheduledFailed());
+
+    // Check if we have a pre-cached version of this video
+    if (this.preloadedScheduledVideo &&
+        this.preloadedScheduledVideo.index === this.scheduleIndex &&
+        this.isVideoBuffered(this.preloadedScheduledVideo.element, 30)) {
+      console.log('✓ Using pre-cached video (instant playback ready)');
+      this.playPreloadedScheduled(seekTime);
+    } else {
+      if (this.preloadedScheduledVideo) {
+        console.log('⚠ Pre-cached video not ready or index mismatch, loading fresh');
+      }
+      this.loadAndPlay(video, displayName, '#ffff00', seekTime, () => this.onScheduledComplete(), () => this.onScheduledFailed());
+    }
+  }
+
+  playPreloadedScheduled(seekTime = 0) {
+    const preloaded = this.preloadedScheduledVideo;
+    const video = preloaded.video;
+    const displayName = video.show + ' - ' + video.episode;
+    const preloadedEl = preloaded.element;
+
+    this.showStatic(300);
+
+    const nowPlayingEl = document.getElementById('nowPlaying');
+    if (nowPlayingEl) {
+      nowPlayingEl.textContent = displayName;
+      nowPlayingEl.style.display = 'block';
+      nowPlayingEl.style.color = '#ffff00';
+    }
+
+    const currentVideoEl = this.videoQueue[this.queueIndex % 3];
+
+    // Copy the preloaded element's src to our rotation video element
+    currentVideoEl.src = preloadedEl.src;
+    currentVideoEl.load();
+
+    this.videoQueue.forEach((v, i) => {
+      v.style.display = i === (this.queueIndex % 3) ? 'block' : 'none';
+    });
+
+    // Since it's preloaded, it should start playing almost immediately
+    currentVideoEl.onloadeddata = () => {
+      if (seekTime > 0 && currentVideoEl.duration && seekTime < currentVideoEl.duration) {
+        currentVideoEl.currentTime = seekTime;
+        console.log('⏩ Seeking to ' + Math.floor(seekTime) + 's');
+      }
+
+      currentVideoEl.play().catch(e => {
+        console.log('⚠ Autoplay blocked, trying muted');
+        currentVideoEl.muted = true;
+        currentVideoEl.play().catch(() => {
+          console.log('❌ Play failed, switching content');
+          this.onScheduledFailed();
+        });
+      });
+    };
+
+    currentVideoEl.onended = () => {
+      console.log('✓ Completed: ' + displayName);
+      this.onScheduledComplete();
+    };
+
+    currentVideoEl.onerror = () => {
+      const errorType = currentVideoEl.error ? currentVideoEl.error.code : 'unknown';
+      console.log('❌ Video error (' + errorType + '): ' + displayName);
+      this.onScheduledFailed();
+    };
+
+    // Clear the preloaded video after using it
+    this.preloadedScheduledVideo = null;
+
+    // Clean up the preload element
+    setTimeout(() => {
+      preloadedEl.src = '';
+      preloadedEl.load();
+    }, 1000);
   }
 
   playCommercialBreak() {
@@ -400,6 +556,13 @@ export class PlaybackHandler {
     this.commercialBreakIndex = 0;
 
     console.log('📺 Commercial break ' + (this.currentBreakIndex + 1) + '/' + this.currentSlotBreaks.length + ' (' + this.commercialBreakAds.length + ' ads)');
+
+    // Start pre-caching the next scheduled video during commercial break
+    const nextScheduledIndex = this.scheduleIndex;
+    this.preloadScheduledVideo(nextScheduledIndex).catch(e => {
+      console.log('⚠ Pre-caching failed, will load normally:', e.message);
+    });
+
     this.playNextCommercial();
   }
 
@@ -535,6 +698,9 @@ export class PlaybackHandler {
     const videoDuration = this.durationCache[videoId] || 0;
     this.currentSlotBreaks = this.calculateSlotCommercialBreaks(this.scheduleIndex, videoDuration, this.currentSlotDuration);
     this.currentBreakIndex = 0;
+
+    // Clear any previously preloaded video since we're moving to a new slot
+    this.preloadedScheduledVideo = null;
 
     this.queueIndex++;
     this.showStatic(300);
