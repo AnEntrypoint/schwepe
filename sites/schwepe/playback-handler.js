@@ -80,14 +80,24 @@ export class PlaybackHandler {
       // Try to load saved videos (may not exist in production)
       try {
         const videoList = await fetch('/public/videos.json').then(r => r.json());
+        // Filter to only include actual video files (not images like .webp)
+        const videoExtensions = ['.mp4', '.webm', '.ogv', '.mov', '.avi', '.mkv', '.flv'];
+        const filteredVideos = videoList.filter(video => {
+          const filename = video.filename || '';
+          return videoExtensions.some(ext => filename.toLowerCase().endsWith(ext));
+        });
+
         // Verify saved videos directory exists by testing one video
-        if (videoList.length > 0) {
-          const testVideo = videoList[0];
+        if (filteredVideos.length > 0) {
+          const testVideo = filteredVideos[0];
           const testUrl = '/public/' + (testVideo.path || 'saved_videos/' + testVideo.filename);
           const testResponse = await fetch(testUrl, { method: 'HEAD' }).catch(() => null);
           if (testResponse && testResponse.ok) {
-            this.savedVideos = videoList;
-            console.log('✓ Loaded saved videos:', this.savedVideos.length, 'files');
+            this.savedVideos = filteredVideos;
+            console.log('✓ Loaded saved videos:', this.savedVideos.length, 'video files');
+            if (filteredVideos.length < videoList.length) {
+              console.log('ℹ Filtered out', videoList.length - filteredVideos.length, 'non-video files (images, etc.)');
+            }
           } else {
             console.log('⚠ Saved videos directory not available (expected in production)');
             this.savedVideos = [];
