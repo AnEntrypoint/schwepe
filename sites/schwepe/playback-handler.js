@@ -441,7 +441,7 @@ export class PlaybackHandler {
     const video = this.scheduledVideos[videoIndex % this.scheduledVideos.length];
     const displayName = video.show + ' - ' + video.episode;
 
-    console.log('📺 Pre-caching scheduled content: ' + displayName + ' (need 30s buffered)');
+    console.log('📺 Pre-caching scheduled content: ' + displayName + ' (need 30s buffered, will wait as long as needed)');
 
     return new Promise((resolve, reject) => {
       const preloadEl = document.createElement('video');
@@ -449,11 +449,9 @@ export class PlaybackHandler {
       preloadEl.src = this.getVideoUrl(video);
 
       let bufferCheckInterval = null;
-      let loadTimeout = null;
 
       const cleanup = () => {
         if (bufferCheckInterval) clearInterval(bufferCheckInterval);
-        if (loadTimeout) clearTimeout(loadTimeout);
       };
 
       const checkBuffered = () => {
@@ -495,15 +493,7 @@ export class PlaybackHandler {
         reject(new Error('Failed to preload scheduled video'));
       });
 
-      // Timeout after 60 seconds
-      loadTimeout = setTimeout(() => {
-        cleanup();
-        console.log('⚠ Pre-cache timeout for: ' + displayName);
-        this.preloadedScheduledVideo = null;
-        this.isPreloadingScheduled = false;
-        reject(new Error('Preload timeout'));
-      }, 60000);
-
+      // No timeout - ads will play continuously until content is ready
       // Check buffer every 500ms
       bufferCheckInterval = setInterval(checkBuffered, 500);
 
