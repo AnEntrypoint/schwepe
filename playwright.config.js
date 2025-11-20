@@ -5,34 +5,28 @@ export default defineConfig({
     // Global launch options for all browsers
     launchOptions: {
       args: [
-        '--enable-gpu-rasterization',
-        '--enable-zero-copy',
-        '--use-gl=desktop',
-        '--ignore-gpu-blocklist',
-        '--enable-accelerated-video-decode',
-        '--enable-accelerated-2d-canvas',
-        '--enable-hardware-overlays',
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--disable-setuid-sandbox',
+        '--no-sandbox',
         '--disable-software-rasterizer',
-        '--force-gpu-rasterization'
+        '--disable-extensions'
       ]
     }
   },
   projects: [
     {
       name: 'chromium',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
         launchOptions: {
           args: [
-            '--enable-gpu-rasterization',
-            '--enable-zero-copy',
-            '--use-gl=desktop',
-            '--ignore-gpu-blocklist',
-            '--enable-accelerated-video-decode',
-            '--enable-accelerated-2d-canvas',
-            '--enable-hardware-overlays',
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--disable-setuid-sandbox',
+            '--no-sandbox',
             '--disable-software-rasterizer',
-            '--force-gpu-rasterization'
+            '--disable-extensions'
           ]
         }
       }
