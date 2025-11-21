@@ -32,6 +32,8 @@ export class PlaybackHandler {
     this.pendingScheduledSeekTime = 0;
     this.continuousStaticInterval = null;
     this.currentlyPlayingAd = null;
+    this.scheduledPreloadFailed = false; // Track if we should give up on scheduled content
+    this.scheduledPreloadTimeout = null; // Timeout for giving up on scheduled content
     this.normalizedVolume = 0.7; // Normalized volume level for all videos
     this.initStaticCanvas();
     this.normalizeVideoVolumes();
@@ -420,6 +422,15 @@ export class PlaybackHandler {
       this.fillerIndex++;
       this.queueIndex++;
 
+      // Check if we should give up on scheduled content
+      if (this.scheduledPreloadFailed) {
+        console.log('⚠ Scheduled content failed to load, switching to filler mode');
+        this.scheduledPreloadFailed = false; // Reset for next attempt
+        this.showStatic(300);
+        setTimeout(() => this.playFiller(), 500);
+        return;
+      }
+
       // Check if scheduled video is ready
       if (this.preloadedScheduledVideo &&
           this.preloadedScheduledVideo.index === this.scheduleIndex) {
@@ -615,6 +626,10 @@ export class PlaybackHandler {
         // Start pre-caching scheduled video
         const onScheduledReady = () => {
           console.log('✓ Scheduled content pre-cached, starting playback');
+          if (this.scheduledPreloadTimeout) {
+            clearTimeout(this.scheduledPreloadTimeout);
+            this.scheduledPreloadTimeout = null;
+          }
           if (this.waitingForScheduledPreload) {
             this.waitingForScheduledPreload = false;
             this.stopContinuousStatic();
@@ -623,10 +638,24 @@ export class PlaybackHandler {
           }
         };
 
+        // Set a timeout for giving up on scheduled content (60 seconds)
+        this.scheduledPreloadTimeout = setTimeout(() => {
+          if (this.waitingForScheduledPreload) {
+            console.log('⏱ Scheduled content preload timeout (60s), giving up');
+            this.waitingForScheduledPreload = false;
+            this.scheduledPreloadFailed = true;
+          }
+        }, 60000);
+
         this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
           console.log('❌ Failed to pre-cache scheduled content:', e.message);
+          if (this.scheduledPreloadTimeout) {
+            clearTimeout(this.scheduledPreloadTimeout);
+            this.scheduledPreloadTimeout = null;
+          }
           this.waitingForScheduledPreload = false;
-          this.playFiller();
+          this.scheduledPreloadFailed = true; // Signal to ad loop that we've given up
+          // Don't call playFiller() here - let the ad loop handle the transition
         });
 
         // While pre-caching, play ads or static
@@ -692,6 +721,10 @@ export class PlaybackHandler {
 
       const onScheduledReady = () => {
         console.log('✓ Scheduled content pre-cached, starting playback');
+        if (this.scheduledPreloadTimeout) {
+          clearTimeout(this.scheduledPreloadTimeout);
+          this.scheduledPreloadTimeout = null;
+        }
         if (this.waitingForScheduledPreload) {
           this.waitingForScheduledPreload = false;
           this.stopContinuousStatic();
@@ -700,10 +733,24 @@ export class PlaybackHandler {
         }
       };
 
+      // Set a timeout for giving up on scheduled content (60 seconds)
+      this.scheduledPreloadTimeout = setTimeout(() => {
+        if (this.waitingForScheduledPreload) {
+          console.log('⏱ Scheduled content preload timeout (60s), giving up');
+          this.waitingForScheduledPreload = false;
+          this.scheduledPreloadFailed = true;
+        }
+      }, 60000);
+
       this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
         console.log('❌ Failed to pre-cache scheduled content:', e.message);
+        if (this.scheduledPreloadTimeout) {
+          clearTimeout(this.scheduledPreloadTimeout);
+          this.scheduledPreloadTimeout = null;
+        }
         this.waitingForScheduledPreload = false;
-        this.onScheduledFailed();
+        this.scheduledPreloadFailed = true; // Signal to ad loop that we've given up
+        // Don't call onScheduledFailed() here - let the ad loop handle the transition
       });
 
       // While pre-caching, play ads or static
