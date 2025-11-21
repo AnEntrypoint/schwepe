@@ -603,6 +603,18 @@
   container.style.transformOrigin = 'top center';
   }
   function slapTV() {
+  // Add shake animation to TV container
+  const tvContainer = document.querySelector('.tv-container');
+  if (tvContainer) {
+  tvContainer.classList.add('tv-shake');
+  setTimeout(() => tvContainer.classList.remove('tv-shake'), 500);
+  }
+
+  // Show visual static synchronized with audio
+  if (window.playback) {
+  window.playback.showStatic(330); // Show static for duration of thud + static audio
+  }
+
   const videos = [document.getElementById('currentVideo'), document.getElementById('nextVideo'), document.getElementById('thirdVideo')];
   videos.forEach(video => {
   if (video) {
@@ -610,10 +622,12 @@
   }
   });
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  const staticDuration = 0.2;
-  const thudTime = staticDuration;
+  const thudTime = 0;
+  const thudDuration = 0.15;
+  const staticTime = 0.08;
+  const staticDuration = 0.25;
+  const whineTime = 0.25;
   const whineDuration = 0.3;
-  const whineTime = thudTime + 0.1;
   const createNoise = (duration, startTime) => {
   const bufferSize = audioContext.sampleRate * duration;
   const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -635,13 +649,13 @@
   const gainNode = audioContext.createGain();
   oscillator.type = 'sine';
   oscillator.frequency.setValueAtTime(60, audioContext.currentTime + startTime);
-  oscillator.frequency.exponentialRampToValueAtTime(30, audioContext.currentTime + startTime + 0.15);
+  oscillator.frequency.exponentialRampToValueAtTime(30, audioContext.currentTime + startTime + thudDuration);
   gainNode.gain.setValueAtTime(0.5, audioContext.currentTime + startTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + startTime + 0.15);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + startTime + thudDuration);
   oscillator.connect(gainNode);
   gainNode.connect(audioContext.destination);
   oscillator.start(audioContext.currentTime + startTime);
-  oscillator.stop(audioContext.currentTime + startTime + 0.15);
+  oscillator.stop(audioContext.currentTime + startTime + thudDuration);
   };
   const createWhine = (startTime) => {
   const oscillator = audioContext.createOscillator();
@@ -656,8 +670,8 @@
   oscillator.start(audioContext.currentTime + startTime);
   oscillator.stop(audioContext.currentTime + startTime + whineDuration);
   };
-  createNoise(staticDuration, 0);
   createThud(thudTime);
+  createNoise(staticDuration, staticTime);
   createWhine(whineTime);
   }
   document.addEventListener('DOMContentLoaded', async () => {
