@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>schwepe - Creation Gallery | Wall of Fame</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<!-- SEO Meta Tags -->
+<meta name="description" content="schwepe Creation Gallery - Wall of Fame featuring creative works, memes, and digital art from the schwepe community.">
+<meta name="keywords" content="schwepe gallery, creation gallery, memes, digital art, community creations">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://schwepe.247420.xyz/gallery.html">
+<!-- Open Graph Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://schwepe.247420.xyz/gallery.html">
+<meta property="og:title" content="schwepe | Creation Gallery">
+<meta property="og:description" content="Wall of Fame featuring creative works and digital art from the schwepe community.">
+<meta property="og:image" content="https://schwepe.247420.xyz/schwepe/logo.gif">
+<meta property="og:site_name" content="schwepe">
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="schwepe | Creation Gallery">
+<meta name="twitter:description" content="Wall of Fame featuring creative works and digital art.">
+<meta name="twitter:image" content="https://schwepe.247420.xyz/schwepe/logo.gif">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="navbar.css">
+<style>
+:root {
+--primary: #00f5ff;
+--secondary: #ff006e;
+--accent: #ffbe0b;
+--bg-dark: #0a0a0a;
+--tv-bezel: #2a2a2a;
+--tv-screen: #1a1a1a;
+--text: #ffffff;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: 'Fredoka', sans-serif;
+background: var(--bg-dark);
+color: var(--text);
+min-height: 100vh;
+overflow-x: hidden;
+}
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 20px;
+}
+.header {
+text-align: center;
+padding: 160px 0 60px;
+position: relative;
+}
+.gallery-title {
+font-size: 4rem;
+font-weight: 700;
+margin-bottom: 10px;
+background: linear-gradient(45deg, var(--secondary), var(--accent), var(--primary));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+.gallery-subtitle {
+font-family: 'VT323', monospace;
+font-size: 1.5rem;
+color: var(--primary);
+letter-spacing: 2px;
+margin-bottom: 40px;
+}
+.complete-gallery {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+gap: 30px;
+padding: 50px 0;
+}
+.schwepe-card {
+background: rgba(0, 245, 255, 0.05);
+border: 2px solid var(--primary);
+border-radius: 15px;
+padding: 35px;
+text-align: center;
+transition: all 0.3s ease;
+cursor: pointer;
+position: relative;
+overflow: hidden;
+}
+.schwepe-card:hover {
+transform: translateY(-5px);
+background: rgba(0, 245, 255, 0.1);
+box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+}
+.schwepe-image {
+width: 100%;
+height: 220px;
+object-fit: cover;
+border-radius: 12px;
+margin-bottom: 25px;
+transition: all 0.3s ease;
+border: 2px solid rgba(0, 245, 255, 0.3);
+}
+.schwepe-card:hover .schwepe-image {
+transform: scale(1.05);
+border-color: var(--primary);
+}
+.schwepe-title {
+font-size: 1.8rem;
+color: var(--primary);
+margin-bottom: 15px;
+font-weight: 700;
+}
+.schwepe-description {
+color: rgba(255, 255, 255, 0.8);
+font-size: 1.1rem;
+line-height: 1.6;
+}
+.special-card {
+border: 2px solid var(--accent) !important;
+background: rgba(255, 190, 11, 0.05) !important;
+}
+.special-card::before {
+content: '⭐ SPECIAL ⭐';
+position: absolute;
+top: 10px;
+right: 10px;
+background: var(--accent);
+color: var(--bg-dark);
+padding: 4px 8px;
+border-radius: 6px;
+font-size: 0.8rem;
+font-weight: 700;
+}
+.corner-man {
+position: fixed;
+bottom: 20px;
+left: 20px;
+width: 140px;
+height: 140px;
+z-index: 999;
+cursor: pointer;
+transition: all 0.4s ease;
+opacity: 0;
+transform: scale(0) rotate(-15deg);
+border-radius: 15px;
+overflow: hidden;
+box-shadow: 0 12px 35px rgba(0, 245, 255, 0.4);
+border: 2px solid var(--primary);
+background: rgba(0, 0, 0, 0.8);
+}
+.corner-man.show {
+opacity: 1;
+transform: scale(1) rotate(0deg);
+}
+.corner-man:hover {
+transform: scale(1.1) rotate(5deg);
+box-shadow: 0 18px 45px rgba(0, 245, 255, 0.6);
+}
+.corner-man img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+background: transparent;
+}
+@media (max-width: 768px) {
+.complete-gallery {
+grid-template-columns: 1fr;
+gap: 25px;
+}
+.gallery-title {
+font-size: 2.8rem;
+}
+.gallery-subtitle {
+font-size: 1.2rem;
+}
+.header {
+padding: 120px 0 40px;
+}
+.corner-man {
+width: 100px;
+height: 100px;
+bottom: 15px;
+left: 15px;
+}
+}
+</style>
+</head>
+<body>
+<div id="navbar-container"></div>
+<div id="corner-man" class="corner-man">
+<img src="cornermen/left/schwepe-corner-001.png" alt="Corner Man">
+</div>
+<div class="container">
+<div class="header">
+<h1 class="gallery-title">Creation Gallery</h1>
+<p class="gallery-subtitle">[ Wall of Fame • schwepe Community ]</p>
+</div>
+<div class="complete-gallery" id="schwepe-gallery">
+<!-- Gallery content will be loaded dynamically from schwepe-descriptions.json -->
+</div>
+</div>
+<script>
+// Load gallery content from JSON
+async function loadGalleryFromJSON() {
+try {
+const response = await fetch('schwepe-descriptions.json');
+const descriptions = await response.json();
+const galleryContainer = document.getElementById('schwepe-gallery');
+galleryContainer.innerHTML = '';
+// Add featured official schwepe first
+const featuredCard = document.createElement('div');
+featuredCard.className = 'schwepe-card special-card';
+featuredCard.innerHTML = `
+<img src="logo.gif" alt="Official schwepe Logo" class="schwepe-image">
+<h3 class="schwepe-title">Official $schwepe Community</h3>
+<p class="schwepe-description">The official branding and identity of our beloved community</p>
+`;
+galleryContainer.appendChild(featuredCard);
+// Add all other schwepes
+Object.entries(descriptions).forEach(([filename, data]) => {
+if (filename === 'logo.gif') return; // Skip the featured one
+const specialClass = data.special ? ' special-card' : '';
+const card = document.createElement('div');
+card.className = `schwepe-card${specialClass}`;
+card.innerHTML = `
+<img src="schwepe/${filename}" alt="${data.title}" class="schwepe-image">
+<h3 class="schwepe-title">${data.title}</h3>
+<p class="schwepe-description">${data.description}</p>
+`;
+// Add click interaction
+card.addEventListener('click', function() {
+this.style.animation = 'bounce 0.5s ease-in-out';
+setTimeout(() => {
+this.style.animation = '';
+}, 500);
+});
+galleryContainer.appendChild(card);
+});
+console.log('✅ Gallery loaded from JSON successfully');
+} catch (error) {
+console.error('❌ Error loading gallery from JSON:', error);
+// Fallback: show error message
+const galleryContainer = document.getElementById('schwepe-gallery');
+galleryContainer.innerHTML = '<p style="color: white; text-align: center; padding: 40px;">Error loading gallery content. Please check back later.</p>';
+}
+}
+// Corner Man functionality
+let cornerManVisible = false;
+let cornerManImages = [];
+function toggleCornerMan() {
+cornerManVisible = !cornerManVisible;
+const cornerMan = document.getElementById('corner-man');
+if (cornerManVisible) {
+cornerMan.classList.add('show');
+if (cornerManImages.length > 0) {
+loadRandomCornerImage();
+}
+} else {
+cornerMan.classList.remove('show');
+}
+}
+function loadCornerManImages() {
+// Load corner man images from cornermen folder
+cornerManImages = [
+'cornermen/left/schwepe-corner-001.png',
+'cornermen/left/schwepe-corner-002.png',
+'cornermen/left/schwepe-corner-003.png'
+];
+}
+function loadRandomCornerImage() {
+if (cornerManImages.length === 0) return;
+const randomIndex = Math.floor(Math.random() * cornerManImages.length);
+const cornerManImg = document.querySelector('#corner-man img');
+if (cornerManImg) {
+cornerManImg.src = cornerManImages[randomIndex];
+}
+}
+// Load navbar function
+async function loadNavbar() {
+try {
+const response = await fetch('navbar.html');
+const navbarHTML = await response.text();
+document.getElementById('navbar-container').innerHTML = navbarHTML;
+const script = document.createElement('script');
+script.src = 'navbar.js';
+document.body.appendChild(script);
+const navLinks = document.querySelectorAll('#navbar-container a');
+navLinks.forEach(link => {
+if (link.href.includes('gallery.html')) {
+link.classList.add('active');
+}
+});
+} catch (error) {
+console.error('Error loading navbar:', error);
+}
+}
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+loadNavbar();
+loadGalleryFromJSON();
+loadCornerManImages();
+// Show corner man after 2 seconds
+setTimeout(() => {
+toggleCornerMan();
+}, 2000);
+// Click corner man to cycle through images
+document.getElementById('corner-man')?.addEventListener('click', loadRandomCornerImage);
+});
+</script>
+</body>
+</html>

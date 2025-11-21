@@ -1,0 +1,37 @@
+{
+  "id": "schwepe",
+  "domain": "schwepe.247420.xyz",
+  "name": "Schwepe's Funky Universe",
+  "meta": {
+    "title": "Schwepe's Funky Universe",
+    "description": "Where 247420 energy meets pure meme magic - Schwepe's ultimate creative universe with meme culture, digital art, and creative community.",
+    "keywords": "schwepe, meme, art, degen, 247420, creativity, meme culture, digital community, frog",
+    "author": "Schwepe's Universe",
+    "themeColor": "#2c3e50",
+    "ogImage": "/media/schwepe.gif",
+    "twitter": "@schwepe"
+  },
+  "templates": {
+    "index": "index.html",
+    "gallery": "gallery.html",
+    "lore": "lore.html",
+    "videos": "videos-thread.html",
+    "images": "images-thread.html"
+  },
+  "schedule": {
+    "file": "schedule.json",
+    "epochStart": 1735689600000,
+    "programSeed": 247420,
+    "loopDurationMs": 6660000
+  },
+  "media": {
+    "images": "media/images",
+    "videos": "media/videos",
+    "static": "media/static"
+  },
+  "styles": {
+    "main": "styles/main.css",
+    "navbar": "styles/navbar.css",
+    "lore": "styles/lore.css"
+  }
+}

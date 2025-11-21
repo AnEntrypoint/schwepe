@@ -1,0 +1,37 @@
+{
+  "id": "247420",
+  "domain": "247420.xyz",
+  "name": "247420 TV",
+  "meta": {
+    "title": "247420 TV - Non-Stop Streaming",
+    "description": "24/7 streaming entertainment channel",
+    "keywords": "247420, streaming, tv, entertainment",
+    "author": "247420",
+    "themeColor": "#000000",
+    "ogImage": "/media/static/logo.gif",
+    "twitter": "@247420"
+  },
+  "templates": {
+    "index": "index.html",
+    "gallery": "gallery.html",
+    "lore": "lore.html",
+    "videos": "videos-thread.html",
+    "images": "images-thread.html"
+  },
+  "schedule": {
+    "file": "saved_videos.json",
+    "epochStart": 1735689600000,
+    "programSeed": 247420,
+    "loopDurationMs": 6660000
+  },
+  "media": {
+    "images": "media/images",
+    "videos": "media/videos",
+    "static": "media/static"
+  },
+  "styles": {
+    "main": "styles/main.css",
+    "navbar": "styles/navbar.css",
+    "lore": "styles/lore.css"
+  }
+}
