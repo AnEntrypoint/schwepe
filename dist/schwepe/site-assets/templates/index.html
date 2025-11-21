@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="site-id" content="{{ id }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ meta.title }}</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta name="description" content="{{ meta.description }}">
+    <meta name="keywords" content="{{ meta.keywords }}">
+    <meta name="author" content="{{ meta.author }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://{{ domain }}/">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://{{ domain }}/">
+    <meta property="og:title" content="Schwepe's Meme Dimension - 247420 Degen Energy & Meme Culture">
+    <meta property="og:description" content="{{ meta.description }}">
+    <meta property="og:image" content="https://{{ domain }}{{ meta.ogImage }}">
+    <meta property="og:image:width" content="400">
+    <meta property="og:image:height" content="400">
+    <meta property="og:site_name" content="Schwepe's Meme Dimension">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="{{ meta.twitter }}">
+    <meta name="twitter:creator" content="{{ meta.twitter }}">
+    <meta name="twitter:title" content="Schwepe's Meme Dimension - 247420 Degen Energy & Meme Culture">
+    <meta name="twitter:description" content="{{ meta.description }}">
+    <meta name="twitter:image" content="https://{{ domain }}{{ meta.ogImage }}">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=VT323&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="navbar.css">
+    <style>
+        :root {
+            --primary: #00f5ff;
+            --secondary: #ff006e;
+            --accent: #ffbe0b;
+            --bg-dark: #0a0a0a;
+            --text: #ffffff;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            text-align: center;
+            padding: 140px 20px 60px;
+        }
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--secondary), var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            font-family: 'VT323', monospace;
+            font-size: 1.8rem;
+            color: var(--primary);
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+        .feature-card {
+            background: rgba(0, 245, 255, 0.05);
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(0, 245, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+        }
+        .feature-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .feature-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        .feature-card p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .cta-section {
+            text-align: center;
+            padding: 80px 20px;
+            margin: 60px 0;
+        }
+        .cta-section p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: var(--text);
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 18px 45px;
+            background: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 245, 255, 0.4);
+        }
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 245, 255, 0.6);
+            background: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-container"></div>
+    <div class="container">
+        <header>
+            <h1>Schwepe's Funky Universe</h1>
+            <p class="subtitle">Where 247420 Energy Meets Pure Meme Magic</p>
+        </header>
+        <div class="features">
+            <a href="lore.html" class="feature-card">
+                <div class="feature-icon">📜</div>
+                <h3>Sacred Texts</h3>
+                <p>Explore the ancient protocols of our digital realm and discover the creative alchemy that fuels our collective consciousness.</p>
+            </a>
+            <a href="gallery.html" class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Creation Gallery</h3>
+                <p>Browse our evolving collection of games, music, art, memes, and digital creations that define our creative community.</p>
+            </a>
+            <a href="videos-thread.html" class="feature-card">
+                <div class="feature-icon">📺</div>
+                <h3>Visual Archives</h3>
+                <p>Experience the trippiest visual journeys and chaotic collaborations from our community's collective mind.</p>
+            </a>
+        </div>
+        <div class="cta-section">
+            <p>Ready to elevate your consciousness?</p>
+            <a href="lore.html" class="cta-button">Enter the Universe</a>
+        </div>
+    </div>
+    <script type="module">
+    async function loadNavbar() {
+        try {
+            const response = await fetch('navbar.html');
+            const navbarHTML = await response.text();
+            document.getElementById('navbar-container').innerHTML = navbarHTML;
+            const script = document.createElement('script');
+            script.src = 'navbar.js';
+            document.body.appendChild(script);
+            const navLinks = document.querySelectorAll('#navbar-container a');
+            navLinks.forEach(link => {
+                if (link.href.includes('index.html') || link.getAttribute('href') === '/') {
+                    link.classList.add('active');
+                }
+            });
+        } catch (error) {
+            console.error('Error loading navbar:', error);
+        }
+    }
+    document.addEventListener('DOMContentLoaded', loadNavbar);
+    </script>
+</body>
+</html>
