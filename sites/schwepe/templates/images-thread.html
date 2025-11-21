@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>schwepe - Digital Dive Bar Images 🍻 | Meme Wall</title>
+    <title>schwepe - Image Archive | Visual Collection</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Fira+Code:wght@400;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="navbar.css">
     <style>
         :root {
@@ -33,110 +32,34 @@
             min-height: 100vh;
         }
 
-        .terminal-flicker {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: var(--dive-bar-bg);
-            animation: diveBarFlicker 0.2s infinite;
-            pointer-events: none;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        @keyframes diveBarFlicker {
-            0% { opacity: 0.96; }
-            25% { opacity: 1; }
-            50% { opacity: 0.98; }
-            75% { opacity: 0.97; }
-            100% { opacity: 0.99; }
+        .header {
+            text-align: center;
+            padding: 160px 0 60px;
+            position: relative;
         }
 
-        /* Beer Spill Drip Animation */
-        @keyframes beerDrip {
-            0% { transform: translateY(-10px); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(100vh); opacity: 0; }
+        .page-title {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--secondary), var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .beer-drip {
-            position: fixed;
-            top: -10px;
-            width: 3px;
-            height: 20px;
-            background: linear-gradient(to bottom, var(--beer-foam), var(--spilled-beer));
-            border-radius: 50%;
-            animation: beerDrip 8s infinite;
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .beer-drip:nth-child(1) { left: 10%; animation-delay: 0s; }
-        .beer-drip:nth-child(2) { left: 30%; animation-delay: 2s; }
-        .beer-drip:nth-child(3) { left: 50%; animation-delay: 4s; }
-        .beer-drip:nth-child(4) { left: 70%; animation-delay: 6s; }
-        .beer-drip:nth-child(5) { left: 90%; animation-delay: 1s; }
-
-        .terminal-window {
-            margin: 100px auto 40px;
-            max-width: 900px;
-            background: var(--terminal-bg);
-            border: 1px solid var(--terminal-green);
-            border-radius: 4px;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .terminal-header {
-            background: var(--terminal-bg-alt);
-            border-bottom: 1px solid var(--terminal-green);
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .terminal-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .terminal-button {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-        }
-
-        .terminal-button.close { background: var(--terminal-red); }
-        .terminal-button.minimize { background: var(--terminal-amber); }
-        .terminal-button.maximize { background: var(--terminal-green); }
-
-        .terminal-title {
-            color: var(--terminal-green);
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .terminal-body {
-            padding: 20px;
-        }
-
-        .terminal-command {
-            color: var(--terminal-green);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 16px;
-            margin-bottom: 8px;
-        }
-
-        .terminal-output {
-            color: var(--text-secondary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            margin-bottom: 4px;
+        .page-subtitle {
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            color: var(--primary);
+            letter-spacing: 2px;
+            margin-bottom: 40px;
         }
 
         .gallery-controls {
@@ -149,13 +72,13 @@
         }
 
         .pagination-info {
-            background: var(--terminal-bg-alt);
-            padding: 8px 16px;
-            border: 1px solid var(--terminal-green);
-            font-size: 12px;
-            color: var(--terminal-green);
-            font-family: 'JetBrains Mono', monospace;
-            border-radius: 2px;
+            background: rgba(0, 245, 255, 0.1);
+            padding: 10px 20px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            font-size: 1rem;
+            color: var(--primary);
+            font-family: 'VT323', monospace;
         }
 
         .pagination-controls {
@@ -165,42 +88,23 @@
         }
 
         .pagination-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
+            background: rgba(0, 245, 255, 0.05);
+            border: 2px solid var(--primary);
+            color: var(--primary);
             padding: 12px 24px;
-            border-radius: 20px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Orbitron', monospace;
+            font-family: 'Fredoka', sans-serif;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pagination-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .pagination-btn:hover::before {
-            left: 100%;
         }
 
         .pagination-btn:hover:not(:disabled) {
-            background: rgba(0, 255, 255, 0.1);
-            color: var(--accent-cyan);
+            background: rgba(0, 245, 255, 0.2);
             transform: translateY(-3px);
-            box-shadow: var(--glow-cyan);
-            border-color: var(--accent-cyan);
+            box-shadow: 0 5px 20px rgba(0, 245, 255, 0.4);
         }
 
         .pagination-btn:disabled {
@@ -212,43 +116,23 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
-            padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
+            padding: 20px 0;
+            margin-bottom: 60px;
         }
 
         .media-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            background: rgba(0, 245, 255, 0.05);
+            border: 2px solid var(--primary);
             border-radius: 15px;
             overflow: hidden;
             transition: all 0.3s ease;
             position: relative;
-            backdrop-filter: blur(15px);
-            font-family: 'Exo 2', sans-serif;
-        }
-
-        .media-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, transparent, rgba(0, 255, 255, 0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .media-item:hover::before {
-            opacity: 1;
         }
 
         .media-item:hover {
             transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 40px rgba(0, 255, 255, 0.3);
-            border-color: var(--accent-cyan);
+            box-shadow: 0 15px 40px rgba(0, 245, 255, 0.3);
+            background: rgba(0, 245, 255, 0.1);
         }
 
         .media-container {
@@ -272,32 +156,29 @@
 
         .media-info {
             padding: 18px;
-            background: rgba(10, 0, 20, 0.8);
-            backdrop-filter: blur(15px);
-            border-top: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 2px solid rgba(0, 245, 255, 0.3);
         }
 
         .media-filename {
             font-size: 0.9rem;
-            color: var(--accent-cyan);
+            color: var(--primary);
             margin-bottom: 8px;
             word-break: break-all;
             font-weight: 600;
-            font-family: 'Space Mono', monospace;
+            font-family: 'VT323', monospace;
         }
 
         .media-date {
             font-size: 0.8rem;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.7);
             opacity: 0.8;
-            font-family: 'Space Mono', monospace;
         }
 
         .media-size {
             font-size: 0.8rem;
-            color: var(--accent-magenta);
+            color: var(--accent);
             margin-top: 5px;
-            font-family: 'Space Mono', monospace;
             font-weight: 600;
         }
 
@@ -308,7 +189,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             z-index: 9000;
             justify-content: center;
             align-items: center;
@@ -333,8 +214,8 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            background: var(--secondary);
+            border: 2px solid var(--primary);
             color: var(--text);
             padding: 10px;
             border-radius: 50%;
@@ -346,11 +227,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 9001;
         }
 
         .modal-close:hover {
-            background: var(--secondary);
-            transform: scale(1.1);
+            background: var(--accent);
+            transform: scale(1.1) rotate(90deg);
         }
 
         .loading {
@@ -373,14 +255,22 @@
         }
 
         @media (max-width: 768px) {
-            .hero-section {
-                padding: 100px 15px 40px;
+            .header {
+                padding: 120px 15px 40px;
+            }
+
+            .page-title {
+                font-size: 2.8rem;
+            }
+
+            .page-subtitle {
+                font-size: 1.2rem;
             }
 
             .media-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
                 gap: 15px;
-                padding: 15px;
+                padding: 15px 0;
             }
 
             .gallery-controls {
@@ -396,65 +286,30 @@
     </style>
 </head>
 <body>
-    <div class="terminal-scanlines"></div>
-    <div class="terminal-flicker"></div>
+    <div id="navbar-container"></div>
 
-    <nav class="navbar">
-        <a href="index.html">
-            <i class="fas fa-terminal"></i>
-            $ ./home.sh
-        </a>
-        <a href="lore.html">
-            <i class="fas fa-file-alt"></i>
-            $ cat lore.txt
-        </a>
-        <a href="images-thread.html" class="active">
-            <i class="fas fa-image"></i>
-            $ ls images/
-        </a>
-        <a href="videos-thread.html">
-            <i class="fas fa-play"></i>
-            $ ./media_player --tv
-        </a>
-        <a href="https://420360.xyz/" target="_blank">
-            <i class="fas fa-network-wired"></i>
-            $ ssh world@schwepe
-        </a>
-      </nav>
-
-    <div class="terminal-window">
-        <div class="terminal-header">
-            <div class="terminal-buttons">
-                <button class="terminal-button close"></button>
-                <button class="terminal-button minimize"></button>
-                <button class="terminal-button maximize"></button>
-            </div>
-            <div class="terminal-title">$ ./image_browser.sh</div>
+    <div class="container">
+        <div class="header">
+            <h1 class="page-title">Image Archive</h1>
+            <p class="page-subtitle">[ Visual Data Repository • Chronological Archive ]</p>
         </div>
-        <div class="terminal-body">
-            <div class="terminal-command">$ ls images/</div>
-            <div class="terminal-output">Visual Data Repository • Chronological Archive</div>
-            <div class="terminal-output">Initializing image viewer...</div>
-            <div class="terminal-output" id="pagination-info">Loading...</div>
 
-            <div class="gallery-controls">
-                <div class="pagination-controls">
-                    <button class="pagination-btn" id="prev-btn" onclick="changePage(-1)">
-                        $ prev_page
-                    </button>
-                    <button class="pagination-btn" id="next-btn" onclick="changePage(1)">
-                        $ next_page
-                    </button>
-                </div>
+        <div class="gallery-controls">
+            <div class="pagination-controls">
+                <button class="pagination-btn" id="prev-btn" onclick="changePage(-1)">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <div class="pagination-info" id="pagination-info">Loading...</div>
+                <button class="pagination-btn" id="next-btn" onclick="changePage(1)">
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
         </div>
-    </div>
 
-    <main>
         <div id="media-container" class="loading">
             <i class="fas fa-spinner fa-spin"></i> Loading images...
         </div>
-    </main>
+    </div>
 
     <div id="modal" class="modal">
         <div class="modal-content">
@@ -560,7 +415,7 @@
                 const endItem = Math.min(this.currentPage * this.itemsPerPage, this.filteredImages.length);
 
                 document.getElementById('pagination-info').textContent =
-                    `Showing ${startItem}-${endItem} of ${this.filteredImages.length} images (Page ${this.currentPage}/${totalPages})`;
+                    `${startItem}-${endItem} of ${this.filteredImages.length} • Page ${this.currentPage}/${totalPages}`;
 
                 document.getElementById('prev-btn').disabled = this.currentPage <= 1;
                 document.getElementById('next-btn').disabled = this.currentPage >= totalPages;
@@ -632,9 +487,29 @@
             document.getElementById('modal').style.display = 'none';
         }
 
-        // Load shared navbar
+        // Load navbar function
+        async function loadNavbar() {
+            try {
+                const response = await fetch('navbar.html');
+                const navbarHTML = await response.text();
+                document.getElementById('navbar-container').innerHTML = navbarHTML;
+                const script = document.createElement('script');
+                script.src = 'navbar.js';
+                document.body.appendChild(script);
+                const navLinks = document.querySelectorAll('#navbar-container a');
+                navLinks.forEach(link => {
+                    if (link.href.includes('images-thread.html')) {
+                        link.classList.add('active');
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading navbar:', error);
+            }
+        }
+
         // Initialize gallery when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
+            loadNavbar();
             gallery = new ImagesGallery();
             gallery.init();
         });
