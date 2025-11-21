@@ -32,7 +32,18 @@ export class PlaybackHandler {
     this.pendingScheduledSeekTime = 0;
     this.continuousStaticInterval = null;
     this.currentlyPlayingAd = null;
+    this.normalizedVolume = 0.7; // Normalized volume level for all videos
     this.initStaticCanvas();
+    this.normalizeVideoVolumes();
+  }
+
+  normalizeVideoVolumes() {
+    // Set normalized volume on all video elements
+    this.videoQueue.forEach(video => {
+      if (video) {
+        video.volume = this.normalizedVolume;
+      }
+    });
   }
 
   initStaticCanvas() {
@@ -389,6 +400,9 @@ export class PlaybackHandler {
     currentVideoEl.load();
 
     currentVideoEl.onloadeddata = () => {
+      // Normalize volume before playing
+      currentVideoEl.volume = this.normalizedVolume;
+
       currentVideoEl.play().catch(e => {
         console.log('⚠ Autoplay blocked, trying muted');
         currentVideoEl.muted = true;
@@ -730,6 +744,9 @@ export class PlaybackHandler {
 
     // Since it's preloaded, it should start playing almost immediately
     currentVideoEl.onloadeddata = () => {
+      // Normalize volume before playing
+      currentVideoEl.volume = this.normalizedVolume;
+
       if (seekTime > 0 && currentVideoEl.duration && seekTime < currentVideoEl.duration) {
         currentVideoEl.currentTime = seekTime;
         console.log('⏩ Seeking to ' + Math.floor(seekTime) + 's');
@@ -853,6 +870,9 @@ export class PlaybackHandler {
     currentVideoEl.load();
 
     currentVideoEl.onloadeddata = () => {
+      // Normalize volume before playing
+      currentVideoEl.volume = this.normalizedVolume;
+
       currentVideoEl.play().catch(e => {
         console.log('⚠ Autoplay blocked, trying muted');
         currentVideoEl.muted = true;
@@ -957,6 +977,9 @@ export class PlaybackHandler {
         clearTimeout(this.loadTimeout);
         this.loadTimeout = null;
       }
+
+      // Normalize volume before playing
+      currentVideoEl.volume = this.normalizedVolume;
 
       if (seekTime > 0 && currentVideoEl.duration && seekTime < currentVideoEl.duration) {
         currentVideoEl.currentTime = seekTime;
