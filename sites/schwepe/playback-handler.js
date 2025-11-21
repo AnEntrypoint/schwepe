@@ -37,6 +37,40 @@ export class PlaybackHandler {
     this.normalizedVolume = 0.7; // Normalized volume level for all videos
     this.initStaticCanvas();
     this.normalizeVideoVolumes();
+    this.preventTabPausing(); // Prevent videos from pausing when tab changes
+  }
+
+  preventTabPausing() {
+    // Prevent videos from pausing when tab is hidden
+    // This ensures the immutable schedule continues even when users switch tabs
+    document.addEventListener('visibilitychange', () => {
+      // Don't let browser pause videos when tab is hidden
+      this.videoQueue.forEach(video => {
+        if (video && video.paused && !this.showingStatic) {
+          console.log('📺 Tab became hidden, resuming playback to maintain schedule');
+          video.play().catch(e => {
+            // If play fails, we'll catch up on next visibility
+          });
+        }
+      });
+    });
+
+    // Also prevent videos from pausing due to other reasons
+    this.videoQueue.forEach(video => {
+      if (video) {
+        video.addEventListener('pause', (e) => {
+          // Only resume if we didn't intentionally pause (e.g., during transitions)
+          if (!this.showingStatic && video.src && video.readyState >= 2) {
+            setTimeout(() => {
+              if (video.paused) {
+                console.log('📺 Video unexpectedly paused, resuming');
+                video.play().catch(() => {});
+              }
+            }, 100);
+          }
+        });
+      }
+    });
   }
 
   normalizeVideoVolumes() {
@@ -238,12 +272,28 @@ export class PlaybackHandler {
       return breaks;
     }
 
+    // Calculate number of commercial breaks to fill the slot
+    // Target: 2-4 breaks dispersed throughout the slot, not all at the end
     const seed = slotIndex * 7919;
-    const breakCount = Math.floor(this.seededRandom(seed) * 3) + 1;
+    const breakCount = Math.floor(this.seededRandom(seed) * 3) + 2; // 2-4 breaks
+
+    // Each break should have 2-5 ads (not all ads at once)
+    const targetAdsPerBreak = Math.floor(this.seededRandom(seed + 1) * 4) + 2;
 
     let totalBreakTime = 0;
     for (let i = 0; i < breakCount; i++) {
-      const ads = this.pickCommercialBreak(slotIndex, i);
+      // Pick a small number of ads for this specific break
+      const ads = [];
+      const thisBreakAdCount = Math.min(targetAdsPerBreak, Math.floor(this.seededRandom(seed + i + 100) * 4) + 2);
+
+      for (let j = 0; j < thisBreakAdCount; j++) {
+        if (this.savedVideos.length > 0) {
+          const adSeed = seed * 100 + i * 10 + j;
+          const adIndex = Math.floor(this.seededRandom(adSeed) * this.savedVideos.length);
+          ads.push(this.savedVideos[adIndex]);
+        }
+      }
+
       let breakDuration = 0;
       ads.forEach(ad => {
         const adDuration = this.durationCache[ad.filename || ad.id] || 15000;
@@ -258,10 +308,14 @@ export class PlaybackHandler {
 
       totalBreakTime += breakDuration;
 
+      // Don't exceed the remaining time in the slot
       if (totalBreakTime >= remainingTime) {
         break;
       }
     }
+
+    console.log('📺 Calculated ' + breaks.length + ' commercial breaks for slot ' + slotIndex + ' (' +
+                breaks.reduce((sum, b) => sum + b.ads.length, 0) + ' total ads dispersed)');
 
     return breaks;
   }
@@ -361,11 +415,14 @@ export class PlaybackHandler {
       } catch (e) {
         console.log('⚠ Failed to load ad, trying next...');
         this.fillerIndex++;
-        // Try next ad
-        if (this.fillerIndex < this.savedVideos.length) {
+        // Try next ad (limit retries to prevent infinite loop)
+        if (this.fillerIndex % this.savedVideos.length < this.savedVideos.length - 1) {
           this.playAdWhileWaiting();
         } else {
-          this.playContinuousStatic();
+          console.log('⚠ All ads failed, giving up on scheduled content');
+          this.scheduledPreloadFailed = true;
+          this.showStatic(300);
+          setTimeout(() => this.skipToNextScheduled(), 500);
         }
         return;
       }
@@ -424,10 +481,10 @@ export class PlaybackHandler {
 
       // Check if we should give up on scheduled content
       if (this.scheduledPreloadFailed) {
-        console.log('⚠ Scheduled content failed to load, switching to filler mode');
+        console.log('⚠ Scheduled content failed to load, skipping to next');
         this.scheduledPreloadFailed = false; // Reset for next attempt
         this.showStatic(300);
-        setTimeout(() => this.playFiller(), 500);
+        setTimeout(() => this.skipToNextScheduled(), 500);
         return;
       }
 
@@ -449,6 +506,16 @@ export class PlaybackHandler {
       this.queueIndex++;
       this.playAdWhileWaiting();
     };
+  }
+
+  skipToNextScheduled() {
+    // Skip the current scheduled video and try the next one
+    console.log('⏭ Skipping to next scheduled video');
+    this.scheduleIndex = (this.scheduleIndex + 1) % this.scheduledVideos.length;
+    this.preloadedScheduledVideo = null;
+    this.isPreloadingScheduled = false;
+    this.waitingForScheduledPreload = false;
+    this.moveToNextSlot();
   }
 
   async preloadScheduledVideo(videoIndex, onReady = null) {
@@ -638,14 +705,14 @@ export class PlaybackHandler {
           }
         };
 
-        // Set a timeout for giving up on scheduled content (60 seconds)
+        // Set a timeout for giving up on scheduled content (30 seconds)
         this.scheduledPreloadTimeout = setTimeout(() => {
           if (this.waitingForScheduledPreload) {
-            console.log('⏱ Scheduled content preload timeout (60s), giving up');
+            console.log('⏱ Scheduled content preload timeout (30s), skipping to next');
             this.waitingForScheduledPreload = false;
             this.scheduledPreloadFailed = true;
           }
-        }, 60000);
+        }, 30000);
 
         this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
           console.log('❌ Failed to pre-cache scheduled content:', e.message);
@@ -733,14 +800,14 @@ export class PlaybackHandler {
         }
       };
 
-      // Set a timeout for giving up on scheduled content (60 seconds)
+      // Set a timeout for giving up on scheduled content (30 seconds)
       this.scheduledPreloadTimeout = setTimeout(() => {
         if (this.waitingForScheduledPreload) {
-          console.log('⏱ Scheduled content preload timeout (60s), giving up');
+          console.log('⏱ Scheduled content preload timeout (30s), skipping to next');
           this.waitingForScheduledPreload = false;
           this.scheduledPreloadFailed = true;
         }
-      }, 60000);
+      }, 30000);
 
       this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
         console.log('❌ Failed to pre-cache scheduled content:', e.message);
