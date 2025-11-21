@@ -1063,7 +1063,14 @@ export class PlaybackHandler {
     this.inCommercialBreak = false;
     this.currentBreakIndex++;
 
-    if (this.currentBreakIndex < this.currentSlotBreaks.length) {
+    // If scheduled content hasn't played yet (synced into commercial break),
+    // play the scheduled content instead of continuing to next break
+    if (!this.scheduledVideoEnded && this.preloadedScheduledVideo) {
+      console.log('📺 Scheduled content ready, switching from commercial break');
+      this.queueIndex++;
+      this.showStatic(300);
+      setTimeout(() => this.playPreloadedScheduled(0), 500);
+    } else if (this.currentBreakIndex < this.currentSlotBreaks.length) {
       console.log('📺 Next commercial break in slot');
       this.queueIndex++;
       this.showStatic(300);
