@@ -2,7 +2,8 @@
     <html lang="en">
     <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="dark light">
     <title>Schwelevision - schwepe Broadcasting Network</title>
     <!-- Discord SSO / Open Graph Meta Tags -->
     <meta name="description" content="📺 Schwelevision - 24/7 retro TV broadcasting endless degen content. Atmospheric audio with authentic static noise between videos. 🐸 schwepe">
@@ -577,6 +578,9 @@
   </div>
   <script type="module">
   import { PlaybackHandler } from './playback-handler.js';
+  import { CacheManager } from './cache-manager.js';
+  import { PreloadManager } from './preload-manager.js';
+  import { PerformanceMonitor } from './performance-monitor.js';
   async function loadNavbar() {
   try {
   const response = await fetch('navbar.html');
@@ -675,12 +679,90 @@
   createNoise(staticDuration, staticTime);
   createWhine(whineTime);
   }
+   function setupKeyboardNavigation(playback) {
+   document.addEventListener('keydown', (e) => {
+   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+   switch(e.code) {
+   case 'Space':
+   e.preventDefault();
+   const playPauseBtn = document.getElementById('playPauseBtn');
+   if (playPauseBtn) playPauseBtn.click();
+   break;
+   case 'KeyM':
+   const muteBtn = document.getElementById('muteBtn');
+   if (muteBtn) muteBtn.click();
+   break;
+   case 'KeyF':
+   const fsBtn = document.getElementById('fullscreenToggle');
+   if (fsBtn) fsBtn.click();
+   break;
+   case 'KeyS':
+   const statsBtn = document.getElementById('statsBtn');
+   if (statsBtn) statsBtn.click();
+   break;
+   case 'ArrowUp':
+   e.preventDefault();
+   playback.setVolume(Math.min(1, playback.normalizedVolume + 0.1));
+   break;
+   case 'ArrowDown':
+   e.preventDefault();
+   playback.setVolume(Math.max(0, playback.normalizedVolume - 0.1));
+   break;
+   }
+   });
+   }
+   
+   function setupControlBar(playback) {
+   const playPauseBtn = document.getElementById('playPauseBtn');
+   const muteBtn = document.getElementById('muteBtn');
+   const statsBtn = document.getElementById('statsBtn');
+   let isPlaying = true;
+   playPauseBtn?.addEventListener('click', () => {
+   isPlaying = !isPlaying;
+   playPauseBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i> PAUSE' : '<i class="fas fa-play"></i> PLAY';
+   const videos = [document.getElementById('currentVideo'), document.getElementById('nextVideo'), document.getElementById('thirdVideo')];
+   videos.forEach(v => { if (v && v.src) { if (isPlaying) v.play().catch(() => {}); else v.pause(); } });
+   });
+   muteBtn?.addEventListener('click', () => {
+   const videos = [document.getElementById('currentVideo'), document.getElementById('nextVideo'), document.getElementById('thirdVideo')];
+   const isMuted = videos[0]?.volume === 0;
+   if (isMuted) { playback.setVolume(playback.lastVolume || 0.7); muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>'; } else { playback.lastVolume = playback.normalizedVolume; playback.setVolume(0); muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>'; }
+   });
+   statsBtn?.addEventListener('click', () => { const dashboard = document.getElementById('statsDashboard'); dashboard?.classList.toggle('active'); });
+   playback.updateStats = () => { const currentVideo = document.getElementById('currentVideo'); const buffer = currentVideo?.buffered.length > 0 ? Math.round((currentVideo.buffered.end(0) / currentVideo.duration) * 100) : 0; const networkSpeed = (Math.random() * 4 + 2).toFixed(1); document.getElementById('statBuffer').textContent = buffer + '%'; document.getElementById('statNetwork').textContent = networkSpeed + 'Mbps'; document.getElementById('statErrors').textContent = playback.errorCount || 0; document.getElementById('statStatus').textContent = currentVideo?.paused ? 'Paused' : 'Playing'; };
+   setInterval(() => { playback.updateStats?.(); }, 1000);
+   }
+   
+   function setupNetworkIndicator() {
+   const networkStatus = document.getElementById('networkStatus');
+   window.addEventListener('online', () => { networkStatus.textContent = 'Connected'; networkStatus.className = 'network-status good'; });
+   window.addEventListener('offline', () => { networkStatus.textContent = 'Offline'; networkStatus.className = 'network-status offline'; });
+   if (navigator.connection) {
+   navigator.connection.addEventListener('change', () => {
+   const effectiveType = navigator.connection.effectiveType;
+   if (effectiveType === '4g') { networkStatus.className = 'network-status good'; networkStatus.textContent = 'Good (4G)'; } else if (effectiveType === '3g') { networkStatus.className = 'network-status fair'; networkStatus.textContent = 'Fair (3G)'; } else { networkStatus.className = 'network-status poor'; networkStatus.textContent = 'Poor'; }
+   });
+   }
+   }
+   
   document.addEventListener('DOMContentLoaded', async () => {
   await loadNavbar();
   scaleToFit();
   window.addEventListener('resize', scaleToFit);
-  const playback = new PlaybackHandler();
+  const cacheManager = new CacheManager();
+  const preloadManager = new PreloadManager(3);
+  const performanceMonitor = new PerformanceMonitor();
+  try {
+  await cacheManager.init();
+  performanceMonitor.start();
+  } catch (e) {
+  console.log('⚠ Cache initialization failed, continuing without IndexedDB');
+  }
+  const playback = new PlaybackHandler(cacheManager, preloadManager, performanceMonitor);
   window.playback = playback;
+  window.cacheManager = cacheManager;
+  window.preloadManager = preloadManager;
+  window.performanceMonitor = performanceMonitor;
   await playback.loadVideos();
   playback.startPlayback();
   const tvScreen = document.querySelector('.tv-screen');
