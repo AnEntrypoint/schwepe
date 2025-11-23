@@ -15,6 +15,39 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+const getDomainIdFromHost = (host) => {
+  const domain = host.split(':')[0];
+
+  if (domain === 'schwepe.247420.xyz' || domain === 'schwepe.247240.xyz') {
+    return 'schwepe';
+  } else if (domain === '247420.xyz' || domain.includes('coolify')) {
+    return '247420';
+  } else if (domain === 'localhost' || domain.startsWith('localhost:')) {
+    return 'schwepe';
+  }
+  
+  return '247420';
+};
+
+app.get('/domain-config.json', (req, res) => {
+  let host = req.headers.host || '';
+  
+  if (req.headers['x-forwarded-host']) {
+    host = req.headers['x-forwarded-host'];
+  }
+
+  const siteId = getDomainIdFromHost(host);
+
+  try {
+    const configPath = path.join(__dirname, 'domains', siteId, 'config.json');
+    const config = require(configPath);
+    res.json(config);
+  } catch (err) {
+    console.error('Failed to load domain config:', err.message);
+    res.status(500).json({ error: 'Failed to load domain config' });
+  }
+});
+
 app.use((req, res, next) => {
   let host = req.headers.host || '';
 

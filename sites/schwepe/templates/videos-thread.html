@@ -576,11 +576,12 @@
   </div>
   </div>
   </div>
-  <script type="module">
-  import { PlaybackHandler } from './playback-handler.js';
-  import { CacheManager } from './cache-manager.js';
-  import { PreloadManager } from './preload-manager.js';
-  import { PerformanceMonitor } from './performance-monitor.js';
+   <script type="module">
+   import { PlaybackHandler } from './playback-handler.js';
+   import { CacheManager } from './cache-manager.js';
+   import { PreloadManager } from './preload-manager.js';
+   import { PerformanceMonitor } from './performance-monitor.js';
+   import DebugHooks from '/lib/debug-hooks.js';
   async function loadNavbar() {
   try {
   const response = await fetch('navbar.html');
@@ -758,13 +759,18 @@
   } catch (e) {
   console.log('⚠ Cache initialization failed, continuing without IndexedDB');
   }
-  const playback = new PlaybackHandler(cacheManager, preloadManager, performanceMonitor);
-  window.playback = playback;
-  window.cacheManager = cacheManager;
-  window.preloadManager = preloadManager;
-  window.performanceMonitor = performanceMonitor;
-  await playback.loadVideos();
-  playback.startPlayback();
+   const playback = new PlaybackHandler(cacheManager, preloadManager, performanceMonitor);
+   window.playback = playback;
+   window.cacheManager = cacheManager;
+   window.preloadManager = preloadManager;
+   window.performanceMonitor = performanceMonitor;
+   
+   // Initialize debug hooks for REPL and Playwright access
+   const tvScheduler = window.tvScheduler || null;
+   DebugHooks.init(playback, tvScheduler, cacheManager);
+   
+   await playback.loadVideos();
+   playback.startPlayback();
   const tvScreen = document.querySelector('.tv-screen');
   if (tvScreen) {
   tvScreen.addEventListener('click', slapTV);

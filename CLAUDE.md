@@ -189,13 +189,32 @@ Fast integration tests using fetch:
 
 Run: `node evals/eval.js` (~15 seconds)
 
-### Browser Testing
+### Browser Testing & Debug Hooks
 For comprehensive Schwelevision testing including video playback, use Playwright MCP:
 - Navigate to videos-thread.html
 - Check window.playback and window.tv objects
 - Monitor console for playback logs
 - Verify video element src changes
 - Confirm color-coded "Now Playing" display
+
+**Debug Hooks (NEW)**: Complete debugging system available via `window.__DEBUG`
+- `getPlaybackState()` - Get complete playback system state
+- `getCurrentVideoInfo()` - Get info about currently playing video
+- `jumpToVideo(index, isScheduled)` - Jump to specific video
+- `forceNextVideo()` - Skip to next video
+- `toggleMode()` - Switch between scheduled and filler
+- `setVolume(volume)` - Set volume 0-1
+- `getVolume()` - Get current volume
+- `listScheduledVideos()` - List scheduled content
+- `listFillerVideos()` - List filler/ad content
+- `getDurationCache()` - Get video duration cache
+- `clearDurationCache()` - Clear cache (rebuilds as videos play)
+- `getSchedulerInfo()` - Get scheduler state
+- `healthCheck()` - Verify system readiness
+- `getDebugReport()` - Get complete system snapshot
+- `eval(code)` - Execute custom code in debug context
+
+See DEBUGGING.md for comprehensive guide and examples.
 
 ## Implementation Notes
 - Each domain gets its own site directory with separate templates
