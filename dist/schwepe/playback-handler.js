@@ -86,6 +86,32 @@ export class PlaybackHandler {
     });
   }
 
+  /**
+   * Unmute all video elements (call after user interaction to enable sound)
+   */
+  unmute() {
+    this.videoQueue.forEach(video => {
+      if (video) {
+        video.muted = false;
+        video.volume = this.normalizedVolume;
+      }
+    });
+    console.log('🔊 Videos unmuted');
+  }
+
+  /**
+   * Set volume level for all videos
+   */
+  setVolume(volume) {
+    this.normalizedVolume = Math.max(0, Math.min(1, volume));
+    this.videoQueue.forEach(video => {
+      if (video) {
+        video.muted = false; // Also unmute when setting volume
+        video.volume = this.normalizedVolume;
+      }
+    });
+  }
+
   initStaticCanvas() {
     if (this.staticCanvas) {
       const ctx = this.staticCanvas.getContext('2d');
@@ -454,12 +480,17 @@ export class PlaybackHandler {
 
     const currentVideoEl = this.videoQueue[this.queueIndex % 3];
 
-    this.videoQueue.forEach((v, i) => {
-      v.style.display = i === (this.queueIndex % 3) ? 'block' : 'none';
-    });
+     this.videoQueue.forEach((v, i) => {
+       if (i === (this.queueIndex % 3)) {
+         v.style.display = 'block';
+       } else {
+         v.style.display = 'none';
+         v.pause();
+       }
+     });
 
-    // Use the preloaded element's src
-    currentVideoEl.src = adToPlay.element.src;
+     // Use the preloaded element's src
+     currentVideoEl.src = adToPlay.element.src;
     currentVideoEl.load();
 
     currentVideoEl.onloadeddata = () => {
@@ -597,57 +628,57 @@ export class PlaybackHandler {
     });
   }
 
-  calculateSchedulePosition() {
-    const now = Date.now();
-    const elapsed = now - this.scheduleEpoch;
-    let totalDuration = 0;
-    let targetIndex = 0;
-    let inCommercialBreak = false;
-    let breakIndex = 0;
-    let seekTime = 0;
-    let slotStartTime = 0;
-    let slotDuration = this.DEFAULT_SLOT_DURATION;
-    let slotBreaks = [];
+   calculateSchedulePosition() {
+     const now = Date.now();
+     const elapsed = now - this.scheduleEpoch;
+     let totalDuration = 0;
+     let targetIndex = 0;
+     let inCommercialBreak = false;
+     let breakIndex = 0;
+     let seekTime = 0;
+     let slotStartTime = 0;
+     let slotDuration = this.DEFAULT_SLOT_DURATION;
+     let slotBreaks = [];
 
-    const findPosition = (cyclePosition) => {
-      totalDuration = 0;
-      for (let i = 0; i < this.scheduledVideos.length; i++) {
-        const video = this.scheduledVideos[i];
-        const videoId = video.id || video.u;
-        const videoDuration = this.durationCache[videoId] || 0;
-        const currentSlotDuration = this.DEFAULT_SLOT_DURATION;
+     const findPosition = (cyclePosition) => {
+       totalDuration = 0;
+       for (let i = 0; i < this.scheduledVideos.length; i++) {
+         const video = this.scheduledVideos[i];
+         const videoId = video.id || video.u;
+         const videoDuration = this.durationCache[videoId] || 1200000;
+         const currentSlotDuration = this.DEFAULT_SLOT_DURATION;
 
-        if (totalDuration + currentSlotDuration > cyclePosition) {
-          targetIndex = i;
-          slotStartTime = totalDuration;
-          slotDuration = currentSlotDuration;
-          const positionInSlot = cyclePosition - totalDuration;
+         if (totalDuration + currentSlotDuration > cyclePosition) {
+           targetIndex = i;
+           slotStartTime = totalDuration;
+           slotDuration = currentSlotDuration;
+           const positionInSlot = cyclePosition - totalDuration;
 
-          slotBreaks = this.calculateSlotCommercialBreaks(i, videoDuration, currentSlotDuration);
+           slotBreaks = this.calculateSlotCommercialBreaks(i, videoDuration, currentSlotDuration);
 
-          if (positionInSlot < videoDuration) {
-            inCommercialBreak = false;
-            seekTime = positionInSlot;
-            breakIndex = 0;
-          } else {
-            inCommercialBreak = true;
-            let breakPosition = positionInSlot - videoDuration;
-            let accumulatedBreakTime = 0;
+           if (positionInSlot < videoDuration) {
+             inCommercialBreak = false;
+             seekTime = positionInSlot;
+             breakIndex = 0;
+           } else {
+             inCommercialBreak = true;
+             let breakPosition = positionInSlot - videoDuration;
+             let accumulatedBreakTime = 0;
 
-            for (let b = 0; b < slotBreaks.length; b++) {
-              if (accumulatedBreakTime + slotBreaks[b].duration > breakPosition) {
-                breakIndex = b;
-                seekTime = breakPosition - accumulatedBreakTime;
-                break;
-              }
-              accumulatedBreakTime += slotBreaks[b].duration;
-            }
-          }
-          return true;
-        }
+             for (let b = 0; b < slotBreaks.length; b++) {
+               if (accumulatedBreakTime + slotBreaks[b].duration > breakPosition) {
+                 breakIndex = b;
+                 seekTime = breakPosition - accumulatedBreakTime;
+                 break;
+               }
+               accumulatedBreakTime += slotBreaks[b].duration;
+             }
+           }
+           return true;
+         }
 
-        totalDuration += currentSlotDuration;
-      }
+         totalDuration += currentSlotDuration;
+       }
       return false;
     };
 
@@ -852,13 +883,18 @@ export class PlaybackHandler {
 
     const currentVideoEl = this.videoQueue[this.queueIndex % 3];
 
-    // Copy the preloaded element's src to our rotation video element
-    currentVideoEl.src = preloadedEl.src;
-    currentVideoEl.load();
+     // Copy the preloaded element's src to our rotation video element
+     currentVideoEl.src = preloadedEl.src;
+     currentVideoEl.load();
 
-    this.videoQueue.forEach((v, i) => {
-      v.style.display = i === (this.queueIndex % 3) ? 'block' : 'none';
-    });
+     this.videoQueue.forEach((v, i) => {
+       if (i === (this.queueIndex % 3)) {
+         v.style.display = 'block';
+       } else {
+         v.style.display = 'none';
+         v.pause();
+       }
+     });
 
     // Since it's preloaded, it should start playing almost immediately
     currentVideoEl.onloadeddata = () => {
@@ -979,13 +1015,18 @@ export class PlaybackHandler {
 
     const currentVideoEl = this.videoQueue[this.queueIndex % 3];
 
-    this.videoQueue.forEach((v, i) => {
-      v.style.display = i === (this.queueIndex % 3) ? 'block' : 'none';
-    });
+     this.videoQueue.forEach((v, i) => {
+       if (i === (this.queueIndex % 3)) {
+         v.style.display = 'block';
+       } else {
+         v.style.display = 'none';
+         v.pause();
+       }
+     });
 
-    // Use the preloaded element's src
-    currentVideoEl.src = adData.element.src;
-    currentVideoEl.load();
+     // Use the preloaded element's src
+     currentVideoEl.src = adData.element.src;
+     currentVideoEl.load();
 
     currentVideoEl.onloadeddata = () => {
       // Normalize volume before playing
@@ -1060,19 +1101,24 @@ export class PlaybackHandler {
       nowPlayingEl.style.color = color;
     }
 
-    this.videoQueue.forEach((v, i) => {
-      v.style.display = i === (this.queueIndex % 3) ? 'block' : 'none';
-    });
+     this.videoQueue.forEach((v, i) => {
+       if (i === (this.queueIndex % 3)) {
+         v.style.display = 'block';
+       } else {
+         v.style.display = 'none';
+         v.pause();
+       }
+     });
 
-    const videoUrl = this.getVideoUrl(video);
-    if (!videoUrl) {
-      console.log('❌ No URL for video');
-      onFailed();
-      return;
-    }
+     const videoUrl = this.getVideoUrl(video);
+     if (!videoUrl) {
+       console.log('❌ No URL for video');
+       onFailed();
+       return;
+     }
 
-    currentVideoEl.src = videoUrl;
-    currentVideoEl.load();
+     currentVideoEl.src = videoUrl;
+     currentVideoEl.load();
 
     if (this.loadTimeout) {
       clearTimeout(this.loadTimeout);
