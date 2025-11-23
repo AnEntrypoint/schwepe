@@ -1,5 +1,5 @@
 export class PlaybackHandler {
-  constructor() {
+  constructor(cacheManager = null, preloadManager = null, performanceMonitor = null) {
     this.currentVideoEl = document.getElementById('currentVideo');
     this.nextVideoEl = document.getElementById('nextVideo');
     this.thirdVideoEl = document.getElementById('thirdVideo');
@@ -35,9 +35,13 @@ export class PlaybackHandler {
     this.scheduledPreloadFailed = false; // Track if we should give up on scheduled content
     this.scheduledPreloadTimeout = null; // Timeout for giving up on scheduled content
     this.normalizedVolume = 0.7; // Normalized volume level for all videos
+    this.analytics = null;
+    this.videoStartTime = 0;
+    this.currentVideoMetadata = null;
     this.initStaticCanvas();
     this.normalizeVideoVolumes();
     this.preventTabPausing(); // Prevent videos from pausing when tab changes
+    this.setupAnalyticsTracking();
   }
 
   preventTabPausing() {
@@ -1212,8 +1216,109 @@ export class PlaybackHandler {
       this.queueIndex++;
       this.showStatic(300);
       setTimeout(() => this.playCommercialBreak(), 500);
-    } else {
-      this.moveToNextSlot();
-    }
+
+  setAnalytics(analytics) {
+    this.analytics = analytics;
+  }
+
+  setupAnalyticsTracking() {
+    if (!this.analytics) return;
+
+    this.videoQueue.forEach((video, index) => {
+      if (!video) return;
+
+      let lastReportedTime = 0;
+      let lastSeekTime = 0;
+      let isBuffering = false;
+
+      video.addEventListener('play', () => {
+        if (this.currentVideoMetadata && this.analytics && this.videoStartTime > 0) {
+          const startTime = Date.now() - this.videoStartTime;
+          if (startTime > 1000) {
+            this.analytics.trackVideoStart(
+              this.currentVideoMetadata.id,
+              this.currentVideoMetadata.title,
+              this.currentVideoMetadata.type
+            );
+          }
+        }
+      });
+
+      video.addEventListener('pause', () => {
+        if (this.analytics && this.currentVideoMetadata && this.videoStartTime > 0) {
+          const watchTime = (Date.now() - this.videoStartTime) / 1000;
+          this.analytics.trackVideoProgress(video);
+        }
+      });
+
+      video.addEventListener('timeupdate', () => {
+        if (!this.analytics || !this.currentVideoMetadata || !this.videoStartTime) return;
+
+        const now = Date.now();
+        if (now - lastReportedTime > 5000) {
+          this.analytics.trackVideoProgress(video);
+          lastReportedTime = now;
+        }
+
+        const currentTime = video.currentTime;
+        if (Math.abs(currentTime - lastSeekTime) > 5) {
+          this.analytics.trackSeek(lastSeekTime, currentTime);
+          lastSeekTime = currentTime;
+        }
+      });
+
+      video.addEventListener('seeking', () => {
+        lastSeekTime = video.currentTime;
+      });
+
+      video.addEventListener('ended', () => {
+        if (this.analytics && this.currentVideoMetadata && this.videoStartTime > 0) {
+          const watchTime = (Date.now() - this.videoStartTime) / 1000;
+          this.analytics.trackVideoComplete(
+            this.currentVideoMetadata.id,
+            this.currentVideoMetadata.title,
+            watchTime
+          );
+        }
+      });
+
+      video.addEventListener('error', () => {
+        if (this.analytics && this.currentVideoMetadata) {
+          const errorCode = video.error ? video.error.code : 'unknown';
+          const errorMessage = video.error ? video.error.message : 'Unknown error';
+          this.analytics.trackError('video_error_' + errorCode, this.currentVideoMetadata.id, errorMessage);
+        }
+      });
+
+      video.addEventListener('waiting', () => {
+        if (!isBuffering && this.analytics) {
+          isBuffering = true;
+          this.analytics.addEvent('buffer_start', { videoId: this.currentVideoMetadata ? this.currentVideoMetadata.id : 'unknown' });
+        }
+      });
+
+      video.addEventListener('playing', () => {
+        if (isBuffering && this.analytics) {
+          isBuffering = false;
+          this.analytics.addEvent('buffer_end', { videoId: this.currentVideoMetadata ? this.currentVideoMetadata.id : 'unknown' });
+        }
+      });
+
+      video.addEventListener('loadstart', () => {
+        if (this.analytics) {
+          this.videoStartTime = Date.now();
+          this.analytics.trackNetworkEvent('load_start', { videoId: this.currentVideoMetadata ? this.currentVideoMetadata.id : 'unknown' });
+        }
+      });
+
+      video.addEventListener('loadedmetadata', () => {
+        if (this.currentVideoMetadata && this.analytics) {
+          this.analytics.trackNetworkEvent('metadata_loaded', { 
+            videoId: this.currentVideoMetadata.id,
+            duration: video.duration
+          });
+        }
+      });
+    });
   }
 }
