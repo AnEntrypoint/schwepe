@@ -771,11 +771,12 @@
    
    await playback.loadVideos();
    playback.startPlayback();
-  const tvScreen = document.querySelector('.tv-screen');
-  if (tvScreen) {
-  tvScreen.addEventListener('click', slapTV);
-  tvScreen.style.cursor = 'pointer';
-  }
+   window.slapTV = slapTV;
+   const tvScreen = document.querySelector('.tv-screen');
+   if (tvScreen) {
+   tvScreen.addEventListener('click', slapTV);
+   tvScreen.style.cursor = 'pointer';
+   }
   });
   </script>
   </body>

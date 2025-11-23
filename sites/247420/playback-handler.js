@@ -454,12 +454,17 @@ export class PlaybackHandler {
 
     const currentVideoEl = this.videoQueue[this.queueIndex % 3];
 
-    this.videoQueue.forEach((v, i) => {
-      v.style.display = i === (this.queueIndex % 3) ? 'block' : 'none';
-    });
+     this.videoQueue.forEach((v, i) => {
+       if (i === (this.queueIndex % 3)) {
+         v.style.display = 'block';
+       } else {
+         v.style.display = 'none';
+         v.pause();
+       }
+     });
 
-    // Use the preloaded element's src
-    currentVideoEl.src = adToPlay.element.src;
+     // Use the preloaded element's src
+     currentVideoEl.src = adToPlay.element.src;
     currentVideoEl.load();
 
     currentVideoEl.onloadeddata = () => {
@@ -852,13 +857,18 @@ export class PlaybackHandler {
 
     const currentVideoEl = this.videoQueue[this.queueIndex % 3];
 
-    // Copy the preloaded element's src to our rotation video element
-    currentVideoEl.src = preloadedEl.src;
-    currentVideoEl.load();
+     // Copy the preloaded element's src to our rotation video element
+     currentVideoEl.src = preloadedEl.src;
+     currentVideoEl.load();
 
-    this.videoQueue.forEach((v, i) => {
-      v.style.display = i === (this.queueIndex % 3) ? 'block' : 'none';
-    });
+     this.videoQueue.forEach((v, i) => {
+       if (i === (this.queueIndex % 3)) {
+         v.style.display = 'block';
+       } else {
+         v.style.display = 'none';
+         v.pause();
+       }
+     });
 
     // Since it's preloaded, it should start playing almost immediately
     currentVideoEl.onloadeddata = () => {
@@ -979,13 +989,18 @@ export class PlaybackHandler {
 
     const currentVideoEl = this.videoQueue[this.queueIndex % 3];
 
-    this.videoQueue.forEach((v, i) => {
-      v.style.display = i === (this.queueIndex % 3) ? 'block' : 'none';
-    });
+     this.videoQueue.forEach((v, i) => {
+       if (i === (this.queueIndex % 3)) {
+         v.style.display = 'block';
+       } else {
+         v.style.display = 'none';
+         v.pause();
+       }
+     });
 
-    // Use the preloaded element's src
-    currentVideoEl.src = adData.element.src;
-    currentVideoEl.load();
+     // Use the preloaded element's src
+     currentVideoEl.src = adData.element.src;
+     currentVideoEl.load();
 
     currentVideoEl.onloadeddata = () => {
       // Normalize volume before playing
@@ -1060,19 +1075,24 @@ export class PlaybackHandler {
       nowPlayingEl.style.color = color;
     }
 
-    this.videoQueue.forEach((v, i) => {
-      v.style.display = i === (this.queueIndex % 3) ? 'block' : 'none';
-    });
+     this.videoQueue.forEach((v, i) => {
+       if (i === (this.queueIndex % 3)) {
+         v.style.display = 'block';
+       } else {
+         v.style.display = 'none';
+         v.pause();
+       }
+     });
 
-    const videoUrl = this.getVideoUrl(video);
-    if (!videoUrl) {
-      console.log('❌ No URL for video');
-      onFailed();
-      return;
-    }
+     const videoUrl = this.getVideoUrl(video);
+     if (!videoUrl) {
+       console.log('❌ No URL for video');
+       onFailed();
+       return;
+     }
 
-    currentVideoEl.src = videoUrl;
-    currentVideoEl.load();
+     currentVideoEl.src = videoUrl;
+     currentVideoEl.load();
 
     if (this.loadTimeout) {
       clearTimeout(this.loadTimeout);
