@@ -35,9 +35,107 @@ export class PlaybackHandler {
     this.scheduledPreloadFailed = false; // Track if we should give up on scheduled content
     this.scheduledPreloadTimeout = null; // Timeout for giving up on scheduled content
     this.normalizedVolume = 0.7; // Normalized volume level for all videos
+    this.maxPreloadedAds = 10; // Limit preloaded ads to prevent memory leaks
+    this.networkRetryCount = 0;
+    this.maxNetworkRetries = 3;
+    this.healthCheckInterval = null;
+    this.lastPlaybackTime = 0;
+    this.stallCheckCount = 0;
     this.initStaticCanvas();
     this.normalizeVideoVolumes();
     this.preventTabPausing(); // Prevent videos from pausing when tab changes
+    this.startHealthCheck(); // Monitor playback health
+  }
+
+  // Monitor playback health and recover from stalls
+  startHealthCheck() {
+    this.healthCheckInterval = setInterval(() => {
+      const currentVideo = this.videoQueue[this.queueIndex % 3];
+      if (currentVideo && !this.showingStatic && currentVideo.src) {
+        // Check if video is stalled (same time for 3 consecutive checks)
+        if (currentVideo.currentTime === this.lastPlaybackTime && !currentVideo.paused && !currentVideo.ended) {
+          this.stallCheckCount++;
+          if (this.stallCheckCount >= 3) {
+            console.log('⚠ Playback stalled, attempting recovery');
+            this.recoverFromStall(currentVideo);
+            this.stallCheckCount = 0;
+          }
+        } else {
+          this.stallCheckCount = 0;
+        }
+        this.lastPlaybackTime = currentVideo.currentTime;
+      }
+    }, 3000); // Check every 3 seconds
+  }
+
+  recoverFromStall(video) {
+    // Try to recover from a stalled video
+    if (video.networkState === 2) { // NETWORK_LOADING
+      console.log('📺 Network still loading, waiting...');
+      return;
+    }
+
+    // Try seeking slightly forward
+    if (video.readyState >= 2 && video.duration) {
+      const newTime = Math.min(video.currentTime + 0.5, video.duration - 1);
+      video.currentTime = newTime;
+      video.play().catch(() => {
+        console.log('❌ Recovery failed, skipping video');
+        this.onScheduledFailed();
+      });
+    } else {
+      // Video not ready, skip to next
+      console.log('❌ Video not ready, skipping');
+      this.onScheduledFailed();
+    }
+  }
+
+  // Clean up preloaded ads to prevent memory leaks
+  cleanupPreloadedAds() {
+    if (this.preloadedAds.size > this.maxPreloadedAds) {
+      const adsToRemove = this.preloadedAds.size - this.maxPreloadedAds;
+      const keys = Array.from(this.preloadedAds.keys());
+      for (let i = 0; i < adsToRemove; i++) {
+        const key = keys[i];
+        const adData = this.preloadedAds.get(key);
+        if (adData && adData.element) {
+          adData.element.src = '';
+          adData.element.load();
+        }
+        this.preloadedAds.delete(key);
+      }
+      console.log('🧹 Cleaned up ' + adsToRemove + ' preloaded ads');
+    }
+  }
+
+  // Update the Now Playing display with status info
+  updateNowPlaying(text, color, isBuffering = false) {
+    const nowPlayingEl = document.getElementById('nowPlaying');
+    if (nowPlayingEl) {
+      const prefix = isBuffering ? '⏳ ' : '';
+      nowPlayingEl.textContent = prefix + text;
+      nowPlayingEl.style.display = 'block';
+      nowPlayingEl.style.color = color;
+    }
+  }
+
+  // Get current playback status for debugging/monitoring
+  getStatus() {
+    const currentVideo = this.videoQueue[this.queueIndex % 3];
+    return {
+      playing: currentVideo ? !currentVideo.paused : false,
+      currentTime: currentVideo ? currentVideo.currentTime : 0,
+      duration: currentVideo ? currentVideo.duration : 0,
+      buffered: currentVideo && currentVideo.buffered.length > 0
+        ? currentVideo.buffered.end(currentVideo.buffered.length - 1) : 0,
+      scheduleIndex: this.scheduleIndex,
+      fillerIndex: this.fillerIndex,
+      playingScheduled: this.playingScheduled,
+      inCommercialBreak: this.inCommercialBreak,
+      preloadedAdsCount: this.preloadedAds.size,
+      scheduledVideosCount: this.scheduledVideos.length,
+      savedVideosCount: this.savedVideos.length
+    };
   }
 
   preventTabPausing() {
@@ -350,6 +448,7 @@ export class PlaybackHandler {
           if (checkInterval) clearInterval(checkInterval);
           if (timeout) clearTimeout(timeout);
           this.preloadedAds.set(videoId, { element: preloadEl, video: video });
+          this.cleanupPreloadedAds(); // Prevent memory leaks
           console.log('✓ Ad fully loaded: ' + (video.filename || video.title));
           resolve({ element: preloadEl, video: video });
         }

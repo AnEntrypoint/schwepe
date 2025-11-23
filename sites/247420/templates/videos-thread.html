@@ -512,6 +512,82 @@
   pointer-events: none;
   z-index: 1;
   }
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+  .hero-section {
+  padding: 40px 10px 20px;
+  }
+  .hero-subtitle {
+  font-size: 1rem;
+  }
+  .now-playing {
+  font-size: 1.2rem;
+  padding: 6px 10px;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  }
+  .url-display {
+  font-size: 1.5rem;
+  bottom: 10px;
+  left: 10px;
+  margin-left: 10px;
+  }
+  .logo-overlay {
+  padding: 10px;
+  bottom: 10px;
+  right: 5px;
+  }
+  .logo-image {
+  max-width: 80px;
+  max-height: 80px;
+  }
+  .qr-image {
+  width: 80px;
+  height: 80px;
+  }
+  .tv-container {
+  padding: 100px 50px 80px 50px;
+  margin: -80px auto;
+  }
+  .tv-skin-overlay {
+  top: -40px;
+  }
+  }
+  @media (max-width: 480px) {
+  .hero-subtitle {
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  }
+  .now-playing {
+  font-size: 1rem;
+  padding: 4px 8px;
+  }
+  .url-display {
+  font-size: 1.2rem;
+  }
+  .logo-overlay {
+  padding: 5px;
+  }
+  .logo-image {
+  max-width: 60px;
+  max-height: 60px;
+  }
+  .qr-image {
+  width: 60px;
+  height: 60px;
+  }
+  }
+  /* Touch device optimizations */
+  @media (hover: none) and (pointer: coarse) {
+  .tv-screen {
+  cursor: pointer;
+  }
+  .tv-button {
+  padding: 20px 35px;
+  font-size: 1.1rem;
+  }
+  }
   </style>
   </head>
   <body>
@@ -570,14 +646,12 @@
   </div>
   </div>
   <script type="module">
-  // Import Schwelevision broadcasting system
-  import './schwelevision.js';
+  import { PlaybackHandler } from './playback-handler.js';
   async function loadNavbar() {
   try {
   const response = await fetch('navbar.html');
   const navbarHTML = await response.text();
   document.getElementById('navbar-container').innerHTML = navbarHTML;
-  // Load navbar JavaScript
   const script = document.createElement('script');
   script.src = 'navbar.js';
   document.body.appendChild(script);
@@ -588,7 +662,7 @@
   }
   });
   } catch (error) {
-  console.error('❌ Error loading navbar:', error);
+  console.error('Error loading navbar:', error);
   }
   }
   function scaleToFit() {
@@ -599,13 +673,91 @@
   container.style.transform = `scale(${scale})`;
   container.style.transformOrigin = 'top center';
   }
+  function slapTV() {
+  // Add shake animation to TV container
+  const tvContainer = document.querySelector('.tv-container');
+  if (tvContainer) {
+  tvContainer.classList.add('tv-shake');
+  setTimeout(() => tvContainer.classList.remove('tv-shake'), 500);
+  }
+
+  // Show visual static synchronized with audio
+  if (window.playback) {
+  window.playback.showStatic(330); // Show static for duration of thud + static audio
+  }
+
+  const videos = [document.getElementById('currentVideo'), document.getElementById('nextVideo'), document.getElementById('thirdVideo')];
+  videos.forEach(video => {
+  if (video) {
+  video.volume = Math.random();
+  }
+  });
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const thudTime = 0;
+  const thudDuration = 0.15;
+  const staticTime = 0.08;
+  const staticDuration = 0.25;
+  const whineTime = 0.25;
+  const whineDuration = 0.3;
+  const createNoise = (duration, startTime) => {
+  const bufferSize = audioContext.sampleRate * duration;
+  const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+  data[i] = Math.random() * 2 - 1;
+  }
+  const noise = audioContext.createBufferSource();
+  noise.buffer = buffer;
+  const gainNode = audioContext.createGain();
+  gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + startTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + startTime + duration);
+  noise.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+  noise.start(audioContext.currentTime + startTime);
+  };
+  const createThud = (startTime) => {
+  const oscillator = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(60, audioContext.currentTime + startTime);
+  oscillator.frequency.exponentialRampToValueAtTime(30, audioContext.currentTime + startTime + thudDuration);
+  gainNode.gain.setValueAtTime(0.5, audioContext.currentTime + startTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + startTime + thudDuration);
+  oscillator.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+  oscillator.start(audioContext.currentTime + startTime);
+  oscillator.stop(audioContext.currentTime + startTime + thudDuration);
+  };
+  const createWhine = (startTime) => {
+  const oscillator = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(800, audioContext.currentTime + startTime);
+  oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + startTime + whineDuration);
+  gainNode.gain.setValueAtTime(0.2, audioContext.currentTime + startTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + startTime + whineDuration);
+  oscillator.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+  oscillator.start(audioContext.currentTime + startTime);
+  oscillator.stop(audioContext.currentTime + startTime + whineDuration);
+  };
+  createThud(thudTime);
+  createNoise(staticDuration, staticTime);
+  createWhine(whineTime);
+  }
   document.addEventListener('DOMContentLoaded', async () => {
   await loadNavbar();
   scaleToFit();
   window.addEventListener('resize', scaleToFit);
-  const tv = new Schwelevision();
-  window.tv = tv; // Expose globally for testing
-  await tv.init();
+  const playback = new PlaybackHandler();
+  window.playback = playback;
+  await playback.loadVideos();
+  playback.startPlayback();
+  const tvScreen = document.querySelector('.tv-screen');
+  if (tvScreen) {
+  tvScreen.addEventListener('click', slapTV);
+  tvScreen.style.cursor = 'pointer';
+  }
   });
   </script>
   </body>

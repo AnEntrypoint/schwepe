@@ -8,6 +8,25 @@
 
 ### Issue Resolutions
 
+**2025-11-23 - Video Player Comprehensive Improvements**:
+- **Problem**: 247420.xyz video player broken (using non-existent Schwelevision class)
+- **Root Cause**: 247420 videos-thread.html tried to use `new Schwelevision()` but the class doesn't exist in that form
+- **Solution**: Updated 247420 to use PlaybackHandler directly (same as schwepe site)
+- **Additional Fixes**:
+  - Added health check system to detect and recover from stalled playback
+  - Added memory leak prevention (cleanup of preloaded ads when cache exceeds 10)
+  - Added `getStatus()` method for debugging/monitoring
+  - Added mobile responsive CSS (media queries for 768px and 480px breakpoints)
+  - Added touch device optimizations
+  - Added slapTV functionality to 247420 (TV shake + volume randomization)
+- **Result**: Both domains now have identical, fully functional video players
+
+**Browser Compatibility Matrix**:
+- Chrome/Edge: Full support
+- Firefox: Full support
+- Safari: Full support with autoplay restrictions (falls back to muted)
+- Mobile browsers: Responsive design with touch optimizations
+
 **2025-11-14 - Video MIME Types**:
 - **Problem**: Saved videos returning HTML instead of video files (error code 4)
 - **Root Cause**: server.cjs missing video MIME type mappings (.mp4, .webm, etc.)
@@ -34,7 +53,7 @@ curl -I https://schwepe.247420.xyz/playback-handler.js | grep content-type
 - Builds successfully with npm run build (and build:multi-site alias)
 - Server runs with exact domain-based routing
 - Health endpoint /api/health working
-- **Schwelevision TV**: 858 videos playing with global sync, transitions, and interactive features
+- **Schwelevision TV**: 565 videos (373 scheduled + 192 filler) playing with global sync, transitions, and interactive features
 
 ## Domain Routing & Designs (✅ VERIFIED LIVE)
 - `247420.xyz` → **247420 Digital Stoner Den** (VT323 monospace, dark theme, age verification overlay)
