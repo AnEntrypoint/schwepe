@@ -512,9 +512,160 @@
   pointer-events: none;
   z-index: 1;
   }
+  /* Debug Overlay Styles */
+  #schwepe-debug-overlay {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 320px;
+  max-height: 90vh;
+  background: rgba(10, 10, 10, 0.95);
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  color: var(--text);
+  z-index: 10000;
+  overflow-y: auto;
+  display: none;
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+  }
+  #schwepe-debug-overlay.active { display: block; }
+  .debug-header {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  color: #000;
+  padding: 8px 12px;
+  font-weight: bold;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  }
+  .debug-close {
+  cursor: pointer;
+  font-size: 18px;
+  }
+  .debug-section {
+  border-bottom: 1px solid #333;
+  padding: 8px 12px;
+  }
+  .debug-section-title {
+  color: var(--primary);
+  font-size: 12px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  }
+  .debug-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  }
+  .debug-label { color: #888; }
+  .debug-value { color: var(--accent); }
+  .debug-value.schedule { color: #ffff00; }
+  .debug-value.filler { color: #00ffff; }
+  .debug-value.error { color: #ff006e; }
+  .debug-value.success { color: #00ff88; }
+  .debug-meter {
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+  }
+  .debug-meter-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.3s ease;
+  }
+  .debug-hint {
+  padding: 8px 12px;
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  }
   </style>
   </head>
   <body>
+  <!-- Debug Overlay (toggle with Ctrl+D) -->
+  <div id="schwepe-debug-overlay">
+    <div class="debug-header">
+      <span>SCHWELEVISION DEBUG</span>
+      <span class="debug-close" onclick="window.schwepeDebug?.hideOverlay()">X</span>
+    </div>
+    <div class="debug-section">
+      <div class="debug-section-title">Playback Status</div>
+      <div class="debug-row">
+        <span class="debug-label">Mode:</span>
+        <span class="debug-value" data-metric="playbackMode">--</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Schedule Index:</span>
+        <span class="debug-value" data-metric="scheduleIndex">--</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Filler Index:</span>
+        <span class="debug-value" data-metric="fillerIndex">--</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Queue Index:</span>
+        <span class="debug-value" data-metric="queueIndex">--</span>
+      </div>
+    </div>
+    <div class="debug-section">
+      <div class="debug-section-title">Video State</div>
+      <div class="debug-row">
+        <span class="debug-label">Playing:</span>
+        <span class="debug-value" data-metric="isPlaying">--</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Current Time:</span>
+        <span class="debug-value" data-metric="currentTime">--</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Duration:</span>
+        <span class="debug-value" data-metric="duration">--</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Buffered:</span>
+        <span class="debug-value" data-metric="buffered">--</span>
+      </div>
+      <div class="debug-meter">
+        <div class="debug-meter-fill" data-metric="bufferMeter" style="width: 0%"></div>
+      </div>
+    </div>
+    <div class="debug-section">
+      <div class="debug-section-title">Performance</div>
+      <div class="debug-row">
+        <span class="debug-label">FPS:</span>
+        <span class="debug-value" data-metric="fps">--</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Network Requests:</span>
+        <span class="debug-value" data-metric="networkRequests">--</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Errors:</span>
+        <span class="debug-value" data-metric="errorCount">--</span>
+      </div>
+    </div>
+    <div class="debug-section">
+      <div class="debug-section-title">Cache</div>
+      <div class="debug-row">
+        <span class="debug-label">Duration Cache:</span>
+        <span class="debug-value" data-metric="durationCacheSize">--</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Preloaded Ads:</span>
+        <span class="debug-value" data-metric="preloadedAds">--</span>
+      </div>
+      <div class="debug-row">
+        <span class="debug-label">Scheduled Preload:</span>
+        <span class="debug-value" data-metric="scheduledPreload">--</span>
+      </div>
+    </div>
+    <div class="debug-hint">Press Ctrl+D to toggle | Debug mode active</div>
+  </div>
   <div class="tv-wrapper">
   <div class="tv-scale-container">
   <div class="hero-section">
@@ -572,6 +723,140 @@
   <script type="module">
   // Import Schwelevision broadcasting system
   import './schwelevision.js';
+  // Import debug utilities (production-safe, zero overhead when disabled)
+  import { createDebugUtils, isDebugEnabled } from './lib/debug-utils.js';
+  import { createDebugConsole } from './lib/debug-console.js';
+
+  // Initialize debug utilities
+  const debugUtils = createDebugUtils();
+  const debugConsole = createDebugConsole();
+
+  // Expose debug utilities globally for testing and console access
+  window.debugUtils = debugUtils;
+  window.debugConsole = debugConsole;
+
+  // Debug overlay controller
+  const schwepeDebug = {
+    overlayVisible: false,
+    updateInterval: null,
+
+    init() {
+      if (!isDebugEnabled()) return;
+      debugUtils.init();
+      this.setupKeyboardShortcut();
+      console.log('%c[DEBUG] Schwelevision debug mode active. Press Ctrl+D to show overlay.', 'color: #00f5ff');
+    },
+
+    setupKeyboardShortcut() {
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'd') {
+          e.preventDefault();
+          this.toggleOverlay();
+        }
+      });
+    },
+
+    toggleOverlay() {
+      this.overlayVisible = !this.overlayVisible;
+      const overlay = document.getElementById('schwepe-debug-overlay');
+      if (overlay) {
+        overlay.classList.toggle('active', this.overlayVisible);
+        if (this.overlayVisible) {
+          this.startUpdates();
+        } else {
+          this.stopUpdates();
+        }
+      }
+    },
+
+    showOverlay() {
+      this.overlayVisible = true;
+      const overlay = document.getElementById('schwepe-debug-overlay');
+      if (overlay) {
+        overlay.classList.add('active');
+        this.startUpdates();
+      }
+    },
+
+    hideOverlay() {
+      this.overlayVisible = false;
+      const overlay = document.getElementById('schwepe-debug-overlay');
+      if (overlay) {
+        overlay.classList.remove('active');
+        this.stopUpdates();
+      }
+    },
+
+    startUpdates() {
+      if (this.updateInterval) return;
+      this.updateInterval = setInterval(() => this.updateMetrics(), 250);
+      this.updateMetrics();
+    },
+
+    stopUpdates() {
+      if (this.updateInterval) {
+        clearInterval(this.updateInterval);
+        this.updateInterval = null;
+      }
+    },
+
+    updateMetrics() {
+      const playback = window.playback || window.tv?.playback;
+      if (!playback) return;
+
+      const video = playback.videoQueue?.[playback.queueIndex % 3];
+      const setValue = (metric, value, className = '') => {
+        const el = document.querySelector(`[data-metric="${metric}"]`);
+        if (el) {
+          if (el.tagName === 'DIV' && metric === 'bufferMeter') {
+            el.style.width = value;
+          } else {
+            el.textContent = value;
+            el.className = 'debug-value' + (className ? ' ' + className : '');
+          }
+        }
+      };
+
+      // Playback status
+      setValue('playbackMode', playback.playingScheduled ? 'SCHEDULE' : (playback.showingStatic ? 'STATIC' : 'FILLER'),
+               playback.playingScheduled ? 'schedule' : 'filler');
+      setValue('scheduleIndex', `${playback.scheduleIndex} / ${playback.scheduledVideos?.length || 0}`);
+      setValue('fillerIndex', `${playback.fillerIndex} / ${playback.savedVideos?.length || 0}`);
+      setValue('queueIndex', playback.queueIndex);
+
+      // Video state
+      setValue('isPlaying', video && !video.paused ? 'Yes' : 'No', video && !video.paused ? 'success' : '');
+      setValue('currentTime', video ? this.formatTime(video.currentTime) : '--');
+      setValue('duration', video ? this.formatTime(video.duration) : '--');
+
+      const buffered = video?.buffered?.length > 0 ? video.buffered.end(video.buffered.length - 1) : 0;
+      setValue('buffered', this.formatTime(buffered));
+      const bufferPercent = video?.duration ? Math.min(100, (buffered / video.duration) * 100) : 0;
+      setValue('bufferMeter', bufferPercent + '%');
+
+      // Performance
+      setValue('fps', debugUtils.perf?.getFPS() || '--');
+      setValue('networkRequests', debugUtils.network?.getStats()?.total || 0);
+      setValue('errorCount', debugUtils.errors?.getRecent(100).length || 0,
+               (debugUtils.errors?.getRecent(100).length || 0) > 0 ? 'error' : '');
+
+      // Cache
+      setValue('durationCacheSize', Object.keys(playback.durationCache || {}).length);
+      setValue('preloadedAds', playback.preloadedAds?.size || 0);
+      setValue('scheduledPreload', playback.preloadedScheduledVideo ? 'Ready' : 'None',
+               playback.preloadedScheduledVideo ? 'success' : '');
+    },
+
+    formatTime(seconds) {
+      if (!seconds || isNaN(seconds)) return '0:00';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+  };
+
+  window.schwepeDebug = schwepeDebug;
+
   async function loadNavbar() {
   try {
   const response = await fetch('navbar.html');
@@ -606,6 +891,9 @@
   const tv = new Schwelevision();
   window.tv = tv; // Expose globally for testing
   await tv.init();
+
+  // Initialize debug utilities (production-safe)
+  schwepeDebug.init();
   });
   </script>
   </body>
