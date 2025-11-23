@@ -39,10 +39,14 @@ export class PlaybackHandler {
     this.videoStartTime = 0;
     this.currentVideoMetadata = null;
     this.activeVideoIndex = 0; // Track which video element is currently active
+    this.isTransitioning = false; // Prevent multiple concurrent playback attempts
+    this.transitionDebounceTimeout = null; // Debounce rapid transitions
+    this.userHasInteracted = false; // Track if user has interacted (for autoplay)
     this.initStaticCanvas();
     this.normalizeVideoVolumes();
     this.preventTabPausing(); // Prevent videos from pausing when tab changes
     this.setupAnalyticsTracking();
+    this.setupUserInteractionTracking(); // Track first user interaction for autoplay
   }
 
   preventTabPausing() {
@@ -78,6 +82,95 @@ export class PlaybackHandler {
         });
       }
     });
+  }
+
+  /**
+   * Track first user interaction to enable audio autoplay
+   */
+  setupUserInteractionTracking() {
+    const enableAudio = () => {
+      if (!this.userHasInteracted) {
+        this.userHasInteracted = true;
+        console.log('🔊 User interaction detected - audio enabled');
+        // Unmute currently playing video
+        const activeVideo = this.videoQueue[this.activeVideoIndex];
+        if (activeVideo && activeVideo.muted) {
+          activeVideo.muted = false;
+          activeVideo.volume = this.normalizedVolume;
+        }
+      }
+    };
+
+    ['click', 'touchstart', 'keydown'].forEach(event => {
+      document.addEventListener(event, enableAudio, { once: false, passive: true });
+    });
+  }
+
+  /**
+   * Safely play a video, handling autoplay restrictions
+   * Starts muted if user hasn't interacted, then tries to play
+   * Returns true if playback started, false if failed completely
+   */
+  async safePlay(videoEl, onSuccess = null, onFailure = null) {
+    if (!videoEl) {
+      if (onFailure) onFailure();
+      return false;
+    }
+
+    // Always set volume first
+    videoEl.volume = this.normalizedVolume;
+
+    // Start muted if user hasn't interacted yet
+    if (!this.userHasInteracted) {
+      videoEl.muted = true;
+    }
+
+    try {
+      await videoEl.play();
+      // If user has interacted and video is muted, unmute it
+      if (this.userHasInteracted && videoEl.muted) {
+        videoEl.muted = false;
+      }
+      if (onSuccess) onSuccess();
+      return true;
+    } catch (e) {
+      console.log('⚠ Autoplay blocked, playing muted');
+      videoEl.muted = true;
+      try {
+        await videoEl.play();
+        console.log('✓ Playing muted');
+        if (onSuccess) onSuccess();
+        return true;
+      } catch (e2) {
+        console.log('❌ Play failed completely');
+        if (onFailure) onFailure();
+        return false;
+      }
+    }
+  }
+
+  /**
+   * Debounced transition to prevent rapid video cycling
+   */
+  debouncedTransition(callback, delay = 500) {
+    if (this.transitionDebounceTimeout) {
+      clearTimeout(this.transitionDebounceTimeout);
+    }
+
+    if (this.isTransitioning) {
+      console.log('⏳ Transition already in progress, queuing...');
+      this.transitionDebounceTimeout = setTimeout(() => {
+        this.isTransitioning = false;
+        callback();
+      }, delay);
+      return;
+    }
+
+    this.isTransitioning = true;
+    this.transitionDebounceTimeout = setTimeout(() => {
+      this.isTransitioning = false;
+      callback();
+    }, delay);
   }
 
   /**
@@ -528,24 +621,23 @@ export class PlaybackHandler {
      currentVideoEl.src = adToPlay.element.src;
     currentVideoEl.load();
 
-    currentVideoEl.onloadeddata = () => {
-      // Normalize volume before playing
-      currentVideoEl.volume = this.normalizedVolume;
-      currentVideoEl.muted = false; // Ensure unmuted
+    let hasHandledCompletion = false; // Guard against duplicate handlers
 
-      currentVideoEl.play().catch(e => {
-        console.log('⚠ Autoplay blocked, trying muted');
-        currentVideoEl.muted = true;
-        currentVideoEl.play().catch(() => {
+    currentVideoEl.onloadeddata = () => {
+      this.safePlay(currentVideoEl, null, () => {
+        if (!hasHandledCompletion) {
+          hasHandledCompletion = true;
           console.log('❌ Play failed, trying next ad');
           this.fillerIndex++;
           this.queueIndex++;
-          this.playAdWhileWaiting();
-        });
+          this.debouncedTransition(() => this.playAdWhileWaiting());
+        }
       });
     };
 
     currentVideoEl.onended = () => {
+      if (hasHandledCompletion) return;
+      hasHandledCompletion = true;
       console.log('✓ Ad completed');
       this.fillerIndex++;
       this.queueIndex++;
@@ -555,7 +647,7 @@ export class PlaybackHandler {
         console.log('⚠ Scheduled content failed to load, skipping to next');
         this.scheduledPreloadFailed = false; // Reset for next attempt
         this.showStatic(300);
-        setTimeout(() => this.skipToNextScheduled(), 500);
+        this.debouncedTransition(() => this.skipToNextScheduled());
         return;
       }
 
@@ -564,18 +656,20 @@ export class PlaybackHandler {
           this.preloadedScheduledVideo.index === this.scheduleIndex) {
         console.log('✓ Scheduled content ready, switching from ads');
         this.showStatic(300);
-        setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
+        this.debouncedTransition(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime));
       } else {
         // Play another ad while still waiting
-        this.playAdWhileWaiting();
+        this.debouncedTransition(() => this.playAdWhileWaiting());
       }
     };
 
     currentVideoEl.onerror = () => {
+      if (hasHandledCompletion) return;
+      hasHandledCompletion = true;
       console.log('❌ Ad playback error, trying next');
       this.fillerIndex++;
       this.queueIndex++;
-      this.playAdWhileWaiting();
+      this.debouncedTransition(() => this.playAdWhileWaiting());
     };
   }
 
@@ -941,33 +1035,34 @@ export class PlaybackHandler {
        }
      });
 
+    let hasHandledCompletion = false; // Guard against duplicate handlers
+
     // Since it's preloaded, it should start playing almost immediately
     currentVideoEl.onloadeddata = () => {
-      // Normalize volume before playing
-      currentVideoEl.volume = this.normalizedVolume;
-      currentVideoEl.muted = false; // Ensure unmuted
-
       if (seekTime > 0 && currentVideoEl.duration && seekTime < currentVideoEl.duration) {
         currentVideoEl.currentTime = seekTime;
         console.log('⏩ Seeking to ' + Math.floor(seekTime) + 's');
       }
 
-      currentVideoEl.play().catch(e => {
-        console.log('⚠ Autoplay blocked, trying muted');
-        currentVideoEl.muted = true;
-        currentVideoEl.play().catch(() => {
+      this.safePlay(currentVideoEl, null, () => {
+        if (!hasHandledCompletion) {
+          hasHandledCompletion = true;
           console.log('❌ Play failed, switching content');
           this.onScheduledFailed();
-        });
+        }
       });
     };
 
     currentVideoEl.onended = () => {
+      if (hasHandledCompletion) return;
+      hasHandledCompletion = true;
       console.log('✓ Completed: ' + displayName);
       this.onScheduledComplete();
     };
 
     currentVideoEl.onerror = () => {
+      if (hasHandledCompletion) return;
+      hasHandledCompletion = true;
       const errorType = currentVideoEl.error ? currentVideoEl.error.code : 'unknown';
       console.log('❌ Video error (' + errorType + '): ' + displayName);
       this.onScheduledFailed();
@@ -1078,27 +1173,28 @@ export class PlaybackHandler {
      currentVideoEl.src = adData.element.src;
      currentVideoEl.load();
 
-    currentVideoEl.onloadeddata = () => {
-      // Normalize volume before playing
-      currentVideoEl.volume = this.normalizedVolume;
-      currentVideoEl.muted = false; // Ensure unmuted
+    let hasHandledCompletion = false; // Guard against duplicate handlers
 
-      currentVideoEl.play().catch(e => {
-        console.log('⚠ Autoplay blocked, trying muted');
-        currentVideoEl.muted = true;
-        currentVideoEl.play().catch(() => {
+    currentVideoEl.onloadeddata = () => {
+      this.safePlay(currentVideoEl, null, () => {
+        if (!hasHandledCompletion) {
+          hasHandledCompletion = true;
           console.log('❌ Play failed');
           onComplete();
-        });
+        }
       });
     };
 
     currentVideoEl.onended = () => {
+      if (hasHandledCompletion) return;
+      hasHandledCompletion = true;
       console.log('✓ Ad completed: ' + displayName);
       onComplete();
     };
 
     currentVideoEl.onerror = () => {
+      if (hasHandledCompletion) return;
+      hasHandledCompletion = true;
       console.log('❌ Ad playback error: ' + displayName);
       onComplete();
     };
@@ -1191,32 +1287,31 @@ export class PlaybackHandler {
       }
     };
 
+    let hasHandledCompletion = false; // Guard against duplicate handlers
+
     currentVideoEl.onloadeddata = () => {
       if (this.loadTimeout) {
         clearTimeout(this.loadTimeout);
         this.loadTimeout = null;
       }
 
-      // Normalize volume before playing
-      currentVideoEl.volume = this.normalizedVolume;
-      currentVideoEl.muted = false; // Ensure unmuted
-
       if (seekTime > 0 && currentVideoEl.duration && seekTime < currentVideoEl.duration) {
         currentVideoEl.currentTime = seekTime;
         console.log('⏩ Seeking to ' + Math.floor(seekTime) + 's');
       }
 
-      currentVideoEl.play().catch(e => {
-        console.log('⚠ Autoplay blocked, trying muted');
-        currentVideoEl.muted = true;
-        currentVideoEl.play().catch(() => {
+      this.safePlay(currentVideoEl, null, () => {
+        if (!hasHandledCompletion) {
+          hasHandledCompletion = true;
           console.log('❌ Play failed, switching content');
           onFailed();
-        });
+        }
       });
     };
 
     currentVideoEl.onended = () => {
+      if (hasHandledCompletion) return;
+      hasHandledCompletion = true;
       if (this.loadTimeout) {
         clearTimeout(this.loadTimeout);
         this.loadTimeout = null;
@@ -1226,6 +1321,8 @@ export class PlaybackHandler {
     };
 
     currentVideoEl.onerror = () => {
+      if (hasHandledCompletion) return;
+      hasHandledCompletion = true;
       if (this.loadTimeout) {
         clearTimeout(this.loadTimeout);
         this.loadTimeout = null;
@@ -1250,6 +1347,7 @@ export class PlaybackHandler {
     this.currentSlotStartTime += this.currentSlotDuration;
     this.currentSlotDuration = this.DEFAULT_SLOT_DURATION;
     this.scheduledVideoEnded = false;
+    this.inCommercialBreak = false; // Reset commercial break state
 
     const video = this.scheduledVideos[this.scheduleIndex];
     const videoId = video.id || video.u;
@@ -1259,10 +1357,11 @@ export class PlaybackHandler {
 
     // Clear any previously preloaded video since we're moving to a new slot
     this.preloadedScheduledVideo = null;
+    this.isPreloadingScheduled = false; // Reset preloading state
 
     this.queueIndex++;
     this.showStatic(300);
-    setTimeout(() => this.playNextScheduled(), 500);
+    this.debouncedTransition(() => this.playNextScheduled());
   }
 
   onScheduledComplete() {
@@ -1271,9 +1370,10 @@ export class PlaybackHandler {
 
     if (this.currentSlotBreaks.length > 0) {
       this.currentBreakIndex = 0;
+      this.inCommercialBreak = true; // Set flag before playing commercial break
       this.queueIndex++;
       this.showStatic(300);
-      setTimeout(() => this.playCommercialBreak(), 500);
+      this.debouncedTransition(() => this.playCommercialBreak());
     } else {
       this.moveToNextSlot();
     }
@@ -1283,14 +1383,14 @@ export class PlaybackHandler {
     console.log('❌ Scheduled content failed');
     this.queueIndex++;
     this.showStatic(500);
-    setTimeout(() => this.playFiller(), 500);
+    this.debouncedTransition(() => this.playFiller());
   }
 
   onFillerComplete() {
     this.fillerIndex = (this.fillerIndex + 1) % this.savedVideos.length;
     this.queueIndex++;
     this.showStatic(300);
-    setTimeout(() => this.playNextScheduled(), 500);
+    this.debouncedTransition(() => this.playNextScheduled());
   }
 
   onCommercialComplete() {
@@ -1298,12 +1398,22 @@ export class PlaybackHandler {
     this.commercialBreakIndex++;
     this.queueIndex++;
     this.showStatic(300);
-    setTimeout(() => this.playNextCommercial(), 500);
+    this.debouncedTransition(() => this.playNextCommercial());
   }
 
   onCommercialBreakComplete() {
-    console.log('✓ Commercial break ' + (this.currentBreakIndex + 1) + '/' + this.currentSlotBreaks.length + ' completed');
+    // Guard against duplicate calls
+    if (!this.inCommercialBreak) {
+      console.log('⚠ Commercial break already completed, ignoring duplicate call');
+      return;
+    }
+
     this.inCommercialBreak = false;
+    const completedBreak = this.currentBreakIndex + 1;
+    const totalBreaks = this.currentSlotBreaks.length;
+    console.log('✓ Commercial break ' + completedBreak + '/' + totalBreaks + ' completed');
+
+    // Increment break index AFTER logging
     this.currentBreakIndex++;
 
     // If scheduled content hasn't played yet (synced into commercial break),
@@ -1312,14 +1422,18 @@ export class PlaybackHandler {
       console.log('📺 Scheduled content ready, switching from commercial break');
       this.queueIndex++;
       this.showStatic(300);
-      setTimeout(() => this.playPreloadedScheduled(0), 500);
+      this.debouncedTransition(() => this.playPreloadedScheduled(0));
     } else if (this.currentBreakIndex < this.currentSlotBreaks.length) {
-      console.log('📺 Next commercial break in slot');
-       this.queueIndex++;
-       this.showStatic(300);
-       setTimeout(() => this.playCommercialBreak(), 500);
-     }
-   }
+      console.log('📺 Next commercial break in slot (' + (this.currentBreakIndex + 1) + '/' + totalBreaks + ')');
+      this.queueIndex++;
+      this.showStatic(300);
+      this.debouncedTransition(() => this.playCommercialBreak());
+    } else {
+      // All breaks completed, move to next slot
+      console.log('✓ All ' + totalBreaks + ' commercial breaks completed, moving to next slot');
+      this.moveToNextSlot();
+    }
+  }
 
    setAnalytics(analytics) {
     this.analytics = analytics;
