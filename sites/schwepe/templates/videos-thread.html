@@ -653,6 +653,20 @@
   noise.start(audioContext.currentTime + startTime);
   };
   const createThud = (startTime) => {
+  // Sharp click transient for instant attack
+  const clickBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.008, audioContext.sampleRate);
+  const clickData = clickBuffer.getChannelData(0);
+  for (let i = 0; i < clickData.length; i++) {
+  const t = i / clickData.length;
+  clickData[i] = (Math.random() * 2 - 1) * Math.exp(-t * 15);
+  }
+  const clickSource = audioContext.createBufferSource();
+  clickSource.buffer = clickBuffer;
+  const clickGain = audioContext.createGain();
+  clickGain.gain.setValueAtTime(0.6, audioContext.currentTime + startTime);
+  clickSource.connect(clickGain);
+  clickGain.connect(audioContext.destination);
+  clickSource.start(audioContext.currentTime + startTime);
   // Main deep thud oscillator
   const oscillator = audioContext.createOscillator();
   const gainNode = audioContext.createGain();
