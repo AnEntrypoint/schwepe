@@ -597,57 +597,57 @@ export class PlaybackHandler {
     });
   }
 
-  calculateSchedulePosition() {
-    const now = Date.now();
-    const elapsed = now - this.scheduleEpoch;
-    let totalDuration = 0;
-    let targetIndex = 0;
-    let inCommercialBreak = false;
-    let breakIndex = 0;
-    let seekTime = 0;
-    let slotStartTime = 0;
-    let slotDuration = this.DEFAULT_SLOT_DURATION;
-    let slotBreaks = [];
+   calculateSchedulePosition() {
+     const now = Date.now();
+     const elapsed = now - this.scheduleEpoch;
+     let totalDuration = 0;
+     let targetIndex = 0;
+     let inCommercialBreak = false;
+     let breakIndex = 0;
+     let seekTime = 0;
+     let slotStartTime = 0;
+     let slotDuration = this.DEFAULT_SLOT_DURATION;
+     let slotBreaks = [];
 
-    const findPosition = (cyclePosition) => {
-      totalDuration = 0;
-      for (let i = 0; i < this.scheduledVideos.length; i++) {
-        const video = this.scheduledVideos[i];
-        const videoId = video.id || video.u;
-        const videoDuration = this.durationCache[videoId] || 0;
-        const currentSlotDuration = this.DEFAULT_SLOT_DURATION;
+     const findPosition = (cyclePosition) => {
+       totalDuration = 0;
+       for (let i = 0; i < this.scheduledVideos.length; i++) {
+         const video = this.scheduledVideos[i];
+         const videoId = video.id || video.u;
+         const videoDuration = this.durationCache[videoId] || 1200000;
+         const currentSlotDuration = this.DEFAULT_SLOT_DURATION;
 
-        if (totalDuration + currentSlotDuration > cyclePosition) {
-          targetIndex = i;
-          slotStartTime = totalDuration;
-          slotDuration = currentSlotDuration;
-          const positionInSlot = cyclePosition - totalDuration;
+         if (totalDuration + currentSlotDuration > cyclePosition) {
+           targetIndex = i;
+           slotStartTime = totalDuration;
+           slotDuration = currentSlotDuration;
+           const positionInSlot = cyclePosition - totalDuration;
 
-          slotBreaks = this.calculateSlotCommercialBreaks(i, videoDuration, currentSlotDuration);
+           slotBreaks = this.calculateSlotCommercialBreaks(i, videoDuration, currentSlotDuration);
 
-          if (positionInSlot < videoDuration) {
-            inCommercialBreak = false;
-            seekTime = positionInSlot;
-            breakIndex = 0;
-          } else {
-            inCommercialBreak = true;
-            let breakPosition = positionInSlot - videoDuration;
-            let accumulatedBreakTime = 0;
+           if (positionInSlot < videoDuration) {
+             inCommercialBreak = false;
+             seekTime = positionInSlot;
+             breakIndex = 0;
+           } else {
+             inCommercialBreak = true;
+             let breakPosition = positionInSlot - videoDuration;
+             let accumulatedBreakTime = 0;
 
-            for (let b = 0; b < slotBreaks.length; b++) {
-              if (accumulatedBreakTime + slotBreaks[b].duration > breakPosition) {
-                breakIndex = b;
-                seekTime = breakPosition - accumulatedBreakTime;
-                break;
-              }
-              accumulatedBreakTime += slotBreaks[b].duration;
-            }
-          }
-          return true;
-        }
+             for (let b = 0; b < slotBreaks.length; b++) {
+               if (accumulatedBreakTime + slotBreaks[b].duration > breakPosition) {
+                 breakIndex = b;
+                 seekTime = breakPosition - accumulatedBreakTime;
+                 break;
+               }
+               accumulatedBreakTime += slotBreaks[b].duration;
+             }
+           }
+           return true;
+         }
 
-        totalDuration += currentSlotDuration;
-      }
+         totalDuration += currentSlotDuration;
+       }
       return false;
     };
 
