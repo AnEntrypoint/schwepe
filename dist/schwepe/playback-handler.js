@@ -1211,13 +1211,15 @@ export class PlaybackHandler {
       this.queueIndex++;
       this.showStatic(300);
       setTimeout(() => this.playPreloadedScheduled(0), 500);
-    } else if (this.currentBreakIndex < this.currentSlotBreaks.length) {
-      console.log('📺 Next commercial break in slot');
-      this.queueIndex++;
-      this.showStatic(300);
-      setTimeout(() => this.playCommercialBreak(), 500);
+     } else if (this.currentBreakIndex < this.currentSlotBreaks.length) {
+       console.log('📺 Next commercial break in slot');
+       this.queueIndex++;
+       this.showStatic(300);
+       setTimeout(() => this.playCommercialBreak(), 500);
+     }
+   }
 
-  setAnalytics(analytics) {
+   setAnalytics(analytics) {
     this.analytics = analytics;
   }
 
