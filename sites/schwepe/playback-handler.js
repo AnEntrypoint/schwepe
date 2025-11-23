@@ -38,6 +38,7 @@ export class PlaybackHandler {
     this.analytics = null;
     this.videoStartTime = 0;
     this.currentVideoMetadata = null;
+    this.activeVideoIndex = 0; // Track which video element is currently active
     this.initStaticCanvas();
     this.normalizeVideoVolumes();
     this.preventTabPausing(); // Prevent videos from pausing when tab changes
@@ -49,25 +50,27 @@ export class PlaybackHandler {
     // This ensures the immutable schedule continues even when users switch tabs
     document.addEventListener('visibilitychange', () => {
       // Don't let browser pause videos when tab is hidden
-      this.videoQueue.forEach(video => {
-        if (video && video.paused && !this.showingStatic) {
-          console.log('📺 Tab became hidden, resuming playback to maintain schedule');
-          video.play().catch(e => {
-            // If play fails, we'll catch up on next visibility
-          });
-        }
-      });
+      // ONLY resume the active video element, not all videos
+      const activeVideo = this.videoQueue[this.activeVideoIndex];
+      if (activeVideo && activeVideo.paused && !this.showingStatic) {
+        console.log('📺 Tab became hidden, resuming active video to maintain schedule');
+        activeVideo.play().catch(e => {
+          // If play fails, we'll catch up on next visibility
+        });
+      }
     });
 
     // Also prevent videos from pausing due to other reasons
-    this.videoQueue.forEach(video => {
+    // ONLY for the active video element
+    this.videoQueue.forEach((video, index) => {
       if (video) {
         video.addEventListener('pause', (e) => {
-          // Only resume if we didn't intentionally pause (e.g., during transitions)
-          if (!this.showingStatic && video.src && video.readyState >= 2) {
+          // Only resume if this is the active video and we didn't intentionally pause
+          if (index === this.activeVideoIndex && !this.showingStatic && video.src && video.readyState >= 2) {
             setTimeout(() => {
-              if (video.paused) {
-                console.log('📺 Video unexpectedly paused, resuming');
+              // Double-check this is still the active video before resuming
+              if (index === this.activeVideoIndex && video.paused) {
+                console.log('📺 Active video unexpectedly paused, resuming');
                 video.play().catch(() => {});
               }
             }, 100);
@@ -75,6 +78,32 @@ export class PlaybackHandler {
         });
       }
     });
+  }
+
+  /**
+   * Stop all non-active video elements to prevent audio overlap
+   * This ensures only the currently playing video has audio
+   */
+  stopNonActiveVideos() {
+    this.videoQueue.forEach((video, index) => {
+      if (video && index !== this.activeVideoIndex) {
+        video.pause();
+        video.muted = true;
+        // Clear the src to fully stop any buffering/playback
+        if (video.src) {
+          video.src = '';
+          video.load();
+        }
+      }
+    });
+  }
+
+  /**
+   * Set the active video element and stop all others
+   */
+  setActiveVideo(index) {
+    this.activeVideoIndex = index % 3;
+    this.stopNonActiveVideos();
   }
 
   normalizeVideoVolumes() {
@@ -156,11 +185,13 @@ export class PlaybackHandler {
       nowPlayingEl.style.color = '#888888';
     }
 
-    // Hide all videos
+    // Hide all videos, mute them, and clear sources to prevent audio overlap
     this.videoQueue.forEach(v => {
       v.style.display = 'none';
       v.pause();
+      v.muted = true;
       v.src = '';
+      v.load();
     });
 
     // Show static
@@ -478,14 +509,18 @@ export class PlaybackHandler {
       nowPlayingEl.style.color = '#00ffff';
     }
 
-    const currentVideoEl = this.videoQueue[this.queueIndex % 3];
+    // Set the active video and stop all others to prevent audio overlap
+    this.setActiveVideo(this.queueIndex);
+    const currentVideoEl = this.videoQueue[this.activeVideoIndex];
 
      this.videoQueue.forEach((v, i) => {
-       if (i === (this.queueIndex % 3)) {
+       if (i === this.activeVideoIndex) {
          v.style.display = 'block';
+         v.muted = false; // Ensure active video is unmuted
        } else {
          v.style.display = 'none';
          v.pause();
+         v.muted = true;
        }
      });
 
@@ -496,6 +531,7 @@ export class PlaybackHandler {
     currentVideoEl.onloadeddata = () => {
       // Normalize volume before playing
       currentVideoEl.volume = this.normalizedVolume;
+      currentVideoEl.muted = false; // Ensure unmuted
 
       currentVideoEl.play().catch(e => {
         console.log('⚠ Autoplay blocked, trying muted');
@@ -881,18 +917,27 @@ export class PlaybackHandler {
       nowPlayingEl.style.color = '#ffff00';
     }
 
-    const currentVideoEl = this.videoQueue[this.queueIndex % 3];
+    // Set the active video and stop all others to prevent audio overlap
+    this.setActiveVideo(this.queueIndex);
+    const currentVideoEl = this.videoQueue[this.activeVideoIndex];
 
      // Copy the preloaded element's src to our rotation video element
      currentVideoEl.src = preloadedEl.src;
      currentVideoEl.load();
 
      this.videoQueue.forEach((v, i) => {
-       if (i === (this.queueIndex % 3)) {
+       if (i === this.activeVideoIndex) {
          v.style.display = 'block';
+         v.muted = false; // Ensure active video is unmuted
        } else {
          v.style.display = 'none';
          v.pause();
+         v.muted = true;
+         // Clear src of non-active videos to prevent audio bleed
+         if (v.src) {
+           v.src = '';
+           v.load();
+         }
        }
      });
 
@@ -900,6 +945,7 @@ export class PlaybackHandler {
     currentVideoEl.onloadeddata = () => {
       // Normalize volume before playing
       currentVideoEl.volume = this.normalizedVolume;
+      currentVideoEl.muted = false; // Ensure unmuted
 
       if (seekTime > 0 && currentVideoEl.duration && seekTime < currentVideoEl.duration) {
         currentVideoEl.currentTime = seekTime;
@@ -1013,14 +1059,18 @@ export class PlaybackHandler {
       nowPlayingEl.style.color = '#00ffff';
     }
 
-    const currentVideoEl = this.videoQueue[this.queueIndex % 3];
+    // Set the active video and stop all others to prevent audio overlap
+    this.setActiveVideo(this.queueIndex);
+    const currentVideoEl = this.videoQueue[this.activeVideoIndex];
 
      this.videoQueue.forEach((v, i) => {
-       if (i === (this.queueIndex % 3)) {
+       if (i === this.activeVideoIndex) {
          v.style.display = 'block';
+         v.muted = false; // Ensure active video is unmuted
        } else {
          v.style.display = 'none';
          v.pause();
+         v.muted = true;
        }
      });
 
@@ -1031,6 +1081,7 @@ export class PlaybackHandler {
     currentVideoEl.onloadeddata = () => {
       // Normalize volume before playing
       currentVideoEl.volume = this.normalizedVolume;
+      currentVideoEl.muted = false; // Ensure unmuted
 
       currentVideoEl.play().catch(e => {
         console.log('⚠ Autoplay blocked, trying muted');
@@ -1090,7 +1141,9 @@ export class PlaybackHandler {
   }
 
   loadAndPlay(video, displayName, color, seekTime, onComplete, onFailed) {
-    const currentVideoEl = this.videoQueue[this.queueIndex % 3];
+    // Set the active video and stop all others to prevent audio overlap
+    this.setActiveVideo(this.queueIndex);
+    const currentVideoEl = this.videoQueue[this.activeVideoIndex];
 
     this.showStatic(300);
 
@@ -1102,11 +1155,13 @@ export class PlaybackHandler {
     }
 
      this.videoQueue.forEach((v, i) => {
-       if (i === (this.queueIndex % 3)) {
+       if (i === this.activeVideoIndex) {
          v.style.display = 'block';
+         v.muted = false; // Ensure active video is unmuted
        } else {
          v.style.display = 'none';
          v.pause();
+         v.muted = true;
        }
      });
 
@@ -1144,6 +1199,7 @@ export class PlaybackHandler {
 
       // Normalize volume before playing
       currentVideoEl.volume = this.normalizedVolume;
+      currentVideoEl.muted = false; // Ensure unmuted
 
       if (seekTime > 0 && currentVideoEl.duration && seekTime < currentVideoEl.duration) {
         currentVideoEl.currentTime = seekTime;
