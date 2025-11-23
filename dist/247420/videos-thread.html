@@ -569,9 +569,10 @@
   </div>
   </div>
   </div>
-  <script type="module">
-  // Import Schwelevision broadcasting system
-  import './schwelevision.js';
+   <script type="module">
+   // Import Schwelevision broadcasting system and debug hooks
+   import './schwelevision.js';
+   import DebugHooks from '/lib/debug-hooks.js';
   async function loadNavbar() {
   try {
   const response = await fetch('navbar.html');
@@ -599,14 +600,19 @@
   container.style.transform = `scale(${scale})`;
   container.style.transformOrigin = 'top center';
   }
-  document.addEventListener('DOMContentLoaded', async () => {
-  await loadNavbar();
-  scaleToFit();
-  window.addEventListener('resize', scaleToFit);
-  const tv = new Schwelevision();
-  window.tv = tv; // Expose globally for testing
-  await tv.init();
-  });
+   document.addEventListener('DOMContentLoaded', async () => {
+   await loadNavbar();
+   scaleToFit();
+   window.addEventListener('resize', scaleToFit);
+   const tv = new Schwelevision();
+   window.tv = tv; // Expose globally for testing
+   
+   // Initialize debug hooks for REPL and Playwright access
+   const playbackHandler = window.playback || null;
+   DebugHooks.init(playbackHandler, tv, null);
+   
+   await tv.init();
+   });
   </script>
   </body>
   </html>
