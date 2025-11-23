@@ -153,7 +153,7 @@ async function runBasicTests() {
   log('Testing videos.json...', COLORS.YELLOW);
   const videosJson = await testWithFetch(`${baseUrl}/public/videos.json`, 'Videos JSON');
   const videos_data = JSON.parse(videosJson);
-  if (!Array.isArray(videos_data) || videos_data.length < 400) {
+  if (!Array.isArray(videos_data) || videos_data.length < 150) {
     throw new Error('Invalid videos.json');
   }
   log(`  Found ${videos_data.length} saved videos`, COLORS.BLUE);

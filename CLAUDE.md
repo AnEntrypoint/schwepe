@@ -83,8 +83,8 @@ Also restored complete templates for:
 
 ## Performance Metrics
 - **Build Size**: 305MB (reduced from 496MB - 38% optimization)
-- **Video Library**: 478 saved videos (144MB)
-- **Scheduled Content**: 391 shows across 78 weeks (25MB schedules)
+- **Video Library**: 192 saved videos (filler/ads for commercial breaks)
+- **Scheduled Content**: 373+ shows across 78 weeks (25MB schedules)
 - **Image Library**: 64MB
 - **Total Assets**: ~303MB in public/, minimal duplication in dist/
 
@@ -99,8 +99,8 @@ Like a real TV station:
 - **Seamless Experience**: Never shows loading states - switches to filler instead
 
 ### Content Sources
-1. **Scheduled Programming** (380 videos): Archive.org streams (weeks 1-78)
-2. **Filler/Ad Content** (478 videos): Local MP4 files from /public/saved_videos/
+1. **Scheduled Programming** (373+ videos): Archive.org streams (weeks 1-78)
+2. **Filler/Ad Content** (192 videos): Local MP4 files from /public/saved_videos/
 3. **TV Static**: Canvas-based static for transitions
 
 ### Playback Flow
@@ -161,8 +161,8 @@ Like a real TV station:
 ### Files
 - **playback-handler.js**: Enhanced video playback with production fallbacks
 - **tv-scheduler.js**: Weekly schedule loader with archive.org URLs
-- **public/videos.json**: 478 saved video metadata (gitignored in production)
-- **public/schedule_weeks/**: Year-long TV schedule (78 weeks, 391 programs)
+- **public/videos.json**: 192 saved video metadata (filler/ads)
+- **public/schedule_weeks/**: Year-long TV schedule (78 weeks, 373+ programs)
 
 ### Testing
 - Tested with Playwright - both saved and scheduled streaming
@@ -181,7 +181,7 @@ Fast integration tests using fetch:
 - Tests all major pages (home, lore, gallery, images, videos)
 - Verifies static asset serving and MIME types
 - Validates JavaScript modules (playback-handler, tv-scheduler)
-- Checks videos.json library (478 videos)
+- Checks videos.json library (192 videos)
 - Validates weekly schedule format (373+ programs per week)
 - Automatic server cleanup after tests
 - Color-coded output for easy debugging
