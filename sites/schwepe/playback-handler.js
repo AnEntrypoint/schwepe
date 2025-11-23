@@ -1216,6 +1216,11 @@ export class PlaybackHandler {
       this.queueIndex++;
       this.showStatic(300);
       setTimeout(() => this.playCommercialBreak(), 500);
+    } else {
+      // All commercial breaks completed, move to next slot
+      this.moveToNextSlot();
+    }
+  }
 
   setAnalytics(analytics) {
     this.analytics = analytics;
