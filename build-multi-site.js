@@ -66,7 +66,7 @@ async function buildSite(siteId) {
   }
 
   // Copy JavaScript modules and assets to dist root for module imports
-  const modulesToCopy = ['schwelevision.js', 'playback-handler.js', 'tv-scheduler.js', 'navbar.js', 'navbar.html', 'navbar.css'];
+  const modulesToCopy = ['schwelevision.js', 'playback-handler.js', 'tv-scheduler.js', 'navbar.js', 'navbar.html', 'navbar.css', 'cache-manager.js', 'preload-manager.js', 'performance-monitor.js'];
   for (const module of modulesToCopy) {
     const source = path.join(sitePath, module);
     const dest = path.join(distPath, module);
