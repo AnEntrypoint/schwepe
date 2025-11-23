@@ -624,6 +624,8 @@
   const videos = [document.getElementById('currentVideo'), document.getElementById('nextVideo'), document.getElementById('thirdVideo')];
   videos.forEach(video => {
   if (video) {
+  // Unmute videos on user interaction (slapping enables sound)
+  video.muted = false;
   video.volume = Math.random();
   }
   });
@@ -726,8 +728,19 @@
    });
    muteBtn?.addEventListener('click', () => {
    const videos = [document.getElementById('currentVideo'), document.getElementById('nextVideo'), document.getElementById('thirdVideo')];
-   const isMuted = videos[0]?.volume === 0;
-   if (isMuted) { playback.setVolume(playback.lastVolume || 0.7); muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>'; } else { playback.lastVolume = playback.normalizedVolume; playback.setVolume(0); muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>'; }
+   // Check both muted property and volume for mute state
+   const isMuted = videos[0]?.muted || videos[0]?.volume === 0;
+   if (isMuted) {
+     // Unmute: restore volume and unmute
+     videos.forEach(v => { if (v) v.muted = false; });
+     playback.setVolume(playback.lastVolume || 0.7);
+     muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+   } else {
+     // Mute: save volume and mute
+     playback.lastVolume = playback.normalizedVolume;
+     videos.forEach(v => { if (v) { v.muted = true; v.volume = 0; } });
+     muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+   }
    });
    statsBtn?.addEventListener('click', () => { const dashboard = document.getElementById('statsDashboard'); dashboard?.classList.toggle('active'); });
    playback.updateStats = () => { const currentVideo = document.getElementById('currentVideo'); const buffer = currentVideo?.buffered.length > 0 ? Math.round((currentVideo.buffered.end(0) / currentVideo.duration) * 100) : 0; const networkSpeed = (Math.random() * 4 + 2).toFixed(1); document.getElementById('statBuffer').textContent = buffer + '%'; document.getElementById('statNetwork').textContent = networkSpeed + 'Mbps'; document.getElementById('statErrors').textContent = playback.errorCount || 0; document.getElementById('statStatus').textContent = currentVideo?.paused ? 'Paused' : 'Playing'; };
@@ -771,11 +784,12 @@
    
    await playback.loadVideos();
    playback.startPlayback();
-  const tvScreen = document.querySelector('.tv-screen');
-  if (tvScreen) {
-  tvScreen.addEventListener('click', slapTV);
-  tvScreen.style.cursor = 'pointer';
-  }
+   window.slapTV = slapTV;
+   const tvScreen = document.querySelector('.tv-screen');
+   if (tvScreen) {
+   tvScreen.addEventListener('click', slapTV);
+   tvScreen.style.cursor = 'pointer';
+   }
   });
   </script>
   </body>
