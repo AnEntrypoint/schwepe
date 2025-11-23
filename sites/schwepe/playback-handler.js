@@ -86,6 +86,32 @@ export class PlaybackHandler {
     });
   }
 
+  /**
+   * Unmute all video elements (call after user interaction to enable sound)
+   */
+  unmute() {
+    this.videoQueue.forEach(video => {
+      if (video) {
+        video.muted = false;
+        video.volume = this.normalizedVolume;
+      }
+    });
+    console.log('🔊 Videos unmuted');
+  }
+
+  /**
+   * Set volume level for all videos
+   */
+  setVolume(volume) {
+    this.normalizedVolume = Math.max(0, Math.min(1, volume));
+    this.videoQueue.forEach(video => {
+      if (video) {
+        video.muted = false; // Also unmute when setting volume
+        video.volume = this.normalizedVolume;
+      }
+    });
+  }
+
   initStaticCanvas() {
     if (this.staticCanvas) {
       const ctx = this.staticCanvas.getContext('2d');
