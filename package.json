@@ -7,30 +7,11 @@
     "build": "npm run rebuild-videos && node build-multi-site.js",
     "build:multi-site": "npm run rebuild-videos && node build-multi-site.js",
     "start": "NODE_ENV=production node server.cjs",
-    "start:dev": "NODE_ENV=development node server.cjs",
-    "deploy": "npm run build && git add . && git commit -m 'build: deployment build' && git push"
+    "start:dev": "NODE_ENV=development node server.cjs"
   },
   "dependencies": {
-    "autoprefixer": "^10.4.20",
-    "axios": "^1.6.0",
-    "concurrently": "^9.1.0",
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "http-proxy-middleware": "^3.0.0",
-    "postcss": "^8.4.49",
-    "vite": "^5.4.10"
+    "express": "^4.21.2"
   },
-  "devDependencies": {
-    "@playwright/test": "^1.56.0",
-    "@types/node": "^24.5.2",
-    "playwright": "^1.56.1",
-    "tailwindcss": "^4.1.14"
-  },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.52.4",
-    "@rollup/rollup-win32-x64-msvc": "^4.52.4"
-  },
-  "main": "server.js",
   "engines": {
     "node": ">=18.0.0"
   },
