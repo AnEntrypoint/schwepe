@@ -663,8 +663,8 @@ export class PlaybackHandler {
     }
 
     this.currentlyPlayingAd = adToPlay;
-    const video = adToPlay.video;
-    const displayName = video.filename || video.title || 'Ad';
+    const adVideo = adToPlay.video;
+    const displayName = adVideo.filename || adVideo.title || 'Ad';
 
     console.log('📺 [AD WHILE CACHING]: ' + displayName);
 
