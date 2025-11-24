@@ -618,7 +618,7 @@
 
   // Show visual static synchronized with audio
   if (window.playback) {
-  window.playback.showStatic(330); // Show static for duration of thud + static audio
+  window.playback.showStatic(450); // Show static for duration of thud + static audio
   }
 
   const videos = [document.getElementById('currentVideo'), document.getElementById('nextVideo'), document.getElementById('thirdVideo')];
@@ -631,10 +631,10 @@
   });
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const thudTime = 0;
-  const thudDuration = 0.15;
+  const thudDuration = 0.25;
   const staticTime = 0.08;
   const staticDuration = 0.25;
-  const whineTime = 0.25;
+  const whineTime = 0.35;
   const whineDuration = 0.3;
   const createNoise = (duration, startTime) => {
   const bufferSize = audioContext.sampleRate * duration;
@@ -653,17 +653,44 @@
   noise.start(audioContext.currentTime + startTime);
   };
   const createThud = (startTime) => {
+  // Sharp click transient for instant attack
+  const clickBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.008, audioContext.sampleRate);
+  const clickData = clickBuffer.getChannelData(0);
+  for (let i = 0; i < clickData.length; i++) {
+  const t = i / clickData.length;
+  clickData[i] = (Math.random() * 2 - 1) * Math.exp(-t * 15);
+  }
+  const clickSource = audioContext.createBufferSource();
+  clickSource.buffer = clickBuffer;
+  const clickGain = audioContext.createGain();
+  clickGain.gain.setValueAtTime(0.6, audioContext.currentTime + startTime);
+  clickSource.connect(clickGain);
+  clickGain.connect(audioContext.destination);
+  clickSource.start(audioContext.currentTime + startTime);
+  // Main deep thud oscillator
   const oscillator = audioContext.createOscillator();
   const gainNode = audioContext.createGain();
   oscillator.type = 'sine';
-  oscillator.frequency.setValueAtTime(60, audioContext.currentTime + startTime);
-  oscillator.frequency.exponentialRampToValueAtTime(30, audioContext.currentTime + startTime + thudDuration);
-  gainNode.gain.setValueAtTime(0.5, audioContext.currentTime + startTime);
+  oscillator.frequency.setValueAtTime(45, audioContext.currentTime + startTime);
+  oscillator.frequency.exponentialRampToValueAtTime(20, audioContext.currentTime + startTime + thudDuration);
+  gainNode.gain.setValueAtTime(0.7, audioContext.currentTime + startTime);
   gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + startTime + thudDuration);
   oscillator.connect(gainNode);
   gainNode.connect(audioContext.destination);
   oscillator.start(audioContext.currentTime + startTime);
   oscillator.stop(audioContext.currentTime + startTime + thudDuration);
+  // Add sub-bass layer for more weight
+  const subOsc = audioContext.createOscillator();
+  const subGain = audioContext.createGain();
+  subOsc.type = 'sine';
+  subOsc.frequency.setValueAtTime(30, audioContext.currentTime + startTime);
+  subOsc.frequency.exponentialRampToValueAtTime(15, audioContext.currentTime + startTime + thudDuration * 0.8);
+  subGain.gain.setValueAtTime(0.5, audioContext.currentTime + startTime);
+  subGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + startTime + thudDuration * 0.8);
+  subOsc.connect(subGain);
+  subGain.connect(audioContext.destination);
+  subOsc.start(audioContext.currentTime + startTime);
+  subOsc.stop(audioContext.currentTime + startTime + thudDuration * 0.8);
   };
   const createWhine = (startTime) => {
   const oscillator = audioContext.createOscillator();
