@@ -35,6 +35,8 @@ export class PlaybackHandler {
     this.scheduledPreloadFailed = false; // Track if we should give up on scheduled content
     this.scheduledPreloadTimeout = null; // Timeout for giving up on scheduled content
     this.normalizedVolume = 0.7; // Normalized volume level for all videos
+    this.recentlyPlayedAds = []; // Track recently played ads to prevent repetition
+    this.maxRecentAds = 20; // Don't repeat any of the last 20 ads
     this.analytics = null;
     this.videoStartTime = 0;
     this.currentVideoMetadata = null;
@@ -403,6 +405,63 @@ export class PlaybackHandler {
     return x - Math.floor(x);
   }
 
+  /**
+   * Track an ad as recently played to prevent repetition
+   */
+  trackPlayedAd(video) {
+    const videoId = video.filename || video.id;
+    if (!this.recentlyPlayedAds.includes(videoId)) {
+      this.recentlyPlayedAds.push(videoId);
+      // Keep only the most recent ads in the list
+      if (this.recentlyPlayedAds.length > this.maxRecentAds) {
+        this.recentlyPlayedAds.shift();
+      }
+    }
+  }
+
+  /**
+   * Check if an ad was recently played
+   */
+  wasRecentlyPlayed(video) {
+    const videoId = video.filename || video.id;
+    return this.recentlyPlayedAds.includes(videoId);
+  }
+
+  /**
+   * Get a non-repeating ad, avoiding recently played and already selected ads
+   * @param {Array} excludeIds - Array of video IDs to exclude (for current break)
+   * @param {number} seed - Seed for deterministic selection
+   * @returns {Object|null} - The selected video or null if none available
+   */
+  getNonRepeatingAd(excludeIds = [], seed = Date.now()) {
+    if (this.savedVideos.length === 0) return null;
+
+    // Build list of available ads (not recently played and not in excludeIds)
+    const availableAds = this.savedVideos.filter(video => {
+      const videoId = video.filename || video.id;
+      return !this.recentlyPlayedAds.includes(videoId) && !excludeIds.includes(videoId);
+    });
+
+    // If all ads were recently played, reset and use all ads except excludeIds
+    if (availableAds.length === 0) {
+      console.log('⚠ All ads recently played, resetting history');
+      this.recentlyPlayedAds = [];
+      const fallbackAds = this.savedVideos.filter(video => {
+        const videoId = video.filename || video.id;
+        return !excludeIds.includes(videoId);
+      });
+      if (fallbackAds.length === 0) {
+        // Even excludeIds exhausted all options, just pick any
+        return this.savedVideos[Math.floor(this.seededRandom(seed) * this.savedVideos.length)];
+      }
+      return fallbackAds[Math.floor(this.seededRandom(seed) * fallbackAds.length)];
+    }
+
+    // Select from available ads using seeded random
+    const index = Math.floor(this.seededRandom(seed) * availableAds.length);
+    return availableAds[index];
+  }
+
   pickCommercialBreak(slotIndex, breakIndex) {
     const seed = slotIndex * 1000 + breakIndex;
     const breakLength = Math.floor(this.seededRandom(seed) * 6) + 1;
@@ -434,6 +493,9 @@ export class PlaybackHandler {
     // Each break should have 2-5 ads (not all ads at once)
     const targetAdsPerBreak = Math.floor(this.seededRandom(seed + 1) * 4) + 2;
 
+    // Track all ads selected for this slot to avoid ANY repetition within the slot
+    const slotSelectedAdIds = [];
+
     let totalBreakTime = 0;
     for (let i = 0; i < breakCount; i++) {
       // Pick a small number of ads for this specific break
@@ -443,8 +505,13 @@ export class PlaybackHandler {
       for (let j = 0; j < thisBreakAdCount; j++) {
         if (this.savedVideos.length > 0) {
           const adSeed = seed * 100 + i * 10 + j;
-          const adIndex = Math.floor(this.seededRandom(adSeed) * this.savedVideos.length);
-          ads.push(this.savedVideos[adIndex]);
+          // Use getNonRepeatingAd to avoid duplicates within slot AND recently played
+          const ad = this.getNonRepeatingAd(slotSelectedAdIds, adSeed);
+          if (ad) {
+            const adId = ad.filename || ad.id;
+            slotSelectedAdIds.push(adId);
+            ads.push(ad);
+          }
         }
       }
 
@@ -469,7 +536,7 @@ export class PlaybackHandler {
     }
 
     console.log('📺 Calculated ' + breaks.length + ' commercial breaks for slot ' + slotIndex + ' (' +
-                breaks.reduce((sum, b) => sum + b.ads.length, 0) + ' total ads dispersed)');
+                breaks.reduce((sum, b) => sum + b.ads.length, 0) + ' total ads dispersed, no repeats)');
 
     return breaks;
   }
@@ -553,24 +620,32 @@ export class PlaybackHandler {
       return;
     }
 
-    // Try to get a pre-loaded ad
+    // Get a non-repeating ad
+    const video = this.getNonRepeatingAd([], Date.now() + this.fillerIndex);
+    if (!video) {
+      console.log('⚠ No ads available');
+      this.playContinuousStatic();
+      return;
+    }
+
+    const videoId = video.filename || video.id;
     let adToPlay = null;
-    const videoId = this.savedVideos[this.fillerIndex % this.savedVideos.length].filename ||
-                     this.savedVideos[this.fillerIndex % this.savedVideos.length].id;
 
     if (this.preloadedAds.has(videoId)) {
       adToPlay = this.preloadedAds.get(videoId);
       console.log('📺 [AD WHILE CACHING]: Using preloaded ad');
     } else {
-      // Try to fully load the next ad
+      // Try to fully load the ad
       console.log('📺 [AD WHILE CACHING]: Loading ad...');
       try {
-        adToPlay = await this.preloadAd(this.savedVideos[this.fillerIndex % this.savedVideos.length]);
+        adToPlay = await this.preloadAd(video);
       } catch (e) {
         console.log('⚠ Failed to load ad, trying next...');
         this.fillerIndex++;
+        // Mark this ad as played so we don't try it again immediately
+        this.trackPlayedAd(video);
         // Try next ad (limit retries to prevent infinite loop)
-        if (this.fillerIndex % this.savedVideos.length < this.savedVideos.length - 1) {
+        if (this.fillerIndex < this.savedVideos.length * 2) {
           this.playAdWhileWaiting();
         } else {
           console.log('⚠ All ads failed, giving up on scheduled content');
@@ -639,6 +714,8 @@ export class PlaybackHandler {
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       console.log('✓ Ad completed');
+      // Track this ad as played to prevent repetition
+      this.trackPlayedAd(video);
       this.fillerIndex++;
       this.queueIndex++;
 
@@ -667,6 +744,8 @@ export class PlaybackHandler {
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       console.log('❌ Ad playback error, trying next');
+      // Track this ad as played to prevent retrying immediately
+      this.trackPlayedAd(video);
       this.fillerIndex++;
       this.queueIndex++;
       this.debouncedTransition(() => this.playAdWhileWaiting());
@@ -1189,6 +1268,8 @@ export class PlaybackHandler {
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       console.log('✓ Ad completed: ' + displayName);
+      // Track this ad as played to prevent repetition
+      this.trackPlayedAd(video);
       onComplete();
     };
 
@@ -1196,6 +1277,8 @@ export class PlaybackHandler {
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       console.log('❌ Ad playback error: ' + displayName);
+      // Track this ad as played to prevent retrying immediately
+      this.trackPlayedAd(video);
       onComplete();
     };
   }
@@ -1207,7 +1290,14 @@ export class PlaybackHandler {
       return;
     }
 
-    const video = this.savedVideos[this.fillerIndex % this.savedVideos.length];
+    // Get a non-repeating filler video
+    const video = this.getNonRepeatingAd([], Date.now() + this.fillerIndex);
+    if (!video) {
+      console.log('⚠ No filler available, retrying schedule');
+      setTimeout(() => this.playNextScheduled(), 2000);
+      return;
+    }
+
     const displayName = video.filename || video.title || 'Filler';
     const videoId = video.filename || video.id;
 
@@ -1226,6 +1316,8 @@ export class PlaybackHandler {
         fillerData = await this.preloadAd(video);
       } catch (e) {
         console.log('❌ Failed to load filler, trying next');
+        // Track this filler as played to prevent retrying immediately
+        this.trackPlayedAd(video);
         this.fillerIndex++;
         this.playFiller();
         return;
