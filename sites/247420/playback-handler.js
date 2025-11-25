@@ -72,10 +72,21 @@ export class PlaybackHandler {
       if (video) {
         video.addEventListener('pause', (e) => {
           // Only resume if this is the active video and we didn't intentionally pause
-          if (index === this.activeVideoIndex && !this.showingStatic && video.src && video.readyState >= 2) {
+          // Also skip if we're in the middle of a transition
+          if (index === this.activeVideoIndex &&
+              !this.showingStatic &&
+              !this.isTransitioning &&
+              video.src &&
+              video.readyState >= 2) {
+            // Capture current state before async check
+            const currentActiveIndex = this.activeVideoIndex;
             setTimeout(() => {
-              // Double-check this is still the active video before resuming
-              if (index === this.activeVideoIndex && video.paused) {
+              // Triple-check: same active video, still paused, not transitioning, not showing static
+              if (index === this.activeVideoIndex &&
+                  index === currentActiveIndex &&
+                  video.paused &&
+                  !this.isTransitioning &&
+                  !this.showingStatic) {
                 console.log('📺 Active video unexpectedly paused, resuming');
                 video.play().catch(() => {});
               }
@@ -829,13 +840,24 @@ export class PlaybackHandler {
       preloadEl.src = this.getVideoUrl(video);
 
       let bufferCheckInterval = null;
+      let hasCompleted = false; // Guard against multiple completions
 
       const cleanup = () => {
-        if (bufferCheckInterval) clearInterval(bufferCheckInterval);
+        if (bufferCheckInterval) {
+          clearInterval(bufferCheckInterval);
+          bufferCheckInterval = null;
+        }
+        // Remove event listeners to prevent duplicate callbacks
+        preloadEl.removeEventListener('progress', checkBuffered);
+        preloadEl.removeEventListener('canplaythrough', checkBuffered);
       };
 
       const checkBuffered = () => {
+        // Guard against multiple completions
+        if (hasCompleted) return;
+
         if (this.isVideoBuffered(preloadEl, 30)) {
+          hasCompleted = true;
           cleanup();
           const bufferedSeconds = preloadEl.buffered.end(preloadEl.buffered.length - 1);
           console.log('✓ Pre-cached ' + Math.floor(bufferedSeconds) + 's of scheduled content - READY');
@@ -846,7 +868,7 @@ export class PlaybackHandler {
           };
           this.isPreloadingScheduled = false;
 
-          // Notify that scheduled video is ready
+          // Notify that scheduled video is ready (only once)
           if (onReady) {
             onReady();
           }
@@ -866,6 +888,8 @@ export class PlaybackHandler {
       preloadEl.addEventListener('canplaythrough', checkBuffered);
 
       preloadEl.addEventListener('error', (e) => {
+        if (hasCompleted) return; // Ignore errors after completion
+        hasCompleted = true;
         cleanup();
         console.log('⚠ Failed to pre-cache scheduled content: ' + displayName);
         this.preloadedScheduledVideo = null;
@@ -978,31 +1002,42 @@ export class PlaybackHandler {
         this.pendingScheduledSeekTime = syncPos.seekTime;
         this.waitingForScheduledPreload = true;
 
+        // Guard flag to prevent duplicate transitions
+        let preloadHandled = false;
+
         // Start pre-caching scheduled video
         const onScheduledReady = () => {
+          // Guard against multiple calls and race with timeout
+          if (preloadHandled || !this.waitingForScheduledPreload) {
+            console.log('⚠ Preload already handled, ignoring duplicate callback');
+            return;
+          }
+          preloadHandled = true;
+
           console.log('✓ Scheduled content pre-cached, starting playback');
           if (this.scheduledPreloadTimeout) {
             clearTimeout(this.scheduledPreloadTimeout);
             this.scheduledPreloadTimeout = null;
           }
-          if (this.waitingForScheduledPreload) {
-            this.waitingForScheduledPreload = false;
-            this.stopContinuousStatic();
-            this.showStatic(300);
-            setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
-          }
+          this.waitingForScheduledPreload = false;
+          this.stopContinuousStatic();
+          this.showStatic(300);
+          setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
         };
 
         // Set a timeout for giving up on scheduled content (30 seconds)
         this.scheduledPreloadTimeout = setTimeout(() => {
-          if (this.waitingForScheduledPreload) {
+          if (this.waitingForScheduledPreload && !preloadHandled) {
             console.log('⏱ Scheduled content preload timeout (30s), skipping to next');
+            preloadHandled = true;
             this.waitingForScheduledPreload = false;
             this.scheduledPreloadFailed = true;
           }
         }, 30000);
 
         this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
+          if (preloadHandled) return; // Already handled by timeout
+          preloadHandled = true;
           console.log('❌ Failed to pre-cache scheduled content:', e.message);
           if (this.scheduledPreloadTimeout) {
             clearTimeout(this.scheduledPreloadTimeout);
@@ -1074,30 +1109,41 @@ export class PlaybackHandler {
       this.pendingScheduledSeekTime = seekTime;
       this.waitingForScheduledPreload = true;
 
+      // Guard flag to prevent duplicate transitions
+      let preloadHandled = false;
+
       const onScheduledReady = () => {
+        // Guard against multiple calls and race with timeout
+        if (preloadHandled || !this.waitingForScheduledPreload) {
+          console.log('⚠ Preload already handled, ignoring duplicate callback');
+          return;
+        }
+        preloadHandled = true;
+
         console.log('✓ Scheduled content pre-cached, starting playback');
         if (this.scheduledPreloadTimeout) {
           clearTimeout(this.scheduledPreloadTimeout);
           this.scheduledPreloadTimeout = null;
         }
-        if (this.waitingForScheduledPreload) {
-          this.waitingForScheduledPreload = false;
-          this.stopContinuousStatic();
-          this.showStatic(300);
-          setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
-        }
+        this.waitingForScheduledPreload = false;
+        this.stopContinuousStatic();
+        this.showStatic(300);
+        setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
       };
 
       // Set a timeout for giving up on scheduled content (30 seconds)
       this.scheduledPreloadTimeout = setTimeout(() => {
-        if (this.waitingForScheduledPreload) {
+        if (this.waitingForScheduledPreload && !preloadHandled) {
           console.log('⏱ Scheduled content preload timeout (30s), skipping to next');
+          preloadHandled = true;
           this.waitingForScheduledPreload = false;
           this.scheduledPreloadFailed = true;
         }
       }, 30000);
 
       this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
+        if (preloadHandled) return; // Already handled by timeout
+        preloadHandled = true;
         console.log('❌ Failed to pre-cache scheduled content:', e.message);
         if (this.scheduledPreloadTimeout) {
           clearTimeout(this.scheduledPreloadTimeout);
