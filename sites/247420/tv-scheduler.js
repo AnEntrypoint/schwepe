@@ -5,11 +5,21 @@ export class TVScheduler {
   }
 
   getWeekNumber() {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 1);
-    const diff = now - start;
-    const oneDay = 1000 * 60 * 60 * 24;
-    return Math.floor(diff / oneDay / 7) + 1;
+    // Use UTC-based calculation aligned with schedule epoch for timezone consistency
+    // All viewers worldwide will get the same week number at the same moment
+    const scheduleEpoch = new Date('2025-11-14T00:00:00Z').getTime();
+    const now = Date.now(); // Always returns UTC milliseconds
+    const elapsed = now - scheduleEpoch;
+    const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+
+    // If before epoch, default to week 1
+    if (elapsed < 0) {
+      return 1;
+    }
+
+    // Calculate week number (1-indexed, wrapping at 78 weeks)
+    const weekNum = Math.floor(elapsed / oneWeek) + 1;
+    return ((weekNum - 1) % 78) + 1; // Wrap to 1-78 range
   }
 
   async loadScheduleForWeek(week) {
