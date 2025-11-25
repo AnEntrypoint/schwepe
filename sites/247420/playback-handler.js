@@ -466,12 +466,18 @@ export class PlaybackHandler {
     const seed = slotIndex * 1000 + breakIndex;
     const breakLength = Math.floor(this.seededRandom(seed) * 6) + 1;
     const ads = [];
+    const selectedIds = []; // Track selected ads to prevent duplicates within break
 
     for (let i = 0; i < breakLength; i++) {
       if (this.savedVideos.length > 0) {
         const adSeed = seed * 100 + i;
-        const adIndex = Math.floor(this.seededRandom(adSeed) * this.savedVideos.length);
-        ads.push(this.savedVideos[adIndex]);
+        // Use getNonRepeatingAd to avoid duplicates within break and recently played
+        const ad = this.getNonRepeatingAd(selectedIds, adSeed);
+        if (ad) {
+          const adId = ad.filename || ad.id;
+          selectedIds.push(adId);
+          ads.push(ad);
+        }
       }
     }
     return ads;
@@ -670,6 +676,12 @@ export class PlaybackHandler {
 
     this.stopContinuousStatic();
 
+    // Keep static visible until video starts playing
+    if (this.staticEl) {
+      this.staticEl.classList.add('active');
+      this.showingStatic = true;
+    }
+
     const nowPlayingEl = document.getElementById('nowPlaying');
     if (nowPlayingEl) {
       nowPlayingEl.textContent = displayName;
@@ -681,36 +693,65 @@ export class PlaybackHandler {
     this.setActiveVideo(this.queueIndex);
     const currentVideoEl = this.videoQueue[this.activeVideoIndex];
 
-     this.videoQueue.forEach((v, i) => {
-       if (i === this.activeVideoIndex) {
-         v.style.display = 'block';
-         v.muted = false; // Ensure active video is unmuted
-       } else {
-         v.style.display = 'none';
-         v.pause();
-         v.muted = true;
-       }
-     });
+    // Keep video hidden until it starts playing to prevent black screen
+    this.videoQueue.forEach((v, i) => {
+      if (i === this.activeVideoIndex) {
+        v.style.display = 'none'; // Start hidden, show when playing
+        v.muted = false;
+      } else {
+        v.style.display = 'none';
+        v.pause();
+        v.muted = true;
+      }
+    });
 
-     // Use the preloaded element's src
-     currentVideoEl.src = adToPlay.element.src;
+    // Use the preloaded element's src
+    currentVideoEl.src = adToPlay.element.src;
     currentVideoEl.load();
 
     let hasHandledCompletion = false; // Guard against duplicate handlers
 
+    // Add a timeout in case video never loads
+    const loadTimeout = setTimeout(() => {
+      if (!hasHandledCompletion) {
+        hasHandledCompletion = true;
+        console.log('❌ Ad load timeout, trying next');
+        this.trackPlayedAd(video);
+        this.fillerIndex++;
+        this.queueIndex++;
+        this.showStatic(300);
+        setTimeout(() => this.debouncedTransition(() => this.playAdWhileWaiting()), 350);
+      }
+    }, 10000);
+
     currentVideoEl.onloadeddata = () => {
-      this.safePlay(currentVideoEl, null, () => {
-        if (!hasHandledCompletion) {
-          hasHandledCompletion = true;
-          console.log('❌ Play failed, trying next ad');
-          this.fillerIndex++;
-          this.queueIndex++;
-          this.debouncedTransition(() => this.playAdWhileWaiting());
+      this.safePlay(currentVideoEl,
+        // On success - show video, hide static
+        () => {
+          clearTimeout(loadTimeout);
+          currentVideoEl.style.display = 'block';
+          if (this.staticEl) {
+            this.staticEl.classList.remove('active');
+            this.showingStatic = false;
+          }
+        },
+        // On failure
+        () => {
+          clearTimeout(loadTimeout);
+          if (!hasHandledCompletion) {
+            hasHandledCompletion = true;
+            console.log('❌ Play failed, trying next ad');
+            this.fillerIndex++;
+            this.queueIndex++;
+            this.showStatic(300);
+            setTimeout(() => this.debouncedTransition(() => this.playAdWhileWaiting()), 350);
+          }
         }
-      });
+      );
     };
 
     currentVideoEl.onended = () => {
+      clearTimeout(loadTimeout);
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       console.log('✓ Ad completed');
@@ -724,7 +765,7 @@ export class PlaybackHandler {
         console.log('⚠ Scheduled content failed to load, skipping to next');
         this.scheduledPreloadFailed = false; // Reset for next attempt
         this.showStatic(300);
-        this.debouncedTransition(() => this.skipToNextScheduled());
+        setTimeout(() => this.debouncedTransition(() => this.skipToNextScheduled()), 350);
         return;
       }
 
@@ -733,14 +774,16 @@ export class PlaybackHandler {
           this.preloadedScheduledVideo.index === this.scheduleIndex) {
         console.log('✓ Scheduled content ready, switching from ads');
         this.showStatic(300);
-        this.debouncedTransition(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime));
+        setTimeout(() => this.debouncedTransition(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime)), 350);
       } else {
         // Play another ad while still waiting
-        this.debouncedTransition(() => this.playAdWhileWaiting());
+        this.showStatic(300);
+        setTimeout(() => this.debouncedTransition(() => this.playAdWhileWaiting()), 350);
       }
     };
 
     currentVideoEl.onerror = () => {
+      clearTimeout(loadTimeout);
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       console.log('❌ Ad playback error, trying next');
@@ -748,7 +791,8 @@ export class PlaybackHandler {
       this.trackPlayedAd(video);
       this.fillerIndex++;
       this.queueIndex++;
-      this.debouncedTransition(() => this.playAdWhileWaiting());
+      this.showStatic(300);
+      setTimeout(() => this.debouncedTransition(() => this.playAdWhileWaiting()), 350);
     };
   }
 
@@ -1081,7 +1125,11 @@ export class PlaybackHandler {
     const displayName = video.show + ' - ' + video.episode;
     const preloadedEl = preloaded.element;
 
-    this.showStatic(300);
+    // Keep static visible until video starts playing
+    if (this.staticEl) {
+      this.staticEl.classList.add('active');
+      this.showingStatic = true;
+    }
 
     const nowPlayingEl = document.getElementById('nowPlaying');
     if (nowPlayingEl) {
@@ -1094,27 +1142,38 @@ export class PlaybackHandler {
     this.setActiveVideo(this.queueIndex);
     const currentVideoEl = this.videoQueue[this.activeVideoIndex];
 
-     // Copy the preloaded element's src to our rotation video element
-     currentVideoEl.src = preloadedEl.src;
-     currentVideoEl.load();
+    // Keep video hidden until it starts playing to prevent black screen
+    this.videoQueue.forEach((v, i) => {
+      if (i === this.activeVideoIndex) {
+        v.style.display = 'none'; // Start hidden, show when playing
+        v.muted = false;
+      } else {
+        v.style.display = 'none';
+        v.pause();
+        v.muted = true;
+        // Clear src of non-active videos to prevent audio bleed
+        if (v.src) {
+          v.src = '';
+          v.load();
+        }
+      }
+    });
 
-     this.videoQueue.forEach((v, i) => {
-       if (i === this.activeVideoIndex) {
-         v.style.display = 'block';
-         v.muted = false; // Ensure active video is unmuted
-       } else {
-         v.style.display = 'none';
-         v.pause();
-         v.muted = true;
-         // Clear src of non-active videos to prevent audio bleed
-         if (v.src) {
-           v.src = '';
-           v.load();
-         }
-       }
-     });
+    // Copy the preloaded element's src to our rotation video element
+    currentVideoEl.src = preloadedEl.src;
+    currentVideoEl.load();
 
     let hasHandledCompletion = false; // Guard against duplicate handlers
+
+    // Add a timeout in case video never loads
+    const loadTimeout = setTimeout(() => {
+      if (!hasHandledCompletion) {
+        hasHandledCompletion = true;
+        console.log('❌ Scheduled video load timeout: ' + displayName);
+        this.showStatic(300);
+        setTimeout(() => this.onScheduledFailed(), 350);
+      }
+    }, 10000);
 
     // Since it's preloaded, it should start playing almost immediately
     currentVideoEl.onloadeddata = () => {
@@ -1123,16 +1182,31 @@ export class PlaybackHandler {
         console.log('⏩ Seeking to ' + Math.floor(seekTime) + 's');
       }
 
-      this.safePlay(currentVideoEl, null, () => {
-        if (!hasHandledCompletion) {
-          hasHandledCompletion = true;
-          console.log('❌ Play failed, switching content');
-          this.onScheduledFailed();
+      this.safePlay(currentVideoEl,
+        // On success - show video, hide static
+        () => {
+          clearTimeout(loadTimeout);
+          currentVideoEl.style.display = 'block';
+          if (this.staticEl) {
+            this.staticEl.classList.remove('active');
+            this.showingStatic = false;
+          }
+        },
+        // On failure
+        () => {
+          clearTimeout(loadTimeout);
+          if (!hasHandledCompletion) {
+            hasHandledCompletion = true;
+            console.log('❌ Play failed, switching content');
+            this.showStatic(300);
+            setTimeout(() => this.onScheduledFailed(), 350);
+          }
         }
-      });
+      );
     };
 
     currentVideoEl.onended = () => {
+      clearTimeout(loadTimeout);
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       console.log('✓ Completed: ' + displayName);
@@ -1140,11 +1214,13 @@ export class PlaybackHandler {
     };
 
     currentVideoEl.onerror = () => {
+      clearTimeout(loadTimeout);
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       const errorType = currentVideoEl.error ? currentVideoEl.error.code : 'unknown';
       console.log('❌ Video error (' + errorType + '): ' + displayName);
-      this.onScheduledFailed();
+      this.showStatic(300);
+      setTimeout(() => this.onScheduledFailed(), 350);
     };
 
     // Clear the preloaded video after using it
@@ -1211,7 +1287,11 @@ export class PlaybackHandler {
         adData = await this.preloadAd(video);
       } catch (e) {
         console.log('❌ Failed to load ad, skipping: ' + displayName);
-        this.onCommercialComplete();
+        // Track as played to prevent retrying immediately
+        this.trackPlayedAd(video);
+        // Show static during transition to prevent black screen
+        this.showStatic(300);
+        setTimeout(() => this.onCommercialComplete(), 350);
         return;
       }
     }
@@ -1224,7 +1304,11 @@ export class PlaybackHandler {
     const video = adData.video;
     const displayName = video.filename || video.title || 'Ad';
 
-    this.showStatic(300);
+    // Keep static visible until video starts playing
+    if (this.staticEl) {
+      this.staticEl.classList.add('active');
+      this.showingStatic = true;
+    }
 
     const nowPlayingEl = document.getElementById('nowPlaying');
     if (nowPlayingEl) {
@@ -1237,34 +1321,61 @@ export class PlaybackHandler {
     this.setActiveVideo(this.queueIndex);
     const currentVideoEl = this.videoQueue[this.activeVideoIndex];
 
-     this.videoQueue.forEach((v, i) => {
-       if (i === this.activeVideoIndex) {
-         v.style.display = 'block';
-         v.muted = false; // Ensure active video is unmuted
-       } else {
-         v.style.display = 'none';
-         v.pause();
-         v.muted = true;
-       }
-     });
+    // Keep video hidden until it starts playing to prevent black screen
+    this.videoQueue.forEach((v, i) => {
+      if (i === this.activeVideoIndex) {
+        v.style.display = 'none'; // Start hidden, show when playing
+        v.muted = false;
+      } else {
+        v.style.display = 'none';
+        v.pause();
+        v.muted = true;
+      }
+    });
 
-     // Use the preloaded element's src
-     currentVideoEl.src = adData.element.src;
-     currentVideoEl.load();
+    // Use the preloaded element's src
+    currentVideoEl.src = adData.element.src;
+    currentVideoEl.load();
 
     let hasHandledCompletion = false; // Guard against duplicate handlers
 
+    // Add a timeout in case video never loads
+    const loadTimeout = setTimeout(() => {
+      if (!hasHandledCompletion) {
+        hasHandledCompletion = true;
+        console.log('❌ Ad load timeout: ' + displayName);
+        this.trackPlayedAd(video);
+        this.showStatic(300);
+        setTimeout(() => onComplete(), 350);
+      }
+    }, 10000);
+
     currentVideoEl.onloadeddata = () => {
-      this.safePlay(currentVideoEl, null, () => {
-        if (!hasHandledCompletion) {
-          hasHandledCompletion = true;
-          console.log('❌ Play failed');
-          onComplete();
+      this.safePlay(currentVideoEl,
+        // On success - show video, hide static
+        () => {
+          clearTimeout(loadTimeout);
+          currentVideoEl.style.display = 'block';
+          if (this.staticEl) {
+            this.staticEl.classList.remove('active');
+            this.showingStatic = false;
+          }
+        },
+        // On failure
+        () => {
+          clearTimeout(loadTimeout);
+          if (!hasHandledCompletion) {
+            hasHandledCompletion = true;
+            console.log('❌ Play failed');
+            this.showStatic(300);
+            setTimeout(() => onComplete(), 350);
+          }
         }
-      });
+      );
     };
 
     currentVideoEl.onended = () => {
+      clearTimeout(loadTimeout);
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       console.log('✓ Ad completed: ' + displayName);
@@ -1274,12 +1385,14 @@ export class PlaybackHandler {
     };
 
     currentVideoEl.onerror = () => {
+      clearTimeout(loadTimeout);
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       console.log('❌ Ad playback error: ' + displayName);
       // Track this ad as played to prevent retrying immediately
       this.trackPlayedAd(video);
-      onComplete();
+      this.showStatic(300);
+      setTimeout(() => onComplete(), 350);
     };
   }
 
@@ -1319,7 +1432,9 @@ export class PlaybackHandler {
         // Track this filler as played to prevent retrying immediately
         this.trackPlayedAd(video);
         this.fillerIndex++;
-        this.playFiller();
+        // Show static during transition to prevent black screen
+        this.showStatic(300);
+        setTimeout(() => this.playFiller(), 350);
         return;
       }
     }
