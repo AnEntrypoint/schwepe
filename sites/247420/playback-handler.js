@@ -1651,13 +1651,15 @@ export class PlaybackHandler {
     console.log('✓ Scheduled content completed');
     this.scheduledVideoEnded = true;
 
-    if (this.currentSlotBreaks.length > 0) {
-      this.currentBreakIndex = 0;
-      this.inCommercialBreak = true; // Set flag before playing commercial break
+    if (this.currentSlotBreaks.length > 0 && this.currentBreakIndex < this.currentSlotBreaks.length - 1) {
+      // More commercial breaks remaining in this slot
+      this.currentBreakIndex++;
+      this.inCommercialBreak = true;
       this.queueIndex++;
       this.showStatic(300);
       this.debouncedTransition(() => this.playCommercialBreak());
     } else {
+      // No more breaks, move to next slot
       this.moveToNextSlot();
     }
   }
