@@ -1681,8 +1681,16 @@ export class PlaybackHandler {
       this.queueIndex++;
       this.showStatic(300);
       this.debouncedTransition(() => this.playCommercialBreak());
+    } else if (!this.scheduledVideoEnded) {
+      // All breaks completed but scheduled video hasn't played yet
+      // This can happen when we sync into a commercial break and preloading is slow (Firefox)
+      console.log('📺 All commercial breaks done, starting scheduled content (may need buffering)');
+      this.queueIndex++;
+      this.showStatic(300);
+      // Use playNextScheduled which handles preloading and fallback
+      this.debouncedTransition(() => this.playNextScheduled(0));
     } else {
-      // All breaks completed, move to next slot
+      // All breaks completed and scheduled video already played, move to next slot
       console.log('✓ All ' + totalBreaks + ' commercial breaks completed, moving to next slot');
       this.moveToNextSlot();
     }
