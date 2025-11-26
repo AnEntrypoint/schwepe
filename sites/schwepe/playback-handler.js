@@ -15,6 +15,7 @@ export class PlaybackHandler {
     this.showingStatic = false;
     this.staticCanvas = document.getElementById('noiseCanvas');
     this.scheduleEpoch = new Date('2025-11-14T00:00:00Z').getTime();
+    this.clockOffset = 0;
     this.durationCache = this.loadDurationCache();
     this.DEFAULT_SLOT_DURATION = 1800000;
     this.currentSlotStartTime = 0;
@@ -49,6 +50,32 @@ export class PlaybackHandler {
     this.preventTabPausing(); // Prevent videos from pausing when tab changes
     this.setupAnalyticsTracking();
     this.setupUserInteractionTracking(); // Track first user interaction for autoplay
+  }
+
+  getSyncedTime() {
+    return Date.now() + this.clockOffset;
+  }
+
+  async syncTimeWithServer() {
+    try {
+      const before = Date.now();
+      const response = await fetch('/api/time');
+      const after = Date.now();
+      const data = await response.json();
+      
+      const roundTrip = after - before;
+      const serverTime = data.serverTime;
+      const estimatedServerTime = serverTime + (roundTrip / 2);
+      
+      this.clockOffset = estimatedServerTime - after;
+      
+      console.log('🕐 Time sync: offset=' + this.clockOffset + 'ms (RTT=' + roundTrip + 'ms)');
+      return true;
+    } catch (err) {
+      console.log('⚠ Time sync failed, using local time:', err.message);
+      this.clockOffset = 0;
+      return false;
+    }
   }
 
   preventTabPausing() {
@@ -322,6 +349,9 @@ export class PlaybackHandler {
 
   async loadVideos() {
     try {
+      // Sync time with server first for global schedule synchronization
+      await this.syncTimeWithServer();
+
       // Load TV scheduler (primary content source for production)
       const { TVScheduler } = await import('./tv-scheduler.js').catch(() => ({ TVScheduler: null }));
 
@@ -906,7 +936,7 @@ export class PlaybackHandler {
   }
 
    calculateSchedulePosition() {
-     const now = Date.now();
+     const now = this.getSyncedTime();
      const elapsed = now - this.scheduleEpoch;
      let totalDuration = 0;
      let targetIndex = 0;
@@ -991,7 +1021,7 @@ export class PlaybackHandler {
 
       console.log('⏱ Syncing to slot ' + syncPos.index + ' (' +
         Math.floor(syncPos.slotDuration / 60000) + 'min slot, ' +
-        Math.floor((Date.now() - this.scheduleEpoch - syncPos.slotStartTime) / 60000) + 'min in)');
+        Math.floor((this.getSyncedTime() - this.scheduleEpoch - syncPos.slotStartTime) / 60000) + 'min in)');
 
       if (this.currentSlotBreaks.length > 0) {
         console.log('📺 Slot has ' + this.currentSlotBreaks.length + ' commercial break(s)');
@@ -1587,7 +1617,7 @@ export class PlaybackHandler {
   }
 
   getRemainingSlotTime() {
-    const now = Date.now();
+    const now = this.getSyncedTime();
     const elapsed = now - this.scheduleEpoch;
     const slotElapsed = elapsed - this.currentSlotStartTime;
     const remaining = this.currentSlotDuration - slotElapsed;

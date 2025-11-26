@@ -29,6 +29,13 @@ const getDomainIdFromHost = (host) => {
   return '247420';
 };
 
+app.get('/api/time', (req, res) => {
+  res.json({ 
+    serverTime: Date.now(),
+    utc: new Date().toISOString()
+  });
+});
+
 app.get('/domain-config.json', (req, res) => {
   let host = req.headers.host || '';
   
