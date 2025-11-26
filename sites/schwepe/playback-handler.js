@@ -588,7 +588,7 @@ export class PlaybackHandler {
     return breaks;
   }
 
-  isVideoBuffered(videoEl, requiredSeconds = 30) {
+  isVideoBuffered(videoEl, requiredSeconds = 10) {
     if (!videoEl || !videoEl.buffered || videoEl.buffered.length === 0) {
       return false;
     }
@@ -862,7 +862,7 @@ export class PlaybackHandler {
     const video = this.scheduledVideos[videoIndex % this.scheduledVideos.length];
     const displayName = video.show + ' - ' + video.episode;
 
-    console.log('📺 Pre-caching scheduled content: ' + displayName + ' (need 30s buffered, will wait as long as needed)');
+    console.log('📺 Pre-caching scheduled content: ' + displayName + ' (need 10s buffered, will wait up to 30s)');
 
     return new Promise((resolve, reject) => {
       const preloadEl = document.createElement('video');
@@ -886,7 +886,7 @@ export class PlaybackHandler {
         // Guard against multiple completions
         if (hasCompleted) return;
 
-        if (this.isVideoBuffered(preloadEl, 30)) {
+        if (this.isVideoBuffered(preloadEl, 10)) {
           hasCompleted = true;
           cleanup();
           const bufferedSeconds = preloadEl.buffered.end(preloadEl.buffered.length - 1);
@@ -1126,7 +1126,7 @@ export class PlaybackHandler {
     // Check if we have a pre-cached version of this video
     if (this.preloadedScheduledVideo &&
         this.preloadedScheduledVideo.index === this.scheduleIndex &&
-        this.isVideoBuffered(this.preloadedScheduledVideo.element, 30)) {
+        this.isVideoBuffered(this.preloadedScheduledVideo.element, 10)) {
       console.log('✓ Using pre-cached video (instant playback ready)');
       this.playPreloadedScheduled(seekTime);
     } else {
