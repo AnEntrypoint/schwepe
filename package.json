@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "scripts": {
     "rebuild-videos": "node scripts/rebuild-video-list.js",
-    "build": "npm run rebuild-videos && node build-multi-site.js",
-    "build:multi-site": "npm run rebuild-videos && node build-multi-site.js",
+    "rebuild-images": "node scripts/rebuild-image-list.cjs",
+    "rebuild-media": "npm run rebuild-videos && npm run rebuild-images",
+    "build": "npm run rebuild-media && node build-multi-site.js",
+    "build:multi-site": "npm run rebuild-media && node build-multi-site.js",
     "start": "NODE_ENV=production node server.cjs",
     "start:dev": "NODE_ENV=development node server.cjs"
   },

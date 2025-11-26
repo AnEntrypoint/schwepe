@@ -15,6 +15,7 @@ export class PlaybackHandler {
     this.showingStatic = false;
     this.staticCanvas = document.getElementById('noiseCanvas');
     this.scheduleEpoch = new Date('2025-11-14T00:00:00Z').getTime();
+    this.clockOffset = 0;
     this.durationCache = this.loadDurationCache();
     this.DEFAULT_SLOT_DURATION = 1800000;
     this.currentSlotStartTime = 0;
@@ -49,6 +50,32 @@ export class PlaybackHandler {
     this.preventTabPausing(); // Prevent videos from pausing when tab changes
     this.setupAnalyticsTracking();
     this.setupUserInteractionTracking(); // Track first user interaction for autoplay
+  }
+
+  getSyncedTime() {
+    return Date.now() + this.clockOffset;
+  }
+
+  async syncTimeWithServer() {
+    try {
+      const before = Date.now();
+      const response = await fetch('/api/time');
+      const after = Date.now();
+      const data = await response.json();
+      
+      const roundTrip = after - before;
+      const serverTime = data.serverTime;
+      const estimatedServerTime = serverTime + (roundTrip / 2);
+      
+      this.clockOffset = estimatedServerTime - after;
+      
+      console.log('🕐 Time sync: offset=' + this.clockOffset + 'ms (RTT=' + roundTrip + 'ms)');
+      return true;
+    } catch (err) {
+      console.log('⚠ Time sync failed, using local time:', err.message);
+      this.clockOffset = 0;
+      return false;
+    }
   }
 
   preventTabPausing() {
@@ -322,6 +349,9 @@ export class PlaybackHandler {
 
   async loadVideos() {
     try {
+      // Sync time with server first for global schedule synchronization
+      await this.syncTimeWithServer();
+
       // Load TV scheduler (primary content source for production)
       const { TVScheduler } = await import('./tv-scheduler.js').catch(() => ({ TVScheduler: null }));
 
@@ -558,7 +588,7 @@ export class PlaybackHandler {
     return breaks;
   }
 
-  isVideoBuffered(videoEl, requiredSeconds = 30) {
+  isVideoBuffered(videoEl, requiredSeconds = 10) {
     if (!videoEl || !videoEl.buffered || videoEl.buffered.length === 0) {
       return false;
     }
@@ -832,7 +862,7 @@ export class PlaybackHandler {
     const video = this.scheduledVideos[videoIndex % this.scheduledVideos.length];
     const displayName = video.show + ' - ' + video.episode;
 
-    console.log('📺 Pre-caching scheduled content: ' + displayName + ' (need 30s buffered, will wait as long as needed)');
+    console.log('📺 Pre-caching scheduled content: ' + displayName + ' (need 10s buffered, will wait up to 30s)');
 
     return new Promise((resolve, reject) => {
       const preloadEl = document.createElement('video');
@@ -856,7 +886,7 @@ export class PlaybackHandler {
         // Guard against multiple completions
         if (hasCompleted) return;
 
-        if (this.isVideoBuffered(preloadEl, 30)) {
+        if (this.isVideoBuffered(preloadEl, 10)) {
           hasCompleted = true;
           cleanup();
           const bufferedSeconds = preloadEl.buffered.end(preloadEl.buffered.length - 1);
@@ -906,7 +936,7 @@ export class PlaybackHandler {
   }
 
    calculateSchedulePosition() {
-     const now = Date.now();
+     const now = this.getSyncedTime();
      const elapsed = now - this.scheduleEpoch;
      let totalDuration = 0;
      let targetIndex = 0;
@@ -991,7 +1021,7 @@ export class PlaybackHandler {
 
       console.log('⏱ Syncing to slot ' + syncPos.index + ' (' +
         Math.floor(syncPos.slotDuration / 60000) + 'min slot, ' +
-        Math.floor((Date.now() - this.scheduleEpoch - syncPos.slotStartTime) / 60000) + 'min in)');
+        Math.floor((this.getSyncedTime() - this.scheduleEpoch - syncPos.slotStartTime) / 60000) + 'min in)');
 
       if (this.currentSlotBreaks.length > 0) {
         console.log('📺 Slot has ' + this.currentSlotBreaks.length + ' commercial break(s)');
@@ -1096,7 +1126,7 @@ export class PlaybackHandler {
     // Check if we have a pre-cached version of this video
     if (this.preloadedScheduledVideo &&
         this.preloadedScheduledVideo.index === this.scheduleIndex &&
-        this.isVideoBuffered(this.preloadedScheduledVideo.element, 30)) {
+        this.isVideoBuffered(this.preloadedScheduledVideo.element, 10)) {
       console.log('✓ Using pre-cached video (instant playback ready)');
       this.playPreloadedScheduled(seekTime);
     } else {
@@ -1587,7 +1617,7 @@ export class PlaybackHandler {
   }
 
   getRemainingSlotTime() {
-    const now = Date.now();
+    const now = this.getSyncedTime();
     const elapsed = now - this.scheduleEpoch;
     const slotElapsed = elapsed - this.currentSlotStartTime;
     const remaining = this.currentSlotDuration - slotElapsed;
@@ -1621,13 +1651,15 @@ export class PlaybackHandler {
     console.log('✓ Scheduled content completed');
     this.scheduledVideoEnded = true;
 
-    if (this.currentSlotBreaks.length > 0) {
-      this.currentBreakIndex = 0;
-      this.inCommercialBreak = true; // Set flag before playing commercial break
+    if (this.currentSlotBreaks.length > 0 && this.currentBreakIndex < this.currentSlotBreaks.length - 1) {
+      // More commercial breaks remaining in this slot
+      this.currentBreakIndex++;
+      this.inCommercialBreak = true;
       this.queueIndex++;
       this.showStatic(300);
       this.debouncedTransition(() => this.playCommercialBreak());
     } else {
+      // No more breaks, move to next slot
       this.moveToNextSlot();
     }
   }
