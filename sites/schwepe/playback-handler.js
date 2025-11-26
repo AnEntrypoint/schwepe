@@ -1055,15 +1055,15 @@ export class PlaybackHandler {
           setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
         };
 
-        // Set a timeout for giving up on scheduled content (30 seconds)
+        // Set a timeout for giving up on scheduled content (60 seconds - longer to avoid skipping)
         this.scheduledPreloadTimeout = setTimeout(() => {
           if (this.waitingForScheduledPreload && !preloadHandled) {
-            console.log('⏱ Scheduled content preload timeout (30s), skipping to next');
+            console.log('⏱ Scheduled content preload timeout (60s), skipping to next');
             preloadHandled = true;
             this.waitingForScheduledPreload = false;
             this.scheduledPreloadFailed = true;
           }
-        }, 30000);
+        }, 60000);
 
         this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
           if (preloadHandled) return; // Already handled by timeout
@@ -1078,14 +1078,9 @@ export class PlaybackHandler {
           // Don't call playFiller() here - let the ad loop handle the transition
         });
 
-        // While pre-caching, play ads or static
-        if (this.savedVideos.length > 0) {
-          console.log('📺 Playing ads while pre-caching scheduled content...');
-          setTimeout(() => this.playAdWhileWaiting(), 1000);
-        } else {
-          console.log('📺 No ads available, showing static while pre-caching...');
-          this.playContinuousStatic();
-        }
+        // While pre-caching, show loading static
+        console.log('📺 Loading scheduled content...');
+        this.playContinuousStatic();
       } else {
         console.log('📺 Commercial break ' + (syncPos.breakIndex + 1) + '/' + this.currentSlotBreaks.length + ' in progress');
         this.playCommercialBreak();
