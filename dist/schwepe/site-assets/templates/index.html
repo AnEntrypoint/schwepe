@@ -10,23 +10,19 @@
     <meta name="keywords" content="{{ meta.keywords }}">
     <meta name="author" content="{{ meta.author }}">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://{{ domain }}/">
+    <link rel="canonical" content="https://{{ domain }}/">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://{{ domain }}/">
-    <meta property="og:title" content="Schwepe's Meme Dimension - 247420 Degen Energy & Meme Culture">
+    <meta property="og:title" content="Schwepe's Meme Dimension - 247420 Degen Energy">
     <meta property="og:description" content="{{ meta.description }}">
     <meta property="og:image" content="https://{{ domain }}{{ meta.ogImage }}">
-    <meta property="og:image:width" content="400">
-    <meta property="og:image:height" content="400">
-    <meta property="og:site_name" content="Schwepe's Meme Dimension">
-    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Schwepe's Universe">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="{{ meta.twitter }}">
-    <meta name="twitter:creator" content="{{ meta.twitter }}">
-    <meta name="twitter:title" content="Schwepe's Meme Dimension - 247420 Degen Energy & Meme Culture">
+    <meta name="twitter:title" content="Schwepe's Meme Dimension">
     <meta name="twitter:description" content="{{ meta.description }}">
     <meta name="twitter:image" content="https://{{ domain }}{{ meta.ogImage }}">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=VT323&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700;800;900&family=VT323&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="navbar.css">
     <style>
@@ -48,128 +44,447 @@
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+        
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
         }
-        header {
+        .bg-gradient {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 245, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 0, 110, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(255, 190, 11, 0.1) 0%, transparent 50%);
+            animation: gradientShift 20s ease infinite;
+        }
+        @keyframes gradientShift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-10%, -10%) rotate(180deg); }
+        }
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            animation: float 15s ease-in-out infinite;
+        }
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            background: var(--secondary);
+            top: 60%;
+            left: 80%;
+            animation-delay: 2s;
+        }
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            top: 80%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        .shape:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            background: var(--primary);
+            top: 40%;
+            left: 70%;
+            animation-delay: 1s;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        /* Content */
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            padding: 140px 20px 60px;
+            padding: 100px 20px 60px;
         }
-        h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, var(--secondary), var(--accent), var(--primary));
+        .hero-logo {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 30px;
+            border-radius: 50%;
+            border: 4px solid var(--primary);
+            box-shadow: 0 0 40px rgba(0, 245, 255, 0.4);
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(0, 245, 255, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 60px rgba(0, 245, 255, 0.6); }
+        }
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            background-size: 200% 200%;
+            animation: gradientFlow 4s ease infinite;
         }
-        .subtitle {
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .hero-subtitle {
             font-family: 'VT323', monospace;
-            font-size: 1.8rem;
+            font-size: clamp(1.2rem, 3vw, 2rem);
             color: var(--primary);
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
         }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin: 60px 0;
-        }
-        .feature-card {
-            background: rgba(0, 245, 255, 0.05);
-            border: 2px solid var(--primary);
-            border-radius: 15px;
-            padding: 40px 30px;
-            text-align: center;
-            text-decoration: none;
-            color: var(--text);
-            transition: all 0.3s ease;
-        }
-        .feature-card:hover {
-            transform: translateY(-5px);
-            background: rgba(0, 245, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
-        }
-        .feature-icon {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            display: block;
-        }
-        .feature-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-        .feature-card p {
-            font-size: 1.1rem;
-            line-height: 1.6;
+        .hero-description {
+            font-size: 1.2rem;
             color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin: 0 auto 50px;
+            line-height: 1.8;
         }
-        .cta-section {
-            text-align: center;
-            padding: 80px 20px;
-            margin: 60px 0;
-        }
-        .cta-section p {
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-            color: var(--text);
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .cta-button {
-            display: inline-block;
-            padding: 18px 45px;
-            background: var(--primary);
-            color: var(--bg-dark);
-            border: none;
-            border-radius: 50px;
-            font-size: 1.2rem;
+            padding: 18px 40px;
+            font-size: 1.1rem;
             font-weight: 700;
-            cursor: pointer;
+            border-radius: 50px;
             text-decoration: none;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .cta-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
             box-shadow: 0 5px 20px rgba(0, 245, 255, 0.4);
         }
-        .cta-button:hover {
+        .cta-primary:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 30px rgba(0, 245, 255, 0.6);
-            background: var(--accent);
+        }
+        .cta-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        .cta-secondary:hover {
+            background: rgba(0, 245, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 80px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #888;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(0, 245, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 245, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(0, 245, 255, 0.3);
+        }
+        .feature-icon {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            display: inline-block;
+            transition: transform 0.4s ease;
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+        .feature-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        .feature-description {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        .feature-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+            font-weight: 600;
+            text-decoration: none;
+            transition: gap 0.3s;
+        }
+        .feature-link:hover {
+            gap: 12px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: rgba(0, 245, 255, 0.05);
+            padding: 60px 20px;
+            margin: 80px 0;
+        }
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+        .stat-item {
+            padding: 20px;
+        }
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            font-family: 'VT323', monospace;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .stat-label {
+            font-size: 1.1rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(0, 245, 255, 0.2);
+            margin-top: 80px;
+        }
+        .footer-text {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .footer-link {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 120px 20px 40px;
+            }
+            .hero-logo {
+                width: 150px;
+                height: 150px;
+            }
+            .cta-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 <body>
-    <div id="navbar-container"></div>
-    <div class="container">
-        <header>
-            <h1>Schwepe's Funky Universe</h1>
-            <p class="subtitle">Where 247420 Energy Meets Pure Meme Magic</p>
-        </header>
-        <div class="features">
-            <a href="lore.html" class="feature-card">
-                <div class="feature-icon">📜</div>
-                <h3>Sacred Texts</h3>
-                <p>Explore the ancient protocols of our digital realm and discover the creative alchemy that fuels our collective consciousness.</p>
-            </a>
-            <a href="gallery.html" class="feature-card">
-                <div class="feature-icon">🎨</div>
-                <h3>Creation Gallery</h3>
-                <p>Browse our evolving collection of games, music, art, memes, and digital creations that define our creative community.</p>
-            </a>
-            <a href="videos-thread.html" class="feature-card">
-                <div class="feature-icon">📺</div>
-                <h3>Visual Archives</h3>
-                <p>Experience the trippiest visual journeys and chaotic collaborations from our community's collective mind.</p>
-            </a>
-        </div>
-        <div class="cta-section">
-            <p>Ready to elevate your consciousness?</p>
-            <a href="lore.html" class="cta-button">Enter the Universe</a>
+    <div class="animated-bg">
+        <div class="bg-gradient"></div>
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
         </div>
     </div>
+
+    <div id="navbar-container"></div>
+
+    <div class="content">
+        <section class="hero">
+            <img src="logo.gif" alt="Schwepe Logo" class="hero-logo">
+            <h1 class="hero-title">SCHWEPE</h1>
+            <p class="hero-subtitle">[ 247420 DEGEN ENERGY MEETS PURE MEME MAGIC ]</p>
+            <p class="hero-description">
+                The ultimate digital universe where creativity, chaos, and community collide. 
+                Watch endless streams, explore the gallery, and immerse yourself in the schwepe experience.
+            </p>
+            <div class="cta-buttons">
+                <a href="videos-thread.html" class="cta-button cta-primary">
+                    <i class="fas fa-tv"></i>
+                    Watch Schwelevision
+                </a>
+                <a href="gallery.html" class="cta-button cta-secondary">
+                    <i class="fas fa-images"></i>
+                    Explore Gallery
+                </a>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="stat-shows">402</div>
+                    <div class="stat-label">TV Shows</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">78</div>
+                    <div class="stat-label">Weeks of Content</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="stat-images">281</div>
+                    <div class="stat-label">Gallery Images</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Broadcasting</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="section-header">
+                <h2 class="section-title">What's Inside</h2>
+                <p class="section-subtitle">Explore the schwepe universe</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📺</div>
+                    <h3 class="feature-title">Schwelevision TV</h3>
+                    <p class="feature-description">
+                        24/7 retro TV broadcasting with globally synchronized playback. 
+                        Watch archive.org content with commercial breaks, just like real television.
+                    </p>
+                    <a href="videos-thread.html" class="feature-link">
+                        Start Watching <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🖼️</div>
+                    <h3 class="feature-title">Image Gallery</h3>
+                    <p class="feature-description">
+                        Browse 281 saved images from the schwepe community. 
+                        Memes, art, and digital creations all in one place.
+                    </p>
+                    <a href="gallery.html" class="feature-link">
+                        View Gallery <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3 class="feature-title">TV Guide</h3>
+                    <p class="feature-description">
+                        Old-school TV schedule showing what's playing now and what's coming up next. 
+                        78 weeks of programming cycling continuously.
+                    </p>
+                    <a href="javascript:void(0)" onclick="document.getElementById('schedule-btn').click()" class="feature-link">
+                        View Schedule <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p class="footer-text">
+                Made with 💙 by the schwepe community | 
+                <a href="https://github.com/AnEntrypoint/schwepe" class="footer-link" target="_blank">View Source</a>
+            </p>
+        </footer>
+    </div>
+
     <script type="module">
     async function loadNavbar() {
         try {
@@ -179,6 +494,7 @@
             const script = document.createElement('script');
             script.src = 'navbar.js';
             document.body.appendChild(script);
+            
             const navLinks = document.querySelectorAll('#navbar-container a');
             navLinks.forEach(link => {
                 if (link.href.includes('index.html') || link.getAttribute('href') === '/') {
@@ -189,6 +505,48 @@
             console.error('Error loading navbar:', error);
         }
     }
+
+    // Animate stats on scroll
+    const observerOptions = {
+        threshold: 0.5
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateStats();
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    const statsSection = document.querySelector('.stats-section');
+    if (statsSection) {
+        observer.observe(statsSection);
+    }
+
+    function animateStats() {
+        const animateNumber = (element, target) => {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 30);
+        };
+
+        const showsStat = document.getElementById('stat-shows');
+        const imagesStat = document.getElementById('stat-images');
+        
+        if (showsStat) animateNumber(showsStat, 402);
+        if (imagesStat) animateNumber(imagesStat, 281);
+    }
+
     document.addEventListener('DOMContentLoaded', loadNavbar);
     </script>
 </body>
