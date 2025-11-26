@@ -1670,25 +1670,31 @@ export class PlaybackHandler {
     this.currentBreakIndex++;
 
     // If scheduled content hasn't played yet (synced into commercial break),
-    // play the scheduled content instead of continuing to next break
-    if (!this.scheduledVideoEnded && this.preloadedScheduledVideo) {
-      console.log('📺 Scheduled content ready, switching from commercial break');
-      this.queueIndex++;
-      this.showStatic(300);
-      this.debouncedTransition(() => this.playPreloadedScheduled(0));
-    } else if (this.currentBreakIndex < this.currentSlotBreaks.length) {
+    // ALWAYS try to play scheduled content - don't continue to more breaks
+    // This is critical for Firefox where preloading is slower
+    if (!this.scheduledVideoEnded) {
+      if (this.preloadedScheduledVideo) {
+        console.log('📺 Scheduled content ready, switching from commercial break');
+        this.queueIndex++;
+        this.showStatic(300);
+        this.debouncedTransition(() => this.playPreloadedScheduled(0));
+      } else {
+        // Scheduled content not preloaded yet (common in Firefox)
+        // Use playNextScheduled which handles preloading with fallback ads
+        console.log('📺 Scheduled content not preloaded yet, starting playback (will buffer with ads if needed)');
+        this.queueIndex++;
+        this.showStatic(300);
+        this.debouncedTransition(() => this.playNextScheduled(0));
+      }
+      return;
+    }
+
+    // Scheduled content has already played, continue with remaining breaks
+    if (this.currentBreakIndex < this.currentSlotBreaks.length) {
       console.log('📺 Next commercial break in slot (' + (this.currentBreakIndex + 1) + '/' + totalBreaks + ')');
       this.queueIndex++;
       this.showStatic(300);
       this.debouncedTransition(() => this.playCommercialBreak());
-    } else if (!this.scheduledVideoEnded) {
-      // All breaks completed but scheduled video hasn't played yet
-      // This can happen when we sync into a commercial break and preloading is slow (Firefox)
-      console.log('📺 All commercial breaks done, starting scheduled content (may need buffering)');
-      this.queueIndex++;
-      this.showStatic(300);
-      // Use playNextScheduled which handles preloading and fallback
-      this.debouncedTransition(() => this.playNextScheduled(0));
     } else {
       // All breaks completed and scheduled video already played, move to next slot
       console.log('✓ All ' + totalBreaks + ' commercial breaks completed, moving to next slot');
