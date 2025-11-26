@@ -14,9 +14,7 @@
   "templates": {
     "index": "index.html",
     "gallery": "gallery.html",
-    "lore": "lore.html",
-    "videos": "videos-thread.html",
-    "images": "images-thread.html"
+    "videos": "videos-thread.html"
   },
   "schedule": {
     "file": "schedule.json",
