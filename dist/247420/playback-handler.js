@@ -469,7 +469,31 @@ export class PlaybackHandler {
   }
 
   /**
+   * Get a synchronized ad for commercial breaks - purely deterministic
+   * Ignores recently played history to ensure all viewers see same ads
+   * @param {Array} excludeIds - Array of video IDs to exclude (for current break)
+   * @param {number} seed - Seed for deterministic selection
+   * @returns {Object|null} - The selected video or null if none available
+   */
+  getSynchronizedAd(excludeIds = [], seed = Date.now()) {
+    if (this.savedVideos.length === 0) return null;
+
+    const availableAds = this.savedVideos.filter(video => {
+      const videoId = video.filename || video.id;
+      return !excludeIds.includes(videoId);
+    });
+
+    if (availableAds.length === 0) {
+      return this.savedVideos[Math.floor(this.seededRandom(seed) * this.savedVideos.length)];
+    }
+
+    const index = Math.floor(this.seededRandom(seed) * availableAds.length);
+    return availableAds[index];
+  }
+
+  /**
    * Get a non-repeating ad, avoiding recently played and already selected ads
+   * Used for non-synchronized filler content
    * @param {Array} excludeIds - Array of video IDs to exclude (for current break)
    * @param {number} seed - Seed for deterministic selection
    * @returns {Object|null} - The selected video or null if none available
@@ -512,8 +536,8 @@ export class PlaybackHandler {
     for (let i = 0; i < breakLength; i++) {
       if (this.savedVideos.length > 0) {
         const adSeed = seed * 100 + i;
-        // Use getNonRepeatingAd to avoid duplicates within break and recently played
-        const ad = this.getNonRepeatingAd(selectedIds, adSeed);
+        // Use synchronized ad selection for global sync (ignores recently played)
+        const ad = this.getSynchronizedAd(selectedIds, adSeed);
         if (ad) {
           const adId = ad.filename || ad.id;
           selectedIds.push(adId);
@@ -552,8 +576,8 @@ export class PlaybackHandler {
       for (let j = 0; j < thisBreakAdCount; j++) {
         if (this.savedVideos.length > 0) {
           const adSeed = seed * 100 + i * 10 + j;
-          // Use getNonRepeatingAd to avoid duplicates within slot AND recently played
-          const ad = this.getNonRepeatingAd(slotSelectedAdIds, adSeed);
+          // Use synchronized ad selection for global sync (ignores recently played)
+          const ad = this.getSynchronizedAd(slotSelectedAdIds, adSeed);
           if (ad) {
             const adId = ad.filename || ad.id;
             slotSelectedAdIds.push(adId);
