@@ -32,7 +32,6 @@ export class PlaybackHandler {
     this.waitingForScheduledPreload = false;
     this.pendingScheduledSeekTime = 0;
     this.continuousStaticInterval = null;
-    this.currentlyPlayingAd = null;
     this.scheduledPreloadFailed = false; // Track if we should give up on scheduled content
     this.scheduledPreloadTimeout = null; // Timeout for giving up on scheduled content
     this.normalizedVolume = 0.7; // Normalized volume level for all videos
@@ -684,193 +683,6 @@ export class PlaybackHandler {
     }
   }
 
-  async playAdWhileWaiting() {
-    // Play a fully-loaded ad while waiting for scheduled content to pre-cache
-    if (this.savedVideos.length === 0) {
-      this.playContinuousStatic();
-      return;
-    }
-
-    // Get a non-repeating ad
-    const video = this.getNonRepeatingAd([], Date.now() + this.fillerIndex);
-    if (!video) {
-      console.log('⚠ No ads available');
-      this.playContinuousStatic();
-      return;
-    }
-
-    const videoId = video.filename || video.id;
-    let adToPlay = null;
-
-    if (this.preloadedAds.has(videoId)) {
-      adToPlay = this.preloadedAds.get(videoId);
-      console.log('📺 [AD WHILE CACHING]: Using preloaded ad');
-    } else {
-      // Try to fully load the ad
-      console.log('📺 [AD WHILE CACHING]: Loading ad...');
-      try {
-        adToPlay = await this.preloadAd(video);
-      } catch (e) {
-        console.log('⚠ Failed to load ad, trying next...');
-        this.fillerIndex++;
-        // Mark this ad as played so we don't try it again immediately
-        this.trackPlayedAd(video);
-        // Try next ad (limit retries to prevent infinite loop)
-        if (this.fillerIndex < this.savedVideos.length * 2) {
-          this.playAdWhileWaiting();
-        } else {
-          console.log('⚠ All ads failed, giving up on scheduled content');
-          this.scheduledPreloadFailed = true;
-          this.showStatic(300);
-          setTimeout(() => this.skipToNextScheduled(), 500);
-        }
-        return;
-      }
-    }
-
-    if (!adToPlay) {
-      this.playContinuousStatic();
-      return;
-    }
-
-    this.currentlyPlayingAd = adToPlay;
-    const adVideo = adToPlay.video;
-    const displayName = adVideo.filename || adVideo.title || 'Ad';
-
-    console.log('📺 [AD WHILE CACHING]: ' + displayName);
-
-    this.stopContinuousStatic();
-
-    // Keep static visible until video starts playing
-    if (this.staticEl) {
-      this.staticEl.classList.add('active');
-      this.showingStatic = true;
-    }
-
-    const nowPlayingEl = document.getElementById('nowPlaying');
-    if (nowPlayingEl) {
-      nowPlayingEl.textContent = displayName;
-      nowPlayingEl.style.display = 'block';
-      nowPlayingEl.style.color = '#00ffff';
-    }
-
-    // Set the active video and stop all others to prevent audio overlap
-    this.setActiveVideo(this.queueIndex);
-    const currentVideoEl = this.videoQueue[this.activeVideoIndex];
-
-    // Keep video hidden until it starts playing to prevent black screen
-    this.videoQueue.forEach((v, i) => {
-      if (i === this.activeVideoIndex) {
-        v.style.display = 'none'; // Start hidden, show when playing
-        v.muted = false;
-      } else {
-        v.style.display = 'none';
-        v.pause();
-        v.muted = true;
-      }
-    });
-
-    // Use the preloaded element's src
-    currentVideoEl.src = adToPlay.element.src;
-    currentVideoEl.load();
-
-    let hasHandledCompletion = false; // Guard against duplicate handlers
-
-    // Add a timeout in case video never loads
-    const loadTimeout = setTimeout(() => {
-      if (!hasHandledCompletion) {
-        hasHandledCompletion = true;
-        console.log('❌ Ad load timeout, trying next');
-        this.trackPlayedAd(video);
-        this.fillerIndex++;
-        this.queueIndex++;
-        this.showStatic(300);
-        setTimeout(() => this.debouncedTransition(() => this.playAdWhileWaiting()), 350);
-      }
-    }, 10000);
-
-    currentVideoEl.onloadeddata = () => {
-      this.safePlay(currentVideoEl,
-        // On success - show video, hide static
-        () => {
-          clearTimeout(loadTimeout);
-          currentVideoEl.style.display = 'block';
-          if (this.staticEl) {
-            this.staticEl.classList.remove('active');
-            this.showingStatic = false;
-          }
-        },
-        // On failure
-        () => {
-          clearTimeout(loadTimeout);
-          if (!hasHandledCompletion) {
-            hasHandledCompletion = true;
-            console.log('❌ Play failed, trying next ad');
-            this.fillerIndex++;
-            this.queueIndex++;
-            this.showStatic(300);
-            setTimeout(() => this.debouncedTransition(() => this.playAdWhileWaiting()), 350);
-          }
-        }
-      );
-    };
-
-    currentVideoEl.onended = () => {
-      clearTimeout(loadTimeout);
-      if (hasHandledCompletion) return;
-      hasHandledCompletion = true;
-      console.log('✓ Ad completed');
-      // Track this ad as played to prevent repetition
-      this.trackPlayedAd(video);
-      this.fillerIndex++;
-      this.queueIndex++;
-
-      // Check if we should give up on scheduled content
-      if (this.scheduledPreloadFailed) {
-        console.log('⚠ Scheduled content failed to load, skipping to next');
-        this.scheduledPreloadFailed = false; // Reset for next attempt
-        this.showStatic(300);
-        setTimeout(() => this.debouncedTransition(() => this.skipToNextScheduled()), 350);
-        return;
-      }
-
-      // Check if scheduled video is ready
-      if (this.preloadedScheduledVideo &&
-          this.preloadedScheduledVideo.index === this.scheduleIndex) {
-        console.log('✓ Scheduled content ready, switching from ads');
-        this.showStatic(300);
-        setTimeout(() => this.debouncedTransition(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime)), 350);
-      } else {
-        // Play another ad while still waiting
-        this.showStatic(300);
-        setTimeout(() => this.debouncedTransition(() => this.playAdWhileWaiting()), 350);
-      }
-    };
-
-    currentVideoEl.onerror = () => {
-      clearTimeout(loadTimeout);
-      if (hasHandledCompletion) return;
-      hasHandledCompletion = true;
-      console.log('❌ Ad playback error, trying next');
-      // Track this ad as played to prevent retrying immediately
-      this.trackPlayedAd(video);
-      this.fillerIndex++;
-      this.queueIndex++;
-      this.showStatic(300);
-      setTimeout(() => this.debouncedTransition(() => this.playAdWhileWaiting()), 350);
-    };
-  }
-
-  skipToNextScheduled() {
-    // Skip the current scheduled video and try the next one
-    console.log('⏭ Skipping to next scheduled video');
-    this.scheduleIndex = (this.scheduleIndex + 1) % this.scheduledVideos.length;
-    this.preloadedScheduledVideo = null;
-    this.isPreloadingScheduled = false;
-    this.waitingForScheduledPreload = false;
-    this.moveToNextSlot();
-  }
-
   async preloadScheduledVideo(videoIndex, onReady = null) {
     if (this.isPreloadingScheduled) {
       console.log('⚠ Already preloading scheduled video');
@@ -1051,64 +863,60 @@ export class PlaybackHandler {
         console.log('📺 Slot has ' + this.currentSlotBreaks.length + ' commercial break(s)');
       }
 
-      if (!syncPos.inCommercialBreak) {
-        console.log('📺 Should play scheduled content');
-        this.pendingScheduledSeekTime = syncPos.seekTime;
-        this.waitingForScheduledPreload = true;
+      // At startup, always go straight to scheduled content (skip commercials)
+      console.log('📺 Starting playback of scheduled content');
+      this.pendingScheduledSeekTime = syncPos.seekTime;
+      this.waitingForScheduledPreload = true;
 
-        // Guard flag to prevent duplicate transitions
-        let preloadHandled = false;
+      // Guard flag to prevent duplicate transitions
+      let preloadHandled = false;
 
-        // Start pre-caching scheduled video
-        const onScheduledReady = () => {
-          // Guard against multiple calls and race with timeout
-          if (preloadHandled || !this.waitingForScheduledPreload) {
-            console.log('⚠ Preload already handled, ignoring duplicate callback');
-            return;
-          }
+      // Start pre-caching scheduled video
+      const onScheduledReady = () => {
+        // Guard against multiple calls and race with timeout
+        if (preloadHandled || !this.waitingForScheduledPreload) {
+          console.log('⚠ Preload already handled, ignoring duplicate callback');
+          return;
+        }
+        preloadHandled = true;
+
+        console.log('✓ Scheduled content pre-cached, starting playback');
+        if (this.scheduledPreloadTimeout) {
+          clearTimeout(this.scheduledPreloadTimeout);
+          this.scheduledPreloadTimeout = null;
+        }
+        this.waitingForScheduledPreload = false;
+        this.stopContinuousStatic();
+        this.showStatic(300);
+        setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
+      };
+
+      // Set a timeout for giving up on scheduled content (60 seconds - longer to avoid skipping)
+      this.scheduledPreloadTimeout = setTimeout(() => {
+        if (this.waitingForScheduledPreload && !preloadHandled) {
+          console.log('⏱ Scheduled content preload timeout (60s), skipping to next');
           preloadHandled = true;
-
-          console.log('✓ Scheduled content pre-cached, starting playback');
-          if (this.scheduledPreloadTimeout) {
-            clearTimeout(this.scheduledPreloadTimeout);
-            this.scheduledPreloadTimeout = null;
-          }
           this.waitingForScheduledPreload = false;
-          this.stopContinuousStatic();
-          this.showStatic(300);
-          setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
-        };
+          this.scheduledPreloadFailed = true;
+        }
+      }, 60000);
 
-        // Set a timeout for giving up on scheduled content (60 seconds - longer to avoid skipping)
-        this.scheduledPreloadTimeout = setTimeout(() => {
-          if (this.waitingForScheduledPreload && !preloadHandled) {
-            console.log('⏱ Scheduled content preload timeout (60s), skipping to next');
-            preloadHandled = true;
-            this.waitingForScheduledPreload = false;
-            this.scheduledPreloadFailed = true;
-          }
-        }, 60000);
+      this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
+        if (preloadHandled) return; // Already handled by timeout
+        preloadHandled = true;
+        console.log('❌ Failed to pre-cache scheduled content:', e.message);
+        if (this.scheduledPreloadTimeout) {
+          clearTimeout(this.scheduledPreloadTimeout);
+          this.scheduledPreloadTimeout = null;
+        }
+        this.waitingForScheduledPreload = false;
+        this.scheduledPreloadFailed = true; // Signal to ad loop that we've given up
+        // Don't call playFiller() here - let the ad loop handle the transition
+      });
 
-        this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
-          if (preloadHandled) return; // Already handled by timeout
-          preloadHandled = true;
-          console.log('❌ Failed to pre-cache scheduled content:', e.message);
-          if (this.scheduledPreloadTimeout) {
-            clearTimeout(this.scheduledPreloadTimeout);
-            this.scheduledPreloadTimeout = null;
-          }
-          this.waitingForScheduledPreload = false;
-          this.scheduledPreloadFailed = true; // Signal to ad loop that we've given up
-          // Don't call playFiller() here - let the ad loop handle the transition
-        });
-
-        // While pre-caching, show loading static
-        console.log('📺 Loading scheduled content...');
-        this.playContinuousStatic();
-      } else {
-        console.log('📺 Commercial break ' + (syncPos.breakIndex + 1) + '/' + this.currentSlotBreaks.length + ' in progress');
-        this.playCommercialBreak();
-      }
+      // While pre-caching, show loading static
+      console.log('📺 Loading scheduled content...');
+      this.playContinuousStatic();
     } else if (this.savedVideos.length > 0) {
       console.log('No schedule available, playing filler content only');
       this.playFiller();
@@ -1203,14 +1011,9 @@ export class PlaybackHandler {
         // Don't call onScheduledFailed() here - let the ad loop handle the transition
       });
 
-      // While pre-caching, play ads or static
-      if (this.savedVideos.length > 0) {
-        console.log('📺 Playing ads while pre-caching...');
-        setTimeout(() => this.playAdWhileWaiting(), 500);
-      } else {
-        console.log('📺 No ads available, showing static while pre-caching...');
-        this.playContinuousStatic();
-      }
+      // While pre-caching, show static (simplified behavior)
+      console.log('📺 Showing static while pre-caching scheduled content...');
+      this.playContinuousStatic();
     }
   }
 
