@@ -1456,7 +1456,7 @@ export class PlaybackHandler {
 
     const video = this.scheduledVideos[this.scheduleIndex];
     const videoId = video.id || video.u;
-    const videoDuration = this.durationCache[videoId] || 0;
+    const videoDuration = this.durationCache[videoId] || 1200000;
     this.currentSlotBreaks = this.calculateSlotCommercialBreaks(this.scheduleIndex, videoDuration, this.currentSlotDuration);
     this.currentBreakIndex = 0;
 
