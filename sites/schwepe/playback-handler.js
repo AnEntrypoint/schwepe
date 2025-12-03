@@ -891,15 +891,15 @@ export class PlaybackHandler {
         setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
       };
 
-      // Set a timeout for giving up on scheduled content (60 seconds - longer to avoid skipping)
+      // Set a timeout for giving up on scheduled content (5 minutes - allow slow streams to load)
       this.scheduledPreloadTimeout = setTimeout(() => {
         if (this.waitingForScheduledPreload && !preloadHandled) {
-          console.log('⏱ Scheduled content preload timeout (60s), skipping to next');
+          console.log('⏱ Scheduled content preload timeout (5min), skipping to next');
           preloadHandled = true;
           this.waitingForScheduledPreload = false;
           this.scheduledPreloadFailed = true;
         }
-      }, 60000);
+      }, 300000);
 
       this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
         if (preloadHandled) return; // Already handled by timeout
@@ -988,15 +988,15 @@ export class PlaybackHandler {
         setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
       };
 
-      // Set a timeout for giving up on scheduled content (30 seconds)
+      // Set a timeout for giving up on scheduled content (5 minutes - allow slow streams to load)
       this.scheduledPreloadTimeout = setTimeout(() => {
         if (this.waitingForScheduledPreload && !preloadHandled) {
-          console.log('⏱ Scheduled content preload timeout (30s), skipping to next');
+          console.log('⏱ Scheduled content preload timeout (5min), skipping to next');
           preloadHandled = true;
           this.waitingForScheduledPreload = false;
           this.scheduledPreloadFailed = true;
         }
-      }, 30000);
+      }, 300000);
 
       this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
         if (preloadHandled) return; // Already handled by timeout
