@@ -698,7 +698,7 @@ export class PlaybackHandler {
     const video = this.scheduledVideos[videoIndex % this.scheduledVideos.length];
     const displayName = video.show + ' - ' + video.episode;
 
-    console.log('📺 Pre-caching scheduled content: ' + displayName + ' (need 10s buffered, will wait up to 30s)');
+    console.log('📺 Loading scheduled content: ' + displayName);
 
     return new Promise((resolve, reject) => {
       const preloadEl = document.createElement('video');
@@ -706,27 +706,33 @@ export class PlaybackHandler {
       preloadEl.src = this.getVideoUrl(video);
 
       let bufferCheckInterval = null;
-      let hasCompleted = false; // Guard against multiple completions
+      let hasCompleted = false;
+      let hasStartedPlaying = false;
 
       const cleanup = () => {
         if (bufferCheckInterval) {
           clearInterval(bufferCheckInterval);
           bufferCheckInterval = null;
         }
-        // Remove event listeners to prevent duplicate callbacks
-        preloadEl.removeEventListener('progress', checkBuffered);
-        preloadEl.removeEventListener('canplaythrough', checkBuffered);
+        preloadEl.removeEventListener('progress', checkBuffer);
+        preloadEl.removeEventListener('canplaythrough', checkBuffer);
+        preloadEl.removeEventListener('playing', onPlaying);
       };
 
-      const checkBuffered = () => {
-        // Guard against multiple completions
+      const onPlaying = () => {
+        hasStartedPlaying = true;
+      };
+
+      const checkBuffer = () => {
         if (hasCompleted) return;
 
-        if (this.isVideoBuffered(preloadEl, 10)) {
+        const bufferedSeconds = preloadEl.buffered.length > 0 ?
+          preloadEl.buffered.end(preloadEl.buffered.length - 1) : 0;
+
+        if (bufferedSeconds > 3 && !hasStartedPlaying) {
           hasCompleted = true;
           cleanup();
-          const bufferedSeconds = preloadEl.buffered.end(preloadEl.buffered.length - 1);
-          console.log('✓ Pre-cached ' + Math.floor(bufferedSeconds) + 's of scheduled content - READY');
+          console.log('✓ Buffered ' + Math.floor(bufferedSeconds) + 's - starting playback');
           this.preloadedScheduledVideo = {
             element: preloadEl,
             video: video,
@@ -734,7 +740,6 @@ export class PlaybackHandler {
           };
           this.isPreloadingScheduled = false;
 
-          // Notify that scheduled video is ready (only once)
           if (onReady) {
             onReady();
           }
@@ -1063,7 +1068,7 @@ export class PlaybackHandler {
 
     let hasHandledCompletion = false; // Guard against duplicate handlers
 
-    // Add a timeout in case video never loads
+    // Add a timeout in case video never loads (5 minutes)
     const loadTimeout = setTimeout(() => {
       if (!hasHandledCompletion) {
         hasHandledCompletion = true;
@@ -1071,7 +1076,7 @@ export class PlaybackHandler {
         this.showStatic(300);
         setTimeout(() => this.onScheduledFailed(), 350);
       }
-    }, 10000);
+    }, 300000);
 
     // Since it's preloaded, it should start playing almost immediately
     currentVideoEl.onloadeddata = () => {
@@ -1119,6 +1124,44 @@ export class PlaybackHandler {
       console.log('❌ Video error (' + errorType + '): ' + displayName);
       this.showStatic(300);
       setTimeout(() => this.onScheduledFailed(), 350);
+    };
+
+    // Handle stalling: pause and wait for buffer, then sync to correct time
+    let stallCheckInterval = null;
+    currentVideoEl.onstalling = () => {
+      console.log('⏸ Playback stalled, waiting for buffer...');
+      currentVideoEl.pause();
+
+      if (stallCheckInterval) clearInterval(stallCheckInterval);
+      stallCheckInterval = setInterval(() => {
+        if (currentVideoEl.buffered.length > 0) {
+          const bufferEnd = currentVideoEl.buffered.end(currentVideoEl.buffered.length - 1);
+          const targetSeekPos = currentVideoEl.currentTime + 5;
+
+          if (bufferEnd > targetSeekPos && bufferEnd > currentVideoEl.currentTime + 2) {
+            console.log('✓ Buffer recovered, resuming with sync adjustment');
+            clearInterval(stallCheckInterval);
+
+            const now = Date.now();
+            const elapsedSeconds = (now - this.scheduleEpoch) / 1000;
+            const slotElapsed = elapsedSeconds - (this.currentSlotStartTime / 1000);
+
+            if (slotElapsed > 0 && slotElapsed < currentVideoEl.duration) {
+              currentVideoEl.currentTime = slotElapsed;
+              console.log('🔄 Synced to ' + Math.floor(slotElapsed) + 's');
+            }
+
+            this.safePlay(currentVideoEl);
+          }
+        }
+      }, 500);
+    };
+
+    currentVideoEl.onplaying = () => {
+      if (stallCheckInterval) {
+        clearInterval(stallCheckInterval);
+        stallCheckInterval = null;
+      }
     };
 
     // Clear the preloaded video after using it
