@@ -863,64 +863,60 @@ export class PlaybackHandler {
         console.log('📺 Slot has ' + this.currentSlotBreaks.length + ' commercial break(s)');
       }
 
-      if (!syncPos.inCommercialBreak) {
-        console.log('📺 Should play scheduled content');
-        this.pendingScheduledSeekTime = syncPos.seekTime;
-        this.waitingForScheduledPreload = true;
+      // At startup, always go straight to scheduled content (skip commercials)
+      console.log('📺 Starting playback of scheduled content');
+      this.pendingScheduledSeekTime = syncPos.seekTime;
+      this.waitingForScheduledPreload = true;
 
-        // Guard flag to prevent duplicate transitions
-        let preloadHandled = false;
+      // Guard flag to prevent duplicate transitions
+      let preloadHandled = false;
 
-        // Start pre-caching scheduled video
-        const onScheduledReady = () => {
-          // Guard against multiple calls and race with timeout
-          if (preloadHandled || !this.waitingForScheduledPreload) {
-            console.log('⚠ Preload already handled, ignoring duplicate callback');
-            return;
-          }
+      // Start pre-caching scheduled video
+      const onScheduledReady = () => {
+        // Guard against multiple calls and race with timeout
+        if (preloadHandled || !this.waitingForScheduledPreload) {
+          console.log('⚠ Preload already handled, ignoring duplicate callback');
+          return;
+        }
+        preloadHandled = true;
+
+        console.log('✓ Scheduled content pre-cached, starting playback');
+        if (this.scheduledPreloadTimeout) {
+          clearTimeout(this.scheduledPreloadTimeout);
+          this.scheduledPreloadTimeout = null;
+        }
+        this.waitingForScheduledPreload = false;
+        this.stopContinuousStatic();
+        this.showStatic(300);
+        setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
+      };
+
+      // Set a timeout for giving up on scheduled content (5 minutes - allow slow streams to load)
+      this.scheduledPreloadTimeout = setTimeout(() => {
+        if (this.waitingForScheduledPreload && !preloadHandled) {
+          console.log('⏱ Scheduled content preload timeout (5min), skipping to next');
           preloadHandled = true;
-
-          console.log('✓ Scheduled content pre-cached, starting playback');
-          if (this.scheduledPreloadTimeout) {
-            clearTimeout(this.scheduledPreloadTimeout);
-            this.scheduledPreloadTimeout = null;
-          }
           this.waitingForScheduledPreload = false;
-          this.stopContinuousStatic();
-          this.showStatic(300);
-          setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
-        };
+          this.scheduledPreloadFailed = true;
+        }
+      }, 300000);
 
-        // Set a timeout for giving up on scheduled content (60 seconds - longer to avoid skipping)
-        this.scheduledPreloadTimeout = setTimeout(() => {
-          if (this.waitingForScheduledPreload && !preloadHandled) {
-            console.log('⏱ Scheduled content preload timeout (60s), skipping to next');
-            preloadHandled = true;
-            this.waitingForScheduledPreload = false;
-            this.scheduledPreloadFailed = true;
-          }
-        }, 60000);
+      this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
+        if (preloadHandled) return; // Already handled by timeout
+        preloadHandled = true;
+        console.log('❌ Failed to pre-cache scheduled content:', e.message);
+        if (this.scheduledPreloadTimeout) {
+          clearTimeout(this.scheduledPreloadTimeout);
+          this.scheduledPreloadTimeout = null;
+        }
+        this.waitingForScheduledPreload = false;
+        this.scheduledPreloadFailed = true; // Signal to ad loop that we've given up
+        // Don't call playFiller() here - let the ad loop handle the transition
+      });
 
-        this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
-          if (preloadHandled) return; // Already handled by timeout
-          preloadHandled = true;
-          console.log('❌ Failed to pre-cache scheduled content:', e.message);
-          if (this.scheduledPreloadTimeout) {
-            clearTimeout(this.scheduledPreloadTimeout);
-            this.scheduledPreloadTimeout = null;
-          }
-          this.waitingForScheduledPreload = false;
-          this.scheduledPreloadFailed = true; // Signal to ad loop that we've given up
-          // Don't call playFiller() here - let the ad loop handle the transition
-        });
-
-        // While pre-caching, show loading static
-        console.log('📺 Loading scheduled content...');
-        this.playContinuousStatic();
-      } else {
-        console.log('📺 Commercial break ' + (syncPos.breakIndex + 1) + '/' + this.currentSlotBreaks.length + ' in progress');
-        this.playCommercialBreak();
-      }
+      // While pre-caching, show loading static
+      console.log('📺 Loading scheduled content...');
+      this.playContinuousStatic();
     } else if (this.savedVideos.length > 0) {
       console.log('No schedule available, playing filler content only');
       this.playFiller();
@@ -992,15 +988,15 @@ export class PlaybackHandler {
         setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
       };
 
-      // Set a timeout for giving up on scheduled content (30 seconds)
+      // Set a timeout for giving up on scheduled content (5 minutes - allow slow streams to load)
       this.scheduledPreloadTimeout = setTimeout(() => {
         if (this.waitingForScheduledPreload && !preloadHandled) {
-          console.log('⏱ Scheduled content preload timeout (30s), skipping to next');
+          console.log('⏱ Scheduled content preload timeout (5min), skipping to next');
           preloadHandled = true;
           this.waitingForScheduledPreload = false;
           this.scheduledPreloadFailed = true;
         }
-      }, 30000);
+      }, 300000);
 
       this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
         if (preloadHandled) return; // Already handled by timeout
@@ -1460,7 +1456,7 @@ export class PlaybackHandler {
 
     const video = this.scheduledVideos[this.scheduleIndex];
     const videoId = video.id || video.u;
-    const videoDuration = this.durationCache[videoId] || 0;
+    const videoDuration = this.durationCache[videoId] || 1200000;
     this.currentSlotBreaks = this.calculateSlotCommercialBreaks(this.scheduleIndex, videoDuration, this.currentSlotDuration);
     this.currentBreakIndex = 0;
 
