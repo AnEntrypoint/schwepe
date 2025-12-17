@@ -862,7 +862,7 @@ export class PlaybackHandler {
 
       console.log('⏱ Syncing to slot ' + syncPos.index + ' (' +
         Math.floor(syncPos.slotDuration / 60000) + 'min slot, ' +
-        Math.floor((this.getSyncedTime() - this.scheduleEpoch - syncPos.slotStartTime) / 60000) + 'min in)');
+        Math.floor(((this.getSyncedTime() - this.scheduleEpoch - syncPos.slotStartTime) % syncPos.slotDuration) / 60000) + 'min in)');
 
       if (this.currentSlotBreaks.length > 0) {
         console.log('📺 Slot has ' + this.currentSlotBreaks.length + ' commercial break(s)');
