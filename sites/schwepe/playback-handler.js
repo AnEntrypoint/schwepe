@@ -1,22 +1,36 @@
+import { PlaybackSync } from './playback-sync.js';
+import { PlaybackBreaks } from './playback-breaks.js';
+import { PlaybackUtils } from './playback-utils.js';
+import { PlaybackLifecycle } from './playback-lifecycle.js';
+import { PlaybackRouting } from './playback-routing.js';
+import { PlaybackPreload } from './playback-preload.js';
+
 export class PlaybackHandler {
-  constructor(cacheManager = null, preloadManager = null, performanceMonitor = null) {
+  constructor() {
     this.currentVideoEl = document.getElementById('currentVideo');
     this.nextVideoEl = document.getElementById('nextVideo');
     this.thirdVideoEl = document.getElementById('thirdVideo');
     this.staticEl = document.getElementById('static');
+    this.videoQueue = [this.currentVideoEl, this.nextVideoEl, this.thirdVideoEl];
+    this.staticCanvas = document.getElementById('noiseCanvas');
+
+    this.sync = new PlaybackSync();
+    this.breaks = new PlaybackBreaks();
+    this.utils = new PlaybackUtils();
+    this.lifecycle = new PlaybackLifecycle();
+    this.routing = new PlaybackRouting();
+    this.preload = new PlaybackPreload();
+
     this.savedVideos = [];
     this.scheduledVideos = [];
     this.scheduleIndex = 0;
     this.fillerIndex = 0;
-    this.videoQueue = [this.currentVideoEl, this.nextVideoEl, this.thirdVideoEl];
     this.queueIndex = 0;
-    this.loadTimeout = null;
     this.playingScheduled = false;
     this.showingStatic = false;
-    this.staticCanvas = document.getElementById('noiseCanvas');
     this.scheduleEpoch = new Date('2025-11-14T00:00:00Z').getTime();
     this.clockOffset = 0;
-    this.durationCache = this.loadDurationCache();
+    this.durationCache = this.utils.loadDurationCache();
     this.DEFAULT_SLOT_DURATION = 1800000;
     this.currentSlotStartTime = 0;
     this.currentSlotDuration = 0;
@@ -31,24 +45,34 @@ export class PlaybackHandler {
     this.isPreloadingScheduled = false;
     this.waitingForScheduledPreload = false;
     this.pendingScheduledSeekTime = 0;
-    this.continuousStaticInterval = null;
-    this.scheduledPreloadFailed = false; // Track if we should give up on scheduled content
-    this.scheduledPreloadTimeout = null; // Timeout for giving up on scheduled content
-    this.normalizedVolume = 0.7; // Normalized volume level for all videos
-    this.recentlyPlayedAds = []; // Track recently played ads to prevent repetition
-    this.maxRecentAds = 20; // Don't repeat any of the last 20 ads
+    this.scheduledPreloadTimeout = null;
+    this.normalizedVolume = 0.7;
+    this.recentlyPlayedAds = [];
+    this.maxRecentAds = 20;
     this.analytics = null;
     this.videoStartTime = 0;
     this.currentVideoMetadata = null;
-    this.activeVideoIndex = 0; // Track which video element is currently active
-    this.isTransitioning = false; // Prevent multiple concurrent playback attempts
-    this.transitionDebounceTimeout = null; // Debounce rapid transitions
-    this.userHasInteracted = false; // Track if user has interacted (for autoplay)
+    this.activeVideoIndex = 0;
+    this.isTransitioning = false;
+    this.transitionDebounceTimeout = null;
+    this.userHasInteracted = false;
+    this.loadTimeout = null;
+
     this.initStaticCanvas();
-    this.normalizeVideoVolumes();
-    this.preventTabPausing(); // Prevent videos from pausing when tab changes
+    this.utils.normalizeVideoVolumes(this.videoQueue, this.normalizedVolume);
+    this.lifecycle.preventTabPausing(this.videoQueue, this.activeVideoIndex, this.showingStatic);
     this.setupAnalyticsTracking();
-    this.setupUserInteractionTracking(); // Track first user interaction for autoplay
+    this.lifecycle.setupUserInteractionTracking(() => this.onUserInteraction());
+  }
+
+  onUserInteraction() {
+    this.userHasInteracted = true;
+    console.log('🔊 User interaction detected - audio enabled');
+    const activeVideo = this.videoQueue[this.activeVideoIndex];
+    if (activeVideo && activeVideo.muted) {
+      activeVideo.muted = false;
+      activeVideo.volume = this.normalizedVolume;
+    }
   }
 
   getSyncedTime() {
@@ -61,13 +85,10 @@ export class PlaybackHandler {
       const response = await fetch('/api/time');
       const after = Date.now();
       const data = await response.json();
-      
       const roundTrip = after - before;
       const serverTime = data.serverTime;
       const estimatedServerTime = serverTime + (roundTrip / 2);
-      
       this.clockOffset = estimatedServerTime - after;
-      
       console.log('🕐 Time sync: offset=' + this.clockOffset + 'ms (RTT=' + roundTrip + 'ms)');
       return true;
     } catch (err) {
@@ -77,99 +98,16 @@ export class PlaybackHandler {
     }
   }
 
-  preventTabPausing() {
-    // Prevent videos from pausing when tab is hidden
-    // This ensures the immutable schedule continues even when users switch tabs
-    document.addEventListener('visibilitychange', () => {
-      // Don't let browser pause videos when tab is hidden
-      // ONLY resume the active video element, not all videos
-      const activeVideo = this.videoQueue[this.activeVideoIndex];
-      if (activeVideo && activeVideo.paused && !this.showingStatic) {
-        console.log('📺 Tab became hidden, resuming active video to maintain schedule');
-        activeVideo.play().catch(e => {
-          // If play fails, we'll catch up on next visibility
-        });
-      }
-    });
-
-    // Also prevent videos from pausing due to other reasons
-    // ONLY for the active video element
-    this.videoQueue.forEach((video, index) => {
-      if (video) {
-        video.addEventListener('pause', (e) => {
-          // Only resume if this is the active video and we didn't intentionally pause
-          // Also skip if we're in the middle of a transition
-          if (index === this.activeVideoIndex &&
-              !this.showingStatic &&
-              !this.isTransitioning &&
-              video.src &&
-              video.readyState >= 2) {
-            // Capture current state before async check
-            const currentActiveIndex = this.activeVideoIndex;
-            setTimeout(() => {
-              // Triple-check: same active video, still paused, not transitioning, not showing static
-              if (index === this.activeVideoIndex &&
-                  index === currentActiveIndex &&
-                  video.paused &&
-                  !this.isTransitioning &&
-                  !this.showingStatic) {
-                console.log('📺 Active video unexpectedly paused, resuming');
-                video.play().catch(() => {});
-              }
-            }, 100);
-          }
-        });
-      }
-    });
-  }
-
-  /**
-   * Track first user interaction to enable audio autoplay
-   */
-  setupUserInteractionTracking() {
-    const enableAudio = () => {
-      if (!this.userHasInteracted) {
-        this.userHasInteracted = true;
-        console.log('🔊 User interaction detected - audio enabled');
-        // Unmute currently playing video
-        const activeVideo = this.videoQueue[this.activeVideoIndex];
-        if (activeVideo && activeVideo.muted) {
-          activeVideo.muted = false;
-          activeVideo.volume = this.normalizedVolume;
-        }
-      }
-    };
-
-    ['click', 'touchstart', 'keydown'].forEach(event => {
-      document.addEventListener(event, enableAudio, { once: false, passive: true });
-    });
-  }
-
-  /**
-   * Safely play a video, handling autoplay restrictions
-   * Starts muted if user hasn't interacted, then tries to play
-   * Returns true if playback started, false if failed completely
-   */
   async safePlay(videoEl, onSuccess = null, onFailure = null) {
     if (!videoEl) {
       if (onFailure) onFailure();
       return false;
     }
-
-    // Always set volume first
     videoEl.volume = this.normalizedVolume;
-
-    // Start muted if user hasn't interacted yet
-    if (!this.userHasInteracted) {
-      videoEl.muted = true;
-    }
-
+    if (!this.userHasInteracted) videoEl.muted = true;
     try {
       await videoEl.play();
-      // If user has interacted and video is muted, unmute it
-      if (this.userHasInteracted && videoEl.muted) {
-        videoEl.muted = false;
-      }
+      if (this.userHasInteracted && videoEl.muted) videoEl.muted = false;
       if (onSuccess) onSuccess();
       return true;
     } catch (e) {
@@ -188,14 +126,8 @@ export class PlaybackHandler {
     }
   }
 
-  /**
-   * Debounced transition to prevent rapid video cycling
-   */
   debouncedTransition(callback, delay = 500) {
-    if (this.transitionDebounceTimeout) {
-      clearTimeout(this.transitionDebounceTimeout);
-    }
-
+    if (this.transitionDebounceTimeout) clearTimeout(this.transitionDebounceTimeout);
     if (this.isTransitioning) {
       console.log('⏳ Transition already in progress, queuing...');
       this.transitionDebounceTimeout = setTimeout(() => {
@@ -204,7 +136,6 @@ export class PlaybackHandler {
       }, delay);
       return;
     }
-
     this.isTransitioning = true;
     this.transitionDebounceTimeout = setTimeout(() => {
       this.isTransitioning = false;
@@ -212,16 +143,12 @@ export class PlaybackHandler {
     }, delay);
   }
 
-  /**
-   * Stop all non-active video elements to prevent audio overlap
-   * This ensures only the currently playing video has audio
-   */
-  stopNonActiveVideos() {
-    this.videoQueue.forEach((video, index) => {
-      if (video && index !== this.activeVideoIndex) {
+  setActiveVideo(index) {
+    this.activeVideoIndex = index % 3;
+    this.videoQueue.forEach((video, idx) => {
+      if (video && idx !== this.activeVideoIndex) {
         video.pause();
         video.muted = true;
-        // Clear the src to fully stop any buffering/playback
         if (video.src) {
           video.src = '';
           video.load();
@@ -230,44 +157,11 @@ export class PlaybackHandler {
     });
   }
 
-  /**
-   * Set the active video element and stop all others
-   */
-  setActiveVideo(index) {
-    this.activeVideoIndex = index % 3;
-    this.stopNonActiveVideos();
-  }
-
-  normalizeVideoVolumes() {
-    // Set normalized volume on all video elements
-    this.videoQueue.forEach(video => {
-      if (video) {
-        video.volume = this.normalizedVolume;
-      }
-    });
-  }
-
-  /**
-   * Unmute all video elements (call after user interaction to enable sound)
-   */
-  unmute() {
-    this.videoQueue.forEach(video => {
-      if (video) {
-        video.muted = false;
-        video.volume = this.normalizedVolume;
-      }
-    });
-    console.log('🔊 Videos unmuted');
-  }
-
-  /**
-   * Set volume level for all videos
-   */
   setVolume(volume) {
     this.normalizedVolume = Math.max(0, Math.min(1, volume));
     this.videoQueue.forEach(video => {
       if (video) {
-        video.muted = false; // Also unmute when setting volume
+        video.muted = false;
         video.volume = this.normalizedVolume;
       }
     });
@@ -296,28 +190,18 @@ export class PlaybackHandler {
   }
 
   showStatic(duration = 1000) {
-    if (this.staticEl) {
-      this.staticEl.classList.add('active');
-      this.showingStatic = true;
-      setTimeout(() => {
-        this.staticEl.classList.remove('active');
-        this.showingStatic = false;
-      }, duration);
-    }
+    this.utils.showStatic(this.staticEl, duration);
+    this.showingStatic = true;
   }
 
   playContinuousStatic() {
     console.log('📺 [STATIC]: Playing continuous static (waiting for content)');
-    this.stopContinuousStatic();
-
     const nowPlayingEl = document.getElementById('nowPlaying');
     if (nowPlayingEl) {
       nowPlayingEl.textContent = 'Please Stand By...';
       nowPlayingEl.style.display = 'block';
       nowPlayingEl.style.color = '#888888';
     }
-
-    // Hide all videos, mute them, and clear sources to prevent audio overlap
     this.videoQueue.forEach(v => {
       v.style.display = 'none';
       v.pause();
@@ -325,8 +209,6 @@ export class PlaybackHandler {
       v.src = '';
       v.load();
     });
-
-    // Show static
     if (this.staticEl) {
       this.staticEl.classList.add('active');
       this.showingStatic = true;
@@ -334,26 +216,16 @@ export class PlaybackHandler {
   }
 
   stopContinuousStatic() {
-    if (this.continuousStaticInterval) {
-      clearInterval(this.continuousStaticInterval);
-      this.continuousStaticInterval = null;
-    }
-
     if (this.staticEl && this.showingStatic) {
       this.staticEl.classList.remove('active');
       this.showingStatic = false;
     }
   }
 
-
   async loadVideos() {
     try {
-      // Sync time with server first for global schedule synchronization
       await this.syncTimeWithServer();
-
-      // Load TV scheduler (primary content source for production)
       const { TVScheduler } = await import('./tv-scheduler.js').catch(() => ({ TVScheduler: null }));
-
       if (TVScheduler) {
         const scheduler = new TVScheduler();
         this.scheduledVideos = await scheduler.getScheduleVideos();
@@ -362,18 +234,13 @@ export class PlaybackHandler {
         this.scheduledVideos = [];
         console.log('⚠ TV scheduler not available');
       }
-
-      // Try to load saved videos (may not exist in production)
       try {
         const videoList = await fetch('/public/videos.json').then(r => r.json());
-        // Filter to only include actual video files (not images like .webp)
         const videoExtensions = ['.mp4', '.webm', '.ogv', '.mov', '.avi', '.mkv', '.flv'];
         const filteredVideos = videoList.filter(video => {
           const filename = video.filename || '';
           return videoExtensions.some(ext => filename.toLowerCase().endsWith(ext));
         });
-
-        // Verify saved videos directory exists by testing one video
         if (filteredVideos.length > 0) {
           const testVideo = filteredVideos[0];
           const testUrl = '/public/' + (testVideo.path || 'saved_videos/' + testVideo.filename);
@@ -381,9 +248,6 @@ export class PlaybackHandler {
           if (testResponse && testResponse.ok) {
             this.savedVideos = filteredVideos;
             console.log('✓ Loaded saved videos:', this.savedVideos.length, 'video files');
-            if (filteredVideos.length < videoList.length) {
-              console.log('ℹ Filtered out', videoList.length - filteredVideos.length, 'non-video files (images, etc.)');
-            }
           } else {
             console.log('⚠ Saved videos directory not available (expected in production)');
             this.savedVideos = [];
@@ -393,7 +257,6 @@ export class PlaybackHandler {
         console.log('⚠ Saved videos not available:', e.message);
         this.savedVideos = [];
       }
-
       if (this.scheduledVideos.length === 0 && this.savedVideos.length === 0) {
         console.log('❌ No content available, using fallback');
         this.initializeDefault();
@@ -408,105 +271,49 @@ export class PlaybackHandler {
     }
   }
 
-
   initializeDefault() {
-    this.savedVideos = [
-      { id: 'static_1', title: 'Static Filler', type: 'filler', duration: 10000 }
-    ];
-    this.scheduledVideos = [
-      { id: 'sched_1', title: 'Scheduled Content 1', type: 'scheduled' }
-    ];
+    this.savedVideos = [{ id: 'static_1', title: 'Static Filler', type: 'filler', duration: 10000 }];
+    this.scheduledVideos = [{ id: 'sched_1', title: 'Scheduled Content 1', type: 'scheduled' }];
   }
 
-  loadDurationCache() {
-    try {
-      const cached = localStorage.getItem('schwepe_durations');
-      return cached ? JSON.parse(cached) : {};
-    } catch (e) {
-      return {};
-    }
+  getVideoUrl(video) {
+    return this.utils.getVideoUrl(video);
   }
 
-  saveDurationCache() {
-    try {
-      localStorage.setItem('schwepe_durations', JSON.stringify(this.durationCache));
-    } catch (e) {
-      console.log('⚠ Failed to save duration cache');
-    }
-  }
-
-  cacheDuration(videoId, duration) {
-    this.durationCache[videoId] = duration;
-    this.saveDurationCache();
-  }
-
-  seededRandom(seed) {
-    const x = Math.sin(seed) * 10000;
-    return x - Math.floor(x);
-  }
-
-  /**
-   * Track an ad as recently played to prevent repetition
-   */
   trackPlayedAd(video) {
     const videoId = video.filename || video.id;
     if (!this.recentlyPlayedAds.includes(videoId)) {
       this.recentlyPlayedAds.push(videoId);
-      // Keep only the most recent ads in the list
       if (this.recentlyPlayedAds.length > this.maxRecentAds) {
         this.recentlyPlayedAds.shift();
       }
     }
   }
 
-  /**
-   * Check if an ad was recently played
-   */
   wasRecentlyPlayed(video) {
     const videoId = video.filename || video.id;
     return this.recentlyPlayedAds.includes(videoId);
   }
 
-  /**
-   * Get a synchronized ad for commercial breaks - purely deterministic
-   * Ignores recently played history to ensure all viewers see same ads
-   * @param {Array} excludeIds - Array of video IDs to exclude (for current break)
-   * @param {number} seed - Seed for deterministic selection
-   * @returns {Object|null} - The selected video or null if none available
-   */
   getSynchronizedAd(excludeIds = [], seed = Date.now()) {
     if (this.savedVideos.length === 0) return null;
-
     const availableAds = this.savedVideos.filter(video => {
       const videoId = video.filename || video.id;
       return !excludeIds.includes(videoId);
     });
-
     if (availableAds.length === 0) {
-      return this.savedVideos[Math.floor(this.seededRandom(seed) * this.savedVideos.length)];
+      return this.savedVideos[Math.floor(this.breaks.seededRandom(seed) * this.savedVideos.length)];
     }
-
-    const index = Math.floor(this.seededRandom(seed) * availableAds.length);
+    const index = Math.floor(this.breaks.seededRandom(seed) * availableAds.length);
     return availableAds[index];
   }
 
-  /**
-   * Get a non-repeating ad, avoiding recently played and already selected ads
-   * Used for non-synchronized filler content
-   * @param {Array} excludeIds - Array of video IDs to exclude (for current break)
-   * @param {number} seed - Seed for deterministic selection
-   * @returns {Object|null} - The selected video or null if none available
-   */
   getNonRepeatingAd(excludeIds = [], seed = Date.now()) {
     if (this.savedVideos.length === 0) return null;
-
-    // Build list of available ads (not recently played and not in excludeIds)
     const availableAds = this.savedVideos.filter(video => {
       const videoId = video.filename || video.id;
       return !this.recentlyPlayedAds.includes(videoId) && !excludeIds.includes(videoId);
     });
-
-    // If all ads were recently played, reset and use all ads except excludeIds
     if (availableAds.length === 0) {
       console.log('⚠ All ads recently played, resetting history');
       this.recentlyPlayedAds = [];
@@ -515,67 +322,29 @@ export class PlaybackHandler {
         return !excludeIds.includes(videoId);
       });
       if (fallbackAds.length === 0) {
-        // Even excludeIds exhausted all options, just pick any
-        return this.savedVideos[Math.floor(this.seededRandom(seed) * this.savedVideos.length)];
+        return this.savedVideos[Math.floor(this.breaks.seededRandom(seed) * this.savedVideos.length)];
       }
-      return fallbackAds[Math.floor(this.seededRandom(seed) * fallbackAds.length)];
+      return fallbackAds[Math.floor(this.breaks.seededRandom(seed) * fallbackAds.length)];
     }
-
-    // Select from available ads using seeded random
-    const index = Math.floor(this.seededRandom(seed) * availableAds.length);
+    const index = Math.floor(this.breaks.seededRandom(seed) * availableAds.length);
     return availableAds[index];
-  }
-
-  pickCommercialBreak(slotIndex, breakIndex) {
-    const seed = slotIndex * 1000 + breakIndex;
-    const breakLength = Math.floor(this.seededRandom(seed) * 6) + 1;
-    const ads = [];
-    const selectedIds = []; // Track selected ads to prevent duplicates within break
-
-    for (let i = 0; i < breakLength; i++) {
-      if (this.savedVideos.length > 0) {
-        const adSeed = seed * 100 + i;
-        // Use synchronized ad selection for global sync (ignores recently played)
-        const ad = this.getSynchronizedAd(selectedIds, adSeed);
-        if (ad) {
-          const adId = ad.filename || ad.id;
-          selectedIds.push(adId);
-          ads.push(ad);
-        }
-      }
-    }
-    return ads;
   }
 
   calculateSlotCommercialBreaks(slotIndex, videoDuration, slotDuration) {
     const breaks = [];
     const remainingTime = slotDuration - videoDuration;
-
-    if (remainingTime < 5000) {
-      return breaks;
-    }
-
-    // Calculate number of commercial breaks to fill the slot
-    // Target: 2-4 breaks dispersed throughout the slot, not all at the end
+    if (remainingTime < 5000) return breaks;
     const seed = slotIndex * 7919;
-    const breakCount = Math.floor(this.seededRandom(seed) * 3) + 2; // 2-4 breaks
-
-    // Each break should have 2-5 ads (not all ads at once)
-    const targetAdsPerBreak = Math.floor(this.seededRandom(seed + 1) * 4) + 2;
-
-    // Track all ads selected for this slot to avoid ANY repetition within the slot
+    const breakCount = Math.floor(this.breaks.seededRandom(seed) * 3) + 2;
+    const targetAdsPerBreak = Math.floor(this.breaks.seededRandom(seed + 1) * 4) + 2;
     const slotSelectedAdIds = [];
-
     let totalBreakTime = 0;
     for (let i = 0; i < breakCount; i++) {
-      // Pick a small number of ads for this specific break
       const ads = [];
-      const thisBreakAdCount = Math.min(targetAdsPerBreak, Math.floor(this.seededRandom(seed + i + 100) * 4) + 2);
-
+      const thisBreakAdCount = Math.min(targetAdsPerBreak, Math.floor(this.breaks.seededRandom(seed + i + 100) * 4) + 2);
       for (let j = 0; j < thisBreakAdCount; j++) {
         if (this.savedVideos.length > 0) {
           const adSeed = seed * 100 + i * 10 + j;
-          // Use synchronized ad selection for global sync (ignores recently played)
           const ad = this.getSynchronizedAd(slotSelectedAdIds, adSeed);
           if (ad) {
             const adId = ad.filename || ad.id;
@@ -584,102 +353,137 @@ export class PlaybackHandler {
           }
         }
       }
-
       let breakDuration = 0;
       ads.forEach(ad => {
         const adDuration = this.durationCache[ad.filename || ad.id] || 15000;
         breakDuration += adDuration;
       });
-
-      breaks.push({
-        index: i,
-        ads: ads,
-        duration: breakDuration
-      });
-
+      breaks.push({ index: i, ads: ads, duration: breakDuration });
       totalBreakTime += breakDuration;
-
-      // Don't exceed the remaining time in the slot
-      if (totalBreakTime >= remainingTime) {
-        break;
-      }
+      if (totalBreakTime >= remainingTime) break;
     }
-
-    console.log('📺 Calculated ' + breaks.length + ' commercial breaks for slot ' + slotIndex + ' (' +
-                breaks.reduce((sum, b) => sum + b.ads.length, 0) + ' total ads dispersed, no repeats)');
-
+    console.log('📺 Calculated ' + breaks.length + ' commercial breaks for slot ' + slotIndex + ' (' + breaks.reduce((sum, b) => sum + b.ads.length, 0) + ' total ads dispersed, no repeats)');
     return breaks;
   }
 
-  isVideoBuffered(videoEl, requiredSeconds = 10) {
-    if (!videoEl || !videoEl.buffered || videoEl.buffered.length === 0) {
+  calculateSchedulePosition() {
+    const now = this.getSyncedTime();
+    const elapsed = now - this.scheduleEpoch;
+    let totalDuration = 0;
+    let targetIndex = 0;
+    let inCommercialBreak = false;
+    let breakIndex = 0;
+    let seekTime = 0;
+    let slotStartTime = 0;
+    let slotDuration = this.DEFAULT_SLOT_DURATION;
+    let slotBreaks = [];
+
+    const findPosition = (cyclePosition) => {
+      totalDuration = 0;
+      for (let i = 0; i < this.scheduledVideos.length; i++) {
+        const video = this.scheduledVideos[i];
+        const videoId = video.id || video.u;
+        const videoDuration = this.durationCache[videoId] || 1200000;
+        const currentSlotDuration = this.DEFAULT_SLOT_DURATION;
+
+        if (totalDuration + currentSlotDuration > cyclePosition) {
+          targetIndex = i;
+          slotStartTime = totalDuration;
+          slotDuration = currentSlotDuration;
+          const positionInSlot = cyclePosition - totalDuration;
+          slotBreaks = this.calculateSlotCommercialBreaks(i, videoDuration, currentSlotDuration);
+
+          if (positionInSlot < videoDuration) {
+            inCommercialBreak = false;
+            seekTime = positionInSlot;
+            breakIndex = 0;
+          } else {
+            inCommercialBreak = true;
+            let breakPosition = positionInSlot - videoDuration;
+            let accumulatedBreakTime = 0;
+            for (let b = 0; b < slotBreaks.length; b++) {
+              if (accumulatedBreakTime + slotBreaks[b].duration > breakPosition) {
+                breakIndex = b;
+                seekTime = breakPosition - accumulatedBreakTime;
+                break;
+              }
+              accumulatedBreakTime += slotBreaks[b].duration;
+            }
+          }
+          return true;
+        }
+        totalDuration += currentSlotDuration;
+      }
       return false;
+    };
+
+    if (!findPosition(elapsed)) {
+      const cyclePosition = elapsed % totalDuration;
+      findPosition(cyclePosition);
     }
-    const bufferedEnd = videoEl.buffered.end(videoEl.buffered.length - 1);
-    const currentTime = videoEl.currentTime || 0;
-    return (bufferedEnd - currentTime) >= requiredSeconds;
+
+    return { index: targetIndex, inCommercialBreak, breakIndex, seekTime: seekTime / 1000, slotStartTime, slotDuration, slotBreaks };
   }
 
-  preloadAd(video) {
-    return new Promise((resolve, reject) => {
-      const videoId = video.filename || video.id;
-      if (this.preloadedAds.has(videoId)) {
-        resolve(this.preloadedAds.get(videoId));
-        return;
+  async startPlayback() {
+    console.log('📺 Schwelevision TV station initialized');
+    this.preload.startBackgroundPreloading(this);
+    if (this.scheduledVideos.length > 0) {
+      const syncPos = this.calculateSchedulePosition();
+      this.scheduleIndex = syncPos.index;
+      this.currentSlotStartTime = syncPos.slotStartTime;
+      this.currentSlotDuration = syncPos.slotDuration;
+      this.currentSlotBreaks = syncPos.slotBreaks;
+      this.currentBreakIndex = syncPos.breakIndex;
+      console.log('⏱ Syncing to slot ' + syncPos.index + ' (' + Math.floor(syncPos.slotDuration / 60000) + 'min slot, ' + Math.floor(((this.getSyncedTime() - this.scheduleEpoch - syncPos.slotStartTime) % syncPos.slotDuration) / 60000) + 'min in)');
+      if (this.currentSlotBreaks.length > 0) {
+        console.log('📺 Slot has ' + this.currentSlotBreaks.length + ' commercial break(s)');
       }
-
-      const preloadEl = document.createElement('video');
-      preloadEl.preload = 'auto';
-      preloadEl.src = this.getVideoUrl(video);
-
-      let checkInterval = null;
-      let timeout = null;
-
-      const checkFullyLoaded = () => {
-        // Only resolve when FULLY loaded (readyState 4 = HAVE_ENOUGH_DATA)
-        if (preloadEl.readyState === 4) {
-          if (checkInterval) clearInterval(checkInterval);
-          if (timeout) clearTimeout(timeout);
-          this.preloadedAds.set(videoId, { element: preloadEl, video: video });
-          console.log('✓ Ad fully loaded: ' + (video.filename || video.title));
-          resolve({ element: preloadEl, video: video });
+      console.log('📺 Starting playback of scheduled content');
+      this.pendingScheduledSeekTime = syncPos.seekTime;
+      this.waitingForScheduledPreload = true;
+      let preloadHandled = false;
+      const onScheduledReady = () => {
+        if (preloadHandled || !this.waitingForScheduledPreload) {
+          console.log('⚠ Preload already handled, ignoring duplicate callback');
+          return;
         }
+        preloadHandled = true;
+        console.log('✓ Scheduled content pre-cached, starting playback');
+        if (this.scheduledPreloadTimeout) {
+          clearTimeout(this.scheduledPreloadTimeout);
+          this.scheduledPreloadTimeout = null;
+        }
+        this.waitingForScheduledPreload = false;
+        this.stopContinuousStatic();
+        this.showStatic(300);
+        setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
       };
-
-      preloadEl.addEventListener('canplaythrough', checkFullyLoaded);
-      preloadEl.addEventListener('loadeddata', checkFullyLoaded);
-
-      // Check readyState periodically
-      checkInterval = setInterval(checkFullyLoaded, 200);
-
-      preloadEl.addEventListener('error', () => {
-        if (checkInterval) clearInterval(checkInterval);
-        if (timeout) clearTimeout(timeout);
-        console.log('⚠ Failed to preload ad: ' + (video.filename || video.title));
-        reject(new Error('Failed to preload ad'));
-      });
-
-      // 30 second timeout for ad loading
-      timeout = setTimeout(() => {
-        if (checkInterval) clearInterval(checkInterval);
-        console.log('⚠ Ad preload timeout: ' + (video.filename || video.title));
-        reject(new Error('Ad preload timeout'));
-      }, 30000);
-
-      preloadEl.load();
-    });
-  }
-
-  async startBackgroundPreloading() {
-    if (this.savedVideos.length > 0) {
-      const adsToPreload = this.savedVideos.slice(0, 5);
-      for (const ad of adsToPreload) {
-        try {
-          await this.preloadAd(ad);
-        } catch (e) {
-          console.log('⚠ Failed to preload ad:', ad.filename);
+      this.scheduledPreloadTimeout = setTimeout(() => {
+        if (this.waitingForScheduledPreload && !preloadHandled) {
+          console.log('⏱ Scheduled content preload timeout (5min), skipping to next');
+          preloadHandled = true;
+          this.waitingForScheduledPreload = false;
         }
-      }
+      }, 300000);
+      this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
+        if (preloadHandled) return;
+        preloadHandled = true;
+        console.log('❌ Failed to pre-cache scheduled content:', e.message);
+        if (this.scheduledPreloadTimeout) {
+          clearTimeout(this.scheduledPreloadTimeout);
+          this.scheduledPreloadTimeout = null;
+        }
+        this.waitingForScheduledPreload = false;
+      });
+      console.log('📺 Loading scheduled content...');
+      this.playContinuousStatic();
+    } else if (this.savedVideos.length > 0) {
+      console.log('No schedule available, playing filler content only');
+      this.playFiller();
+    } else {
+      console.log('❌ No content available');
+      this.playContinuousStatic();
     }
   }
 
@@ -688,23 +492,19 @@ export class PlaybackHandler {
       console.log('⚠ Already preloading scheduled video');
       return;
     }
-
     if (this.scheduledVideos.length === 0) {
       console.log('⚠ No scheduled videos to preload');
       return;
     }
-
     this.isPreloadingScheduled = true;
     const video = this.scheduledVideos[videoIndex % this.scheduledVideos.length];
     const displayName = video.show + ' - ' + video.episode;
-
     console.log('📺 Loading scheduled content: ' + displayName);
 
     return new Promise((resolve, reject) => {
       const preloadEl = document.createElement('video');
       preloadEl.preload = 'auto';
       preloadEl.src = this.getVideoUrl(video);
-
       let bufferCheckInterval = null;
       let hasCompleted = false;
       let hasStartedPlaying = false;
@@ -725,25 +525,14 @@ export class PlaybackHandler {
 
       const checkBuffer = () => {
         if (hasCompleted) return;
-
-        const bufferedSeconds = preloadEl.buffered.length > 0 ?
-          preloadEl.buffered.end(preloadEl.buffered.length - 1) : 0;
-
+        const bufferedSeconds = preloadEl.buffered.length > 0 ? preloadEl.buffered.end(preloadEl.buffered.length - 1) : 0;
         if (bufferedSeconds > 3 && !hasStartedPlaying) {
           hasCompleted = true;
           cleanup();
           console.log('✓ Buffered ' + Math.floor(bufferedSeconds) + 's - starting playback');
-          this.preloadedScheduledVideo = {
-            element: preloadEl,
-            video: video,
-            index: videoIndex
-          };
+          this.preloadedScheduledVideo = { element: preloadEl, video: video, index: videoIndex };
           this.isPreloadingScheduled = false;
-
-          if (onReady) {
-            onReady();
-          }
-
+          if (onReady) onReady();
           resolve(this.preloadedScheduledVideo);
         }
       };
@@ -751,15 +540,14 @@ export class PlaybackHandler {
       preloadEl.addEventListener('loadedmetadata', () => {
         const videoId = video.id || video.u;
         if (preloadEl.duration && !isNaN(preloadEl.duration)) {
-          this.cacheDuration(videoId, preloadEl.duration * 1000);
+          this.utils.cacheDuration(videoId, preloadEl.duration * 1000, this.durationCache);
         }
       });
 
       preloadEl.addEventListener('progress', checkBuffer);
       preloadEl.addEventListener('canplaythrough', checkBuffer);
-
       preloadEl.addEventListener('error', (e) => {
-        if (hasCompleted) return; // Ignore errors after completion
+        if (hasCompleted) return;
         hasCompleted = true;
         cleanup();
         console.log('⚠ Failed to pre-cache scheduled content: ' + displayName);
@@ -768,258 +556,9 @@ export class PlaybackHandler {
         reject(new Error('Failed to preload scheduled video'));
       });
 
-      // No timeout - ads will play continuously until content is ready
-      // Check buffer every 500ms
-      bufferCheckInterval = setInterval(checkBuffered, 500);
-
+      bufferCheckInterval = setInterval(checkBuffer, 500);
       preloadEl.load();
     });
-  }
-
-   calculateSchedulePosition() {
-     const now = this.getSyncedTime();
-     const elapsed = now - this.scheduleEpoch;
-     let totalDuration = 0;
-     let targetIndex = 0;
-     let inCommercialBreak = false;
-     let breakIndex = 0;
-     let seekTime = 0;
-     let slotStartTime = 0;
-     let slotDuration = this.DEFAULT_SLOT_DURATION;
-     let slotBreaks = [];
-
-     const findPosition = (cyclePosition) => {
-       totalDuration = 0;
-       for (let i = 0; i < this.scheduledVideos.length; i++) {
-         const video = this.scheduledVideos[i];
-         const videoId = video.id || video.u;
-         const videoDuration = this.durationCache[videoId] || 1200000;
-         const currentSlotDuration = this.DEFAULT_SLOT_DURATION;
-
-         if (totalDuration + currentSlotDuration > cyclePosition) {
-           targetIndex = i;
-           slotStartTime = totalDuration;
-           slotDuration = currentSlotDuration;
-           const positionInSlot = cyclePosition - totalDuration;
-
-           slotBreaks = this.calculateSlotCommercialBreaks(i, videoDuration, currentSlotDuration);
-
-           if (positionInSlot < videoDuration) {
-             inCommercialBreak = false;
-             seekTime = positionInSlot;
-             breakIndex = 0;
-           } else {
-             inCommercialBreak = true;
-             let breakPosition = positionInSlot - videoDuration;
-             let accumulatedBreakTime = 0;
-
-             for (let b = 0; b < slotBreaks.length; b++) {
-               if (accumulatedBreakTime + slotBreaks[b].duration > breakPosition) {
-                 breakIndex = b;
-                 seekTime = breakPosition - accumulatedBreakTime;
-                 break;
-               }
-               accumulatedBreakTime += slotBreaks[b].duration;
-             }
-           }
-           return true;
-         }
-
-         totalDuration += currentSlotDuration;
-       }
-      return false;
-    };
-
-    if (!findPosition(elapsed)) {
-      const cyclePosition = elapsed % totalDuration;
-      findPosition(cyclePosition);
-    }
-
-    return {
-      index: targetIndex,
-      inCommercialBreak: inCommercialBreak,
-      breakIndex: breakIndex,
-      seekTime: seekTime / 1000,
-      slotStartTime: slotStartTime,
-      slotDuration: slotDuration,
-      slotBreaks: slotBreaks
-    };
-  }
-
-  async startPlayback() {
-    console.log('📺 Schwelevision TV station initialized');
-
-    // Start pre-loading ads in background
-    this.startBackgroundPreloading();
-
-    if (this.scheduledVideos.length > 0) {
-      const syncPos = this.calculateSchedulePosition();
-      this.scheduleIndex = syncPos.index;
-      this.currentSlotStartTime = syncPos.slotStartTime;
-      this.currentSlotDuration = syncPos.slotDuration;
-      this.currentSlotBreaks = syncPos.slotBreaks;
-      this.currentBreakIndex = syncPos.breakIndex;
-
-      console.log('⏱ Syncing to slot ' + syncPos.index + ' (' +
-        Math.floor(syncPos.slotDuration / 60000) + 'min slot, ' +
-        Math.floor(((this.getSyncedTime() - this.scheduleEpoch - syncPos.slotStartTime) % syncPos.slotDuration) / 60000) + 'min in)');
-
-      if (this.currentSlotBreaks.length > 0) {
-        console.log('📺 Slot has ' + this.currentSlotBreaks.length + ' commercial break(s)');
-      }
-
-      // At startup, always go straight to scheduled content (skip commercials)
-      console.log('📺 Starting playback of scheduled content');
-      this.pendingScheduledSeekTime = syncPos.seekTime;
-      this.waitingForScheduledPreload = true;
-
-      // Guard flag to prevent duplicate transitions
-      let preloadHandled = false;
-
-      // Start pre-caching scheduled video
-      const onScheduledReady = () => {
-        // Guard against multiple calls and race with timeout
-        if (preloadHandled || !this.waitingForScheduledPreload) {
-          console.log('⚠ Preload already handled, ignoring duplicate callback');
-          return;
-        }
-        preloadHandled = true;
-
-        console.log('✓ Scheduled content pre-cached, starting playback');
-        if (this.scheduledPreloadTimeout) {
-          clearTimeout(this.scheduledPreloadTimeout);
-          this.scheduledPreloadTimeout = null;
-        }
-        this.waitingForScheduledPreload = false;
-        this.stopContinuousStatic();
-        this.showStatic(300);
-        setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
-      };
-
-      // Set a timeout for giving up on scheduled content (5 minutes - allow slow streams to load)
-      this.scheduledPreloadTimeout = setTimeout(() => {
-        if (this.waitingForScheduledPreload && !preloadHandled) {
-          console.log('⏱ Scheduled content preload timeout (5min), skipping to next');
-          preloadHandled = true;
-          this.waitingForScheduledPreload = false;
-          this.scheduledPreloadFailed = true;
-        }
-      }, 300000);
-
-      this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
-        if (preloadHandled) return; // Already handled by timeout
-        preloadHandled = true;
-        console.log('❌ Failed to pre-cache scheduled content:', e.message);
-        if (this.scheduledPreloadTimeout) {
-          clearTimeout(this.scheduledPreloadTimeout);
-          this.scheduledPreloadTimeout = null;
-        }
-        this.waitingForScheduledPreload = false;
-        this.scheduledPreloadFailed = true; // Signal to ad loop that we've given up
-        // Don't call playFiller() here - let the ad loop handle the transition
-      });
-
-      // While pre-caching, show loading static
-      console.log('📺 Loading scheduled content...');
-      this.playContinuousStatic();
-    } else if (this.savedVideos.length > 0) {
-      console.log('No schedule available, playing filler content only');
-      this.playFiller();
-    } else {
-      console.log('❌ No content available');
-      this.playContinuousStatic();
-    }
-  }
-
-  getVideoUrl(video) {
-    if (video.type === 'scheduled' && video.u) {
-      return video.u;
-    } else if (video.path) {
-      return '/public/' + video.path;
-    } else if (video.filename) {
-      return '/public/saved_videos/' + video.filename;
-    }
-    return null;
-  }
-
-  playNextScheduled(seekTime = 0) {
-    if (this.scheduledVideos.length === 0) {
-      console.log('No scheduled content, playing filler');
-      this.playFiller();
-      return;
-    }
-
-    const video = this.scheduledVideos[this.scheduleIndex % this.scheduledVideos.length];
-    const displayName = video.show + ' - ' + video.episode;
-
-    console.log('📺 [SCHEDULE]: ' + displayName);
-    this.playingScheduled = true;
-
-    // Check if we have a pre-cached version of this video
-    if (this.preloadedScheduledVideo &&
-        this.preloadedScheduledVideo.index === this.scheduleIndex &&
-        this.isVideoBuffered(this.preloadedScheduledVideo.element, 10)) {
-      console.log('✓ Using pre-cached video (instant playback ready)');
-      this.playPreloadedScheduled(seekTime);
-    } else {
-      // Need to pre-cache this scheduled video first
-      if (this.preloadedScheduledVideo) {
-        console.log('⚠ Pre-cached video not ready or index mismatch');
-      }
-
-      console.log('📺 Pre-caching scheduled content before playback');
-      this.pendingScheduledSeekTime = seekTime;
-      this.waitingForScheduledPreload = true;
-
-      // Guard flag to prevent duplicate transitions
-      let preloadHandled = false;
-
-      const onScheduledReady = () => {
-        // Guard against multiple calls and race with timeout
-        if (preloadHandled || !this.waitingForScheduledPreload) {
-          console.log('⚠ Preload already handled, ignoring duplicate callback');
-          return;
-        }
-        preloadHandled = true;
-
-        console.log('✓ Scheduled content pre-cached, starting playback');
-        if (this.scheduledPreloadTimeout) {
-          clearTimeout(this.scheduledPreloadTimeout);
-          this.scheduledPreloadTimeout = null;
-        }
-        this.waitingForScheduledPreload = false;
-        this.stopContinuousStatic();
-        this.showStatic(300);
-        setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
-      };
-
-      // Set a timeout for giving up on scheduled content (5 minutes - allow slow streams to load)
-      this.scheduledPreloadTimeout = setTimeout(() => {
-        if (this.waitingForScheduledPreload && !preloadHandled) {
-          console.log('⏱ Scheduled content preload timeout (5min), skipping to next');
-          preloadHandled = true;
-          this.waitingForScheduledPreload = false;
-          this.scheduledPreloadFailed = true;
-        }
-      }, 300000);
-
-      this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
-        if (preloadHandled) return; // Already handled by timeout
-        preloadHandled = true;
-        console.log('❌ Failed to pre-cache scheduled content:', e.message);
-        if (this.scheduledPreloadTimeout) {
-          clearTimeout(this.scheduledPreloadTimeout);
-          this.scheduledPreloadTimeout = null;
-        }
-        this.waitingForScheduledPreload = false;
-        this.scheduledPreloadFailed = true; // Signal to ad loop that we've given up
-        // Don't call onScheduledFailed() here - let the ad loop handle the transition
-      });
-
-      // While pre-caching, show static (simplified behavior)
-      console.log('📺 Showing static while pre-caching scheduled content...');
-      this.playContinuousStatic();
-    }
   }
 
   playPreloadedScheduled(seekTime = 0) {
@@ -1028,7 +567,6 @@ export class PlaybackHandler {
     const displayName = video.show + ' - ' + video.episode;
     const preloadedEl = preloaded.element;
 
-    // Keep static visible until video starts playing
     if (this.staticEl) {
       this.staticEl.classList.add('active');
       this.showingStatic = true;
@@ -1041,20 +579,17 @@ export class PlaybackHandler {
       nowPlayingEl.style.color = '#ffff00';
     }
 
-    // Set the active video and stop all others to prevent audio overlap
     this.setActiveVideo(this.queueIndex);
     const currentVideoEl = this.videoQueue[this.activeVideoIndex];
 
-    // Keep video hidden until it starts playing to prevent black screen
     this.videoQueue.forEach((v, i) => {
       if (i === this.activeVideoIndex) {
-        v.style.display = 'none'; // Start hidden, show when playing
+        v.style.display = 'none';
         v.muted = false;
       } else {
         v.style.display = 'none';
         v.pause();
         v.muted = true;
-        // Clear src of non-active videos to prevent audio bleed
         if (v.src) {
           v.src = '';
           v.load();
@@ -1062,13 +597,10 @@ export class PlaybackHandler {
       }
     });
 
-    // Copy the preloaded element's src to our rotation video element
     currentVideoEl.src = preloadedEl.src;
     currentVideoEl.load();
 
-    let hasHandledCompletion = false; // Guard against duplicate handlers
-
-    // Add a timeout in case video never loads (5 minutes)
+    let hasHandledCompletion = false;
     const loadTimeout = setTimeout(() => {
       if (!hasHandledCompletion) {
         hasHandledCompletion = true;
@@ -1078,7 +610,6 @@ export class PlaybackHandler {
       }
     }, 300000);
 
-    // Since it's preloaded, it should start playing almost immediately
     currentVideoEl.onloadeddata = () => {
       if (seekTime > 0 && currentVideoEl.duration && seekTime < currentVideoEl.duration) {
         currentVideoEl.currentTime = seekTime;
@@ -1086,7 +617,6 @@ export class PlaybackHandler {
       }
 
       this.safePlay(currentVideoEl,
-        // On success - show video, hide static
         () => {
           clearTimeout(loadTimeout);
           currentVideoEl.style.display = 'block';
@@ -1095,7 +625,6 @@ export class PlaybackHandler {
             this.showingStatic = false;
           }
         },
-        // On failure
         () => {
           clearTimeout(loadTimeout);
           if (!hasHandledCompletion) {
@@ -1126,31 +655,25 @@ export class PlaybackHandler {
       setTimeout(() => this.onScheduledFailed(), 350);
     };
 
-    // Handle stalling: pause and wait for buffer, then sync to correct time
     let stallCheckInterval = null;
     currentVideoEl.onstalling = () => {
       console.log('⏸ Playback stalled, waiting for buffer...');
       currentVideoEl.pause();
-
       if (stallCheckInterval) clearInterval(stallCheckInterval);
       stallCheckInterval = setInterval(() => {
         if (currentVideoEl.buffered.length > 0) {
           const bufferEnd = currentVideoEl.buffered.end(currentVideoEl.buffered.length - 1);
           const targetSeekPos = currentVideoEl.currentTime + 5;
-
           if (bufferEnd > targetSeekPos && bufferEnd > currentVideoEl.currentTime + 2) {
             console.log('✓ Buffer recovered, resuming with sync adjustment');
             clearInterval(stallCheckInterval);
-
             const now = Date.now();
             const elapsedSeconds = (now - this.scheduleEpoch) / 1000;
             const slotElapsed = elapsedSeconds - (this.currentSlotStartTime / 1000);
-
             if (slotElapsed > 0 && slotElapsed < currentVideoEl.duration) {
               currentVideoEl.currentTime = slotElapsed;
               console.log('🔄 Synced to ' + Math.floor(slotElapsed) + 's');
             }
-
             this.safePlay(currentVideoEl);
           }
         }
@@ -1164,10 +687,7 @@ export class PlaybackHandler {
       }
     };
 
-    // Clear the preloaded video after using it
     this.preloadedScheduledVideo = null;
-
-    // Clean up the preload element
     setTimeout(() => {
       preloadedEl.src = '';
       preloadedEl.load();
@@ -1180,26 +700,20 @@ export class PlaybackHandler {
       this.moveToNextSlot();
       return;
     }
-
     if (this.savedVideos.length === 0) {
       console.log('No ads available, moving to next slot');
       this.moveToNextSlot();
       return;
     }
-
     this.inCommercialBreak = true;
     const currentBreak = this.currentSlotBreaks[this.currentBreakIndex];
     this.commercialBreakAds = currentBreak.ads;
     this.commercialBreakIndex = 0;
-
     console.log('📺 Commercial break ' + (this.currentBreakIndex + 1) + '/' + this.currentSlotBreaks.length + ' (' + this.commercialBreakAds.length + ' ads)');
-
-    // Start pre-caching the next scheduled video during commercial break
     const nextScheduledIndex = this.scheduleIndex;
     this.preloadScheduledVideo(nextScheduledIndex).catch(e => {
       console.log('⚠ Pre-caching failed, will load normally:', e.message);
     });
-
     this.playNextCommercial();
   }
 
@@ -1208,36 +722,28 @@ export class PlaybackHandler {
       this.onCommercialBreakComplete();
       return;
     }
-
     const video = this.commercialBreakAds[this.commercialBreakIndex];
     const displayName = video.filename || video.title || 'Commercial';
     const videoId = video.filename || video.id;
-
     console.log('📺 [AD ' + (this.commercialBreakIndex + 1) + '/' + this.commercialBreakAds.length + ']: ' + displayName);
     this.playingScheduled = false;
 
-    // Check if ad is already preloaded and fully ready
     let adData = null;
     if (this.preloadedAds.has(videoId)) {
       adData = this.preloadedAds.get(videoId);
       console.log('✓ Using fully-loaded ad from cache');
     } else {
-      // Load ad fully before playing
       console.log('⏳ Fully loading ad: ' + displayName);
       try {
-        adData = await this.preloadAd(video);
+        adData = await this.preload.preloadAd(this, video);
       } catch (e) {
         console.log('❌ Failed to load ad, skipping: ' + displayName);
-        // Track as played to prevent retrying immediately
         this.trackPlayedAd(video);
-        // Show static during transition to prevent black screen
         this.showStatic(300);
         setTimeout(() => this.onCommercialComplete(), 350);
         return;
       }
     }
-
-    // Play the fully-loaded ad
     this.playFullyLoadedAd(adData, () => this.onCommercialComplete());
   }
 
@@ -1245,7 +751,6 @@ export class PlaybackHandler {
     const video = adData.video;
     const displayName = video.filename || video.title || 'Ad';
 
-    // Keep static visible until video starts playing
     if (this.staticEl) {
       this.staticEl.classList.add('active');
       this.showingStatic = true;
@@ -1258,14 +763,12 @@ export class PlaybackHandler {
       nowPlayingEl.style.color = '#00ffff';
     }
 
-    // Set the active video and stop all others to prevent audio overlap
     this.setActiveVideo(this.queueIndex);
     const currentVideoEl = this.videoQueue[this.activeVideoIndex];
 
-    // Keep video hidden until it starts playing to prevent black screen
     this.videoQueue.forEach((v, i) => {
       if (i === this.activeVideoIndex) {
-        v.style.display = 'none'; // Start hidden, show when playing
+        v.style.display = 'none';
         v.muted = false;
       } else {
         v.style.display = 'none';
@@ -1274,13 +777,10 @@ export class PlaybackHandler {
       }
     });
 
-    // Use the preloaded element's src
     currentVideoEl.src = adData.element.src;
     currentVideoEl.load();
 
-    let hasHandledCompletion = false; // Guard against duplicate handlers
-
-    // Add a timeout in case video never loads
+    let hasHandledCompletion = false;
     const loadTimeout = setTimeout(() => {
       if (!hasHandledCompletion) {
         hasHandledCompletion = true;
@@ -1293,7 +793,6 @@ export class PlaybackHandler {
 
     currentVideoEl.onloadeddata = () => {
       this.safePlay(currentVideoEl,
-        // On success - show video, hide static
         () => {
           clearTimeout(loadTimeout);
           currentVideoEl.style.display = 'block';
@@ -1302,7 +801,6 @@ export class PlaybackHandler {
             this.showingStatic = false;
           }
         },
-        // On failure
         () => {
           clearTimeout(loadTimeout);
           if (!hasHandledCompletion) {
@@ -1320,7 +818,6 @@ export class PlaybackHandler {
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       console.log('✓ Ad completed: ' + displayName);
-      // Track this ad as played to prevent repetition
       this.trackPlayedAd(video);
       onComplete();
     };
@@ -1330,7 +827,6 @@ export class PlaybackHandler {
       if (hasHandledCompletion) return;
       hasHandledCompletion = true;
       console.log('❌ Ad playback error: ' + displayName);
-      // Track this ad as played to prevent retrying immediately
       this.trackPlayedAd(video);
       this.showStatic(300);
       setTimeout(() => onComplete(), 350);
@@ -1343,142 +839,98 @@ export class PlaybackHandler {
       setTimeout(() => this.playNextScheduled(), 2000);
       return;
     }
-
-    // Get a non-repeating filler video
     const video = this.getNonRepeatingAd([], Date.now() + this.fillerIndex);
     if (!video) {
       console.log('⚠ No filler available, retrying schedule');
       setTimeout(() => this.playNextScheduled(), 2000);
       return;
     }
-
     const displayName = video.filename || video.title || 'Filler';
     const videoId = video.filename || video.id;
-
     console.log('📺 [FILLER]: ' + displayName);
     this.playingScheduled = false;
 
-    // Check if filler is already preloaded and fully ready
     let fillerData = null;
     if (this.preloadedAds.has(videoId)) {
       fillerData = this.preloadedAds.get(videoId);
       console.log('✓ Using fully-loaded filler from cache');
     } else {
-      // Load filler fully before playing
       console.log('⏳ Fully loading filler: ' + displayName);
       try {
-        fillerData = await this.preloadAd(video);
+        fillerData = await this.preload.preloadAd(this, video);
       } catch (e) {
         console.log('❌ Failed to load filler, trying next');
-        // Track this filler as played to prevent retrying immediately
         this.trackPlayedAd(video);
         this.fillerIndex++;
-        // Show static during transition to prevent black screen
         this.showStatic(300);
         setTimeout(() => this.playFiller(), 350);
         return;
       }
     }
-
-    // Play the fully-loaded filler
     this.playFullyLoadedAd(fillerData, () => this.onFillerComplete());
   }
 
-  loadAndPlay(video, displayName, color, seekTime, onComplete, onFailed) {
-    // Set the active video and stop all others to prevent audio overlap
-    this.setActiveVideo(this.queueIndex);
-    const currentVideoEl = this.videoQueue[this.activeVideoIndex];
-
-    this.showStatic(300);
-
-    const nowPlayingEl = document.getElementById('nowPlaying');
-    if (nowPlayingEl) {
-      nowPlayingEl.textContent = displayName;
-      nowPlayingEl.style.display = 'block';
-      nowPlayingEl.style.color = color;
+  playNextScheduled(seekTime = 0) {
+    if (this.scheduledVideos.length === 0) {
+      console.log('No scheduled content, playing filler');
+      this.playFiller();
+      return;
     }
+    const video = this.scheduledVideos[this.scheduleIndex % this.scheduledVideos.length];
+    const displayName = video.show + ' - ' + video.episode;
+    console.log('📺 [SCHEDULE]: ' + displayName);
+    this.playingScheduled = true;
 
-     this.videoQueue.forEach((v, i) => {
-       if (i === this.activeVideoIndex) {
-         v.style.display = 'block';
-         v.muted = false; // Ensure active video is unmuted
-       } else {
-         v.style.display = 'none';
-         v.pause();
-         v.muted = true;
-       }
-     });
-
-     const videoUrl = this.getVideoUrl(video);
-     if (!videoUrl) {
-       console.log('❌ No URL for video');
-       onFailed();
-       return;
-     }
-
-     currentVideoEl.src = videoUrl;
-     currentVideoEl.load();
-
-    if (this.loadTimeout) {
-      clearTimeout(this.loadTimeout);
-    }
-
-    this.loadTimeout = setTimeout(() => {
-      console.log('⚠ Load timeout (15s), switching to filler');
-      onFailed();
-    }, 15000);
-
-    currentVideoEl.onloadedmetadata = () => {
-      const videoId = video.id || video.u;
-      if (currentVideoEl.duration && !isNaN(currentVideoEl.duration)) {
-        this.cacheDuration(videoId, currentVideoEl.duration * 1000);
+    if (this.preloadedScheduledVideo && this.preloadedScheduledVideo.index === this.scheduleIndex && this.utils.isVideoBuffered(this.preloadedScheduledVideo.element, 10)) {
+      console.log('✓ Using pre-cached video (instant playback ready)');
+      this.playPreloadedScheduled(seekTime);
+    } else {
+      if (this.preloadedScheduledVideo) {
+        console.log('⚠ Pre-cached video not ready or index mismatch');
       }
-    };
+      console.log('📺 Pre-caching scheduled content before playback');
+      this.pendingScheduledSeekTime = seekTime;
+      this.waitingForScheduledPreload = true;
+      let preloadHandled = false;
 
-    let hasHandledCompletion = false; // Guard against duplicate handlers
-
-    currentVideoEl.onloadeddata = () => {
-      if (this.loadTimeout) {
-        clearTimeout(this.loadTimeout);
-        this.loadTimeout = null;
-      }
-
-      if (seekTime > 0 && currentVideoEl.duration && seekTime < currentVideoEl.duration) {
-        currentVideoEl.currentTime = seekTime;
-        console.log('⏩ Seeking to ' + Math.floor(seekTime) + 's');
-      }
-
-      this.safePlay(currentVideoEl, null, () => {
-        if (!hasHandledCompletion) {
-          hasHandledCompletion = true;
-          console.log('❌ Play failed, switching content');
-          onFailed();
+      const onScheduledReady = () => {
+        if (preloadHandled || !this.waitingForScheduledPreload) {
+          console.log('⚠ Preload already handled, ignoring duplicate callback');
+          return;
         }
+        preloadHandled = true;
+        console.log('✓ Scheduled content pre-cached, starting playback');
+        if (this.scheduledPreloadTimeout) {
+          clearTimeout(this.scheduledPreloadTimeout);
+          this.scheduledPreloadTimeout = null;
+        }
+        this.waitingForScheduledPreload = false;
+        this.stopContinuousStatic();
+        this.showStatic(300);
+        setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
+      };
+
+      this.scheduledPreloadTimeout = setTimeout(() => {
+        if (this.waitingForScheduledPreload && !preloadHandled) {
+          console.log('⏱ Scheduled content preload timeout (5min), skipping to next');
+          preloadHandled = true;
+          this.waitingForScheduledPreload = false;
+        }
+      }, 300000);
+
+      this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
+        if (preloadHandled) return;
+        preloadHandled = true;
+        console.log('❌ Failed to pre-cache scheduled content:', e.message);
+        if (this.scheduledPreloadTimeout) {
+          clearTimeout(this.scheduledPreloadTimeout);
+          this.scheduledPreloadTimeout = null;
+        }
+        this.waitingForScheduledPreload = false;
       });
-    };
-
-    currentVideoEl.onended = () => {
-      if (hasHandledCompletion) return;
-      hasHandledCompletion = true;
-      if (this.loadTimeout) {
-        clearTimeout(this.loadTimeout);
-        this.loadTimeout = null;
-      }
-      console.log('✓ Completed: ' + displayName);
-      onComplete();
-    };
-
-    currentVideoEl.onerror = () => {
-      if (hasHandledCompletion) return;
-      hasHandledCompletion = true;
-      if (this.loadTimeout) {
-        clearTimeout(this.loadTimeout);
-        this.loadTimeout = null;
-      }
-      const errorType = currentVideoEl.error ? currentVideoEl.error.code : 'unknown';
-      console.log('❌ Video error (' + errorType + '): ' + displayName);
-      onFailed();
-    };
+      console.log('📺 Showing static while pre-caching scheduled content...');
+      this.playContinuousStatic();
+    }
   }
 
   getRemainingSlotTime() {
@@ -1495,7 +947,7 @@ export class PlaybackHandler {
     this.currentSlotStartTime += this.currentSlotDuration;
     this.currentSlotDuration = this.DEFAULT_SLOT_DURATION;
     this.scheduledVideoEnded = false;
-    this.inCommercialBreak = false; // Reset commercial break state
+    this.inCommercialBreak = false;
 
     const video = this.scheduledVideos[this.scheduleIndex];
     const videoId = video.id || video.u;
@@ -1503,9 +955,8 @@ export class PlaybackHandler {
     this.currentSlotBreaks = this.calculateSlotCommercialBreaks(this.scheduleIndex, videoDuration, this.currentSlotDuration);
     this.currentBreakIndex = 0;
 
-    // Clear any previously preloaded video since we're moving to a new slot
     this.preloadedScheduledVideo = null;
-    this.isPreloadingScheduled = false; // Reset preloading state
+    this.isPreloadingScheduled = false;
 
     this.queueIndex++;
     this.showStatic(300);
@@ -1517,14 +968,12 @@ export class PlaybackHandler {
     this.scheduledVideoEnded = true;
 
     if (this.currentSlotBreaks.length > 0 && this.currentBreakIndex < this.currentSlotBreaks.length - 1) {
-      // More commercial breaks remaining in this slot
       this.currentBreakIndex++;
       this.inCommercialBreak = true;
       this.queueIndex++;
       this.showStatic(300);
       this.debouncedTransition(() => this.playCommercialBreak());
     } else {
-      // No more breaks, move to next slot
       this.moveToNextSlot();
     }
   }
@@ -1552,7 +1001,6 @@ export class PlaybackHandler {
   }
 
   onCommercialBreakComplete() {
-    // Guard against duplicate calls
     if (!this.inCommercialBreak) {
       console.log('⚠ Commercial break already completed, ignoring duplicate call');
       return;
@@ -1563,12 +1011,8 @@ export class PlaybackHandler {
     const totalBreaks = this.currentSlotBreaks.length;
     console.log('✓ Commercial break ' + completedBreak + '/' + totalBreaks + ' completed');
 
-    // Increment break index AFTER logging
     this.currentBreakIndex++;
 
-    // If scheduled content hasn't played yet (synced into commercial break),
-    // ALWAYS try to play scheduled content - don't continue to more breaks
-    // This is critical for Firefox where preloading is slower
     if (!this.scheduledVideoEnded) {
       if (this.preloadedScheduledVideo) {
         console.log('📺 Scheduled content ready, switching from commercial break');
@@ -1576,8 +1020,6 @@ export class PlaybackHandler {
         this.showStatic(300);
         this.debouncedTransition(() => this.playPreloadedScheduled(0));
       } else {
-        // Scheduled content not preloaded yet (common in Firefox)
-        // Use playNextScheduled which handles preloading with fallback ads
         console.log('📺 Scheduled content not preloaded yet, starting playback (will buffer with ads if needed)');
         this.queueIndex++;
         this.showStatic(300);
@@ -1586,29 +1028,25 @@ export class PlaybackHandler {
       return;
     }
 
-    // Scheduled content has already played, continue with remaining breaks
     if (this.currentBreakIndex < this.currentSlotBreaks.length) {
       console.log('📺 Next commercial break in slot (' + (this.currentBreakIndex + 1) + '/' + totalBreaks + ')');
       this.queueIndex++;
       this.showStatic(300);
       this.debouncedTransition(() => this.playCommercialBreak());
     } else {
-      // All breaks completed and scheduled video already played, move to next slot
       console.log('✓ All ' + totalBreaks + ' commercial breaks completed, moving to next slot');
       this.moveToNextSlot();
     }
   }
 
-   setAnalytics(analytics) {
+  setAnalytics(analytics) {
     this.analytics = analytics;
   }
 
   setupAnalyticsTracking() {
     if (!this.analytics) return;
-
     this.videoQueue.forEach((video, index) => {
       if (!video) return;
-
       let lastReportedTime = 0;
       let lastSeekTime = 0;
       let isBuffering = false;
@@ -1617,11 +1055,7 @@ export class PlaybackHandler {
         if (this.currentVideoMetadata && this.analytics && this.videoStartTime > 0) {
           const startTime = Date.now() - this.videoStartTime;
           if (startTime > 1000) {
-            this.analytics.trackVideoStart(
-              this.currentVideoMetadata.id,
-              this.currentVideoMetadata.title,
-              this.currentVideoMetadata.type
-            );
+            this.analytics.trackVideoStart(this.currentVideoMetadata.id, this.currentVideoMetadata.title, this.currentVideoMetadata.type);
           }
         }
       });
@@ -1635,13 +1069,11 @@ export class PlaybackHandler {
 
       video.addEventListener('timeupdate', () => {
         if (!this.analytics || !this.currentVideoMetadata || !this.videoStartTime) return;
-
         const now = Date.now();
         if (now - lastReportedTime > 5000) {
           this.analytics.trackVideoProgress(video);
           lastReportedTime = now;
         }
-
         const currentTime = video.currentTime;
         if (Math.abs(currentTime - lastSeekTime) > 5) {
           this.analytics.trackSeek(lastSeekTime, currentTime);
@@ -1656,11 +1088,7 @@ export class PlaybackHandler {
       video.addEventListener('ended', () => {
         if (this.analytics && this.currentVideoMetadata && this.videoStartTime > 0) {
           const watchTime = (Date.now() - this.videoStartTime) / 1000;
-          this.analytics.trackVideoComplete(
-            this.currentVideoMetadata.id,
-            this.currentVideoMetadata.title,
-            watchTime
-          );
+          this.analytics.trackVideoComplete(this.currentVideoMetadata.id, this.currentVideoMetadata.title, watchTime);
         }
       });
 
@@ -1695,10 +1123,7 @@ export class PlaybackHandler {
 
       video.addEventListener('loadedmetadata', () => {
         if (this.currentVideoMetadata && this.analytics) {
-          this.analytics.trackNetworkEvent('metadata_loaded', { 
-            videoId: this.currentVideoMetadata.id,
-            duration: video.duration
-          });
+          this.analytics.trackNetworkEvent('metadata_loaded', { videoId: this.currentVideoMetadata.id, duration: video.duration });
         }
       });
     });
