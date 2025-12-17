@@ -461,9 +461,12 @@ export class PlaybackHandler {
       };
       this.scheduledPreloadTimeout = setTimeout(() => {
         if (this.waitingForScheduledPreload && !preloadHandled) {
-          console.log('⏱ Scheduled content preload timeout (5min), skipping to next');
+          console.log('⏱ Scheduled content preload timeout (5min), switching to filler');
           preloadHandled = true;
           this.waitingForScheduledPreload = false;
+          this.stopContinuousStatic();
+          this.showStatic(300);
+          setTimeout(() => this.playFiller(), 350);
         }
       }, 300000);
       this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
@@ -912,9 +915,12 @@ export class PlaybackHandler {
 
       this.scheduledPreloadTimeout = setTimeout(() => {
         if (this.waitingForScheduledPreload && !preloadHandled) {
-          console.log('⏱ Scheduled content preload timeout (5min), skipping to next');
+          console.log('⏱ Scheduled content preload timeout (5min), switching to filler');
           preloadHandled = true;
           this.waitingForScheduledPreload = false;
+          this.stopContinuousStatic();
+          this.showStatic(300);
+          setTimeout(() => this.playFiller(), 350);
         }
       }, 300000);
 
