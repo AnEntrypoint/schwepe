@@ -846,6 +846,88 @@ export class PlaybackHandler {
     this.loadAndPlay(video, displayName, '#ffff00', seekTime, () => this.onScheduledComplete(), () => this.onScheduledFailed());
   }
 
+  loadAndPlay(video, displayName, color, seekTime, onComplete, onFailed) {
+    let timeoutId = null;
+    let lastSyncTime = Date.now();
+    const SYNC_INTERVAL = 60000;
+    const BUFFER_CUSHION = 10;
+
+    const videoEl = document.createElement('video');
+    videoEl.crossOrigin = 'anonymous';
+    videoEl.style.display = 'none';
+    document.body.appendChild(videoEl);
+
+    const cleanup = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      videoEl.src = '';
+      videoEl.load();
+      setTimeout(() => {
+        if (videoEl.parentNode) videoEl.parentNode.removeChild(videoEl);
+      }, 100);
+    };
+
+    timeoutId = setTimeout(() => {
+      console.log('⏱ Video load timeout (' + displayName + '), falling back to filler');
+      cleanup();
+      onFailed();
+    }, 15000);
+
+    videoEl.addEventListener('loadedmetadata', () => {
+      console.log('✓ Video metadata loaded (' + displayName + '), playing');
+      clearTimeout(timeoutId);
+      this.currentVideoEl.src = videoEl.src;
+      this.currentVideoEl.load();
+      const playSeekTime = Math.min(seekTime, this.currentVideoEl.duration - 1);
+      this.currentVideoEl.currentTime = playSeekTime;
+      this.safePlay(this.currentVideoEl);
+
+      const onTimeUpdate = () => {
+        const now = Date.now();
+        if (now - lastSyncTime >= SYNC_INTERVAL) {
+          lastSyncTime = now;
+          const correctSeekPos = ((this.getSyncedTime() - this.scheduleEpoch - this.currentSlotStartTime) % this.currentSlotDuration) / 1000;
+          if (correctSeekPos >= 0 && correctSeekPos < this.currentVideoEl.duration) {
+            if (this.currentVideoEl.buffered.length > 0) {
+              const bufferEnd = this.currentVideoEl.buffered.end(this.currentVideoEl.buffered.length - 1);
+              const jumpTarget = correctSeekPos;
+              if (bufferEnd > jumpTarget + BUFFER_CUSHION) {
+                console.log('🔄 Sync: buffer sufficient, jumping to ' + Math.floor(correctSeekPos) + 's');
+                this.currentVideoEl.currentTime = correctSeekPos;
+              } else if (bufferEnd > this.currentVideoEl.currentTime + 1) {
+                console.log('⏩ Sync: advancing 1s (buffer=' + Math.floor(bufferEnd) + 's, target=' + Math.floor(jumpTarget) + 's)');
+                this.currentVideoEl.currentTime += 1;
+              }
+            }
+          }
+        }
+      };
+
+      this.currentVideoEl.addEventListener('timeupdate', onTimeUpdate);
+      this.currentVideoEl.addEventListener('ended', () => {
+        this.currentVideoEl.removeEventListener('timeupdate', onTimeUpdate);
+        cleanup();
+        onComplete();
+      }, { once: true });
+
+      this.currentVideoEl.addEventListener('error', () => {
+        this.currentVideoEl.removeEventListener('timeupdate', onTimeUpdate);
+        console.log('❌ Video playback error (' + displayName + ')');
+        cleanup();
+        onFailed();
+      }, { once: true });
+    });
+
+    videoEl.addEventListener('error', () => {
+      console.log('❌ Failed to load video source (' + displayName + ')');
+      clearTimeout(timeoutId);
+      cleanup();
+      onFailed();
+    }, { once: true });
+
+    videoEl.src = video.u || video.src;
+    videoEl.load();
+  }
+
   getRemainingSlotTime() {
     const now = this.getSyncedTime();
     const elapsed = now - this.scheduleEpoch;
