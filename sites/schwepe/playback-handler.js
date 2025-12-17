@@ -439,48 +439,8 @@ export class PlaybackHandler {
       if (this.currentSlotBreaks.length > 0) {
         console.log('📺 Slot has ' + this.currentSlotBreaks.length + ' commercial break(s)');
       }
-      console.log('📺 Starting playback of scheduled content');
-      this.pendingScheduledSeekTime = syncPos.seekTime;
-      this.waitingForScheduledPreload = true;
-      let preloadHandled = false;
-      const onScheduledReady = () => {
-        if (preloadHandled || !this.waitingForScheduledPreload) {
-          console.log('⚠ Preload already handled, ignoring duplicate callback');
-          return;
-        }
-        preloadHandled = true;
-        console.log('✓ Scheduled content pre-cached, starting playback');
-        if (this.scheduledPreloadTimeout) {
-          clearTimeout(this.scheduledPreloadTimeout);
-          this.scheduledPreloadTimeout = null;
-        }
-        this.waitingForScheduledPreload = false;
-        this.stopContinuousStatic();
-        this.showStatic(300);
-        setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
-      };
-      this.scheduledPreloadTimeout = setTimeout(() => {
-        if (this.waitingForScheduledPreload && !preloadHandled) {
-          console.log('⏱ Scheduled content preload timeout (5min), switching to filler');
-          preloadHandled = true;
-          this.waitingForScheduledPreload = false;
-          this.stopContinuousStatic();
-          this.showStatic(300);
-          setTimeout(() => this.playFiller(), 350);
-        }
-      }, 300000);
-      this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
-        if (preloadHandled) return;
-        preloadHandled = true;
-        console.log('❌ Failed to pre-cache scheduled content:', e.message);
-        if (this.scheduledPreloadTimeout) {
-          clearTimeout(this.scheduledPreloadTimeout);
-          this.scheduledPreloadTimeout = null;
-        }
-        this.waitingForScheduledPreload = false;
-      });
-      console.log('📺 Loading scheduled content...');
-      this.playContinuousStatic();
+      console.log('📺 Starting playback immediately (no preload wait)');
+      this.playNextScheduled(syncPos.seekTime);
     } else if (this.savedVideos.length > 0) {
       console.log('No schedule available, playing filler content only');
       this.playFiller();
@@ -883,60 +843,7 @@ export class PlaybackHandler {
     const displayName = video.show + ' - ' + video.episode;
     console.log('📺 [SCHEDULE]: ' + displayName);
     this.playingScheduled = true;
-
-    if (this.preloadedScheduledVideo && this.preloadedScheduledVideo.index === this.scheduleIndex && this.utils.isVideoBuffered(this.preloadedScheduledVideo.element, 10)) {
-      console.log('✓ Using pre-cached video (instant playback ready)');
-      this.playPreloadedScheduled(seekTime);
-    } else {
-      if (this.preloadedScheduledVideo) {
-        console.log('⚠ Pre-cached video not ready or index mismatch');
-      }
-      console.log('📺 Pre-caching scheduled content before playback');
-      this.pendingScheduledSeekTime = seekTime;
-      this.waitingForScheduledPreload = true;
-      let preloadHandled = false;
-
-      const onScheduledReady = () => {
-        if (preloadHandled || !this.waitingForScheduledPreload) {
-          console.log('⚠ Preload already handled, ignoring duplicate callback');
-          return;
-        }
-        preloadHandled = true;
-        console.log('✓ Scheduled content pre-cached, starting playback');
-        if (this.scheduledPreloadTimeout) {
-          clearTimeout(this.scheduledPreloadTimeout);
-          this.scheduledPreloadTimeout = null;
-        }
-        this.waitingForScheduledPreload = false;
-        this.stopContinuousStatic();
-        this.showStatic(300);
-        setTimeout(() => this.playPreloadedScheduled(this.pendingScheduledSeekTime), 500);
-      };
-
-      this.scheduledPreloadTimeout = setTimeout(() => {
-        if (this.waitingForScheduledPreload && !preloadHandled) {
-          console.log('⏱ Scheduled content preload timeout (5min), switching to filler');
-          preloadHandled = true;
-          this.waitingForScheduledPreload = false;
-          this.stopContinuousStatic();
-          this.showStatic(300);
-          setTimeout(() => this.playFiller(), 350);
-        }
-      }, 300000);
-
-      this.preloadScheduledVideo(this.scheduleIndex, onScheduledReady).catch(e => {
-        if (preloadHandled) return;
-        preloadHandled = true;
-        console.log('❌ Failed to pre-cache scheduled content:', e.message);
-        if (this.scheduledPreloadTimeout) {
-          clearTimeout(this.scheduledPreloadTimeout);
-          this.scheduledPreloadTimeout = null;
-        }
-        this.waitingForScheduledPreload = false;
-      });
-      console.log('📺 Showing static while pre-caching scheduled content...');
-      this.playContinuousStatic();
-    }
+    this.loadAndPlay(video, displayName, '#ffff00', seekTime, () => this.onScheduledComplete(), () => this.onScheduledFailed());
   }
 
   getRemainingSlotTime() {
