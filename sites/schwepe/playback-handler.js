@@ -755,8 +755,8 @@ export class PlaybackHandler {
         }
       });
 
-      preloadEl.addEventListener('progress', checkBuffered);
-      preloadEl.addEventListener('canplaythrough', checkBuffered);
+      preloadEl.addEventListener('progress', checkBuffer);
+      preloadEl.addEventListener('canplaythrough', checkBuffer);
 
       preloadEl.addEventListener('error', (e) => {
         if (hasCompleted) return; // Ignore errors after completion
