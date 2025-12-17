@@ -17,9 +17,9 @@ export class TVScheduler {
       return 1;
     }
 
-    // Calculate week number (1-indexed, wrapping at 78 weeks)
+    // Calculate week number (1-indexed, wrapping at 63 weeks - matching available schedules)
     const weekNum = Math.floor(elapsed / oneWeek) + 1;
-    return ((weekNum - 1) % 78) + 1; // Wrap to 1-78 range
+    return ((weekNum - 1) % 63) + 1; // Wrap to 1-63 range
   }
 
   async loadScheduleForWeek(week) {
