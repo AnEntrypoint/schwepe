@@ -6,6 +6,23 @@
 - Domain routing verified working correctly
 - Schwelevision TV fully functional with video playback
 
+## Current Session Fixes (2025-12-19)
+
+**Playback System Refactoring**:
+- Removed preload delays from `startPlayback()` and `playNextScheduled()` (commit 385d34e)
+- Added `loadAndPlay()` method with dynamic sync timing (commit 06aca48)
+- Simplified `playFiller()` to use unified `loadAndPlay()` path (commit ec751d2)
+- Added `onFillerFailed()` for retry logic instead of broken preload chain
+
+**Technical Implementation**:
+- `loadAndPlay()`: Immediate video load + play with 15s timeout
+- Dynamic sync: Once per minute, checks buffer and either jumps to sync position or advances 1s
+- 10-second buffer cushion before jumping to prevent jitter
+- Consistent error handling between scheduled and filler content
+- All changes built and pushed to origin/main
+
+**Pending**: Server auto-redeploy (Coolify container restart)
+
 ### Issue Resolutions
 
 **2025-11-14 - Video MIME Types**:
