@@ -796,7 +796,7 @@ export class PlaybackHandler {
     };
   }
 
-  async playFiller() {
+  playFiller() {
     if (this.savedVideos.length === 0) {
       console.log('No filler content available, retrying schedule');
       setTimeout(() => this.playNextScheduled(), 2000);
@@ -809,28 +809,9 @@ export class PlaybackHandler {
       return;
     }
     const displayName = video.filename || video.title || 'Filler';
-    const videoId = video.filename || video.id;
     console.log('📺 [FILLER]: ' + displayName);
     this.playingScheduled = false;
-
-    let fillerData = null;
-    if (this.preloadedAds.has(videoId)) {
-      fillerData = this.preloadedAds.get(videoId);
-      console.log('✓ Using fully-loaded filler from cache');
-    } else {
-      console.log('⏳ Fully loading filler: ' + displayName);
-      try {
-        fillerData = await this.preload.preloadAd(this, video);
-      } catch (e) {
-        console.log('❌ Failed to load filler, trying next');
-        this.trackPlayedAd(video);
-        this.fillerIndex++;
-        this.showStatic(300);
-        setTimeout(() => this.playFiller(), 350);
-        return;
-      }
-    }
-    this.playFullyLoadedAd(fillerData, () => this.onFillerComplete());
+    this.loadAndPlay(video, displayName, '#00ffff', 0, () => this.onFillerComplete(), () => this.onFillerFailed());
   }
 
   playNextScheduled(seekTime = 0) {
@@ -851,32 +832,31 @@ export class PlaybackHandler {
     let lastSyncTime = Date.now();
     const SYNC_INTERVAL = 60000;
     const BUFFER_CUSHION = 10;
-
-    const videoEl = document.createElement('video');
-    videoEl.crossOrigin = 'anonymous';
-    videoEl.style.display = 'none';
-    document.body.appendChild(videoEl);
+    let hasStarted = false;
 
     const cleanup = () => {
       if (timeoutId) clearTimeout(timeoutId);
-      videoEl.src = '';
-      videoEl.load();
-      setTimeout(() => {
-        if (videoEl.parentNode) videoEl.parentNode.removeChild(videoEl);
-      }, 100);
     };
 
+    const videoUrl = video.u || video.path || video.src || '';
+    console.log('📺 Loading video: ' + videoUrl);
+
     timeoutId = setTimeout(() => {
-      console.log('⏱ Video load timeout (' + displayName + '), falling back to filler');
-      cleanup();
-      onFailed();
+      if (!hasStarted) {
+        console.log('⏱ Video load timeout (' + displayName + '), falling back to filler');
+        cleanup();
+        onFailed();
+      }
     }, 15000);
 
-    videoEl.addEventListener('loadedmetadata', () => {
-      console.log('✓ Video metadata loaded (' + displayName + '), playing');
+    this.currentVideoEl.src = videoUrl;
+    this.currentVideoEl.load();
+
+    const onLoadedMetadata = () => {
       clearTimeout(timeoutId);
-      this.currentVideoEl.src = videoEl.src;
-      this.currentVideoEl.load();
+      hasStarted = true;
+      console.log('✓ Video loaded (' + displayName + '), playing');
+
       const playSeekTime = Math.min(seekTime, this.currentVideoEl.duration - 1);
       this.currentVideoEl.currentTime = playSeekTime;
       this.safePlay(this.currentVideoEl);
@@ -903,29 +883,28 @@ export class PlaybackHandler {
       };
 
       this.currentVideoEl.addEventListener('timeupdate', onTimeUpdate);
+
       this.currentVideoEl.addEventListener('ended', () => {
         this.currentVideoEl.removeEventListener('timeupdate', onTimeUpdate);
+        this.currentVideoEl.removeEventListener('loadedmetadata', onLoadedMetadata);
+        this.currentVideoEl.removeEventListener('error', onPlayError);
         cleanup();
         onComplete();
       }, { once: true });
+    };
 
-      this.currentVideoEl.addEventListener('error', () => {
-        this.currentVideoEl.removeEventListener('timeupdate', onTimeUpdate);
-        console.log('❌ Video playback error (' + displayName + ')');
+    const onPlayError = () => {
+      this.currentVideoEl.removeEventListener('loadedmetadata', onLoadedMetadata);
+      if (!hasStarted) {
+        console.log('❌ Failed to load video (' + displayName + ')');
+        clearTimeout(timeoutId);
         cleanup();
         onFailed();
-      }, { once: true });
-    });
+      }
+    };
 
-    videoEl.addEventListener('error', () => {
-      console.log('❌ Failed to load video source (' + displayName + ')');
-      clearTimeout(timeoutId);
-      cleanup();
-      onFailed();
-    }, { once: true });
-
-    videoEl.src = video.u || video.src;
-    videoEl.load();
+    this.currentVideoEl.addEventListener('loadedmetadata', onLoadedMetadata);
+    this.currentVideoEl.addEventListener('error', onPlayError);
   }
 
   getRemainingSlotTime() {
@@ -985,6 +964,14 @@ export class PlaybackHandler {
     this.queueIndex++;
     this.showStatic(300);
     this.debouncedTransition(() => this.playNextScheduled());
+  }
+
+  onFillerFailed() {
+    console.log('❌ Filler failed, trying next');
+    this.fillerIndex++;
+    this.queueIndex++;
+    this.showStatic(300);
+    this.debouncedTransition(() => this.playFiller());
   }
 
   onCommercialComplete() {
