@@ -70,3 +70,6 @@ original-images/
 .claude-flow/
 .playwright-mcp/
 .firebase/
+.gm-stop-verified
+
+.code-search/

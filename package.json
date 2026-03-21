@@ -9,7 +9,8 @@
     "build": "npm run rebuild-media && node build-multi-site.js",
     "build:multi-site": "npm run rebuild-media && node build-multi-site.js",
     "start": "NODE_ENV=production node server.cjs",
-    "start:dev": "NODE_ENV=development node server.cjs"
+    "start:dev": "NODE_ENV=development node server.cjs",
+    "test": "node evals/eval.js"
   },
   "dependencies": {
     "express": "^4.21.2"
