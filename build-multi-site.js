@@ -79,7 +79,7 @@ async function buildSite(siteId) {
     }
   }
 
-  const libSource = path.join(sitePath, 'lib');
+  const libSource = path.join(projectRoot, 'lib');
   const libDest = path.join(distPath, 'lib');
   try {
     await fs.access(libSource);
