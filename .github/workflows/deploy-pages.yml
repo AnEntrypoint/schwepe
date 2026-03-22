@@ -28,6 +28,11 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        with:
+          enablement: true
+
       - name: Install dependencies
         run: npm ci
 
@@ -37,9 +42,8 @@ jobs:
       - name: Add .nojekyll
         run: touch dist/schwepe/.nojekyll
 
-      - uses: actions/configure-pages@v4
-
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist/schwepe
 
